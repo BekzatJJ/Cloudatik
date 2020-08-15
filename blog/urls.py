@@ -8,4 +8,5 @@ urlpatterns = [
     path('accounts/profile/', views.trying, name='blog-trying'),
     path('configurations/<device_id>', views.config, name='blog-config')
 
+
 ]

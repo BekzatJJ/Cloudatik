@@ -4,6 +4,8 @@ from .models import Post
 from django.core import serializers
 from django.forms.models import model_to_dict
 
+from django.contrib.auth.decorators import login_required
+
 from django.utils import timezone
 import datetime
 
@@ -28,7 +30,7 @@ def trying(request):
     return HttpResponse('Could not save data')
 
 
-
+@login_required
 def main(request):
     r = requests.get('https://api.cl-ds.com/getUserNode/bekzat/', headers= {'Authorization': 'Token 62990ac3b609e5601a678c1e133416e6da7f10db'})
     if r.status_code == 200:
@@ -57,3 +59,4 @@ def home(request):
 
 def about(request):
     return render(request, 'blog/about.html', {'title':'About'})
+

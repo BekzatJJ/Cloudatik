@@ -12,6 +12,10 @@ window.onload = function () {
         window.ajaxAlarmHistoryProcess={};
         window.nodeParameters={};
 
+        //LCDs and charts
+        window.lcd={};
+        window.chartObject = {};
+
         //Status to not 'data not ready'
         for(var i=0; i< nodes.length; i++){
             ajaxNodeProcess[nodes[i].id] = false;
@@ -74,10 +78,10 @@ window.onload = function () {
                         }
 
                         //initialize lcd charts
-                        var  lcd=[];
+
                         var options=[];
                         var chartDataSet=[];
-                        var chartObject = {};
+
                         for(var i=0; i< data.length; i++){
                             if(Object.keys(data[i].chart_prop).length === 0){
                                     var unit = '';
@@ -92,7 +96,7 @@ window.onload = function () {
                           //width of the lcd
                           if(label.length > 13){var width = 120 + ((label.length - 13)*9); }else{ var width =120;}
 
-                          lcd[i] = new steelseries.DisplaySingle(lcdId, {
+                          lcd[lcdId] = new steelseries.DisplaySingle(lcdId, {
                             width: width,
                             height: 50,
                             unitString: unit,
@@ -102,9 +106,30 @@ window.onload = function () {
                             autoScroll: true
                             });
 
-                          setLastValue(lcd[i], parseFloat(data[i].data[19][data[i].parameter]));
+                          setLastValue(lcd[lcdId], parseFloat(data[i].data[19][data[i].parameter]));
+
+                          var dataInsertArray = [data[i].data[1][data[i].parameter], data[i].data[3][data[i].parameter],
+                                        data[i].data[5][data[i].parameter], data[i].data[7][data[i].parameter],
+                                        data[i].data[9][data[i].parameter], data[i].data[11][data[i].parameter],
+                                        data[i].data[13][data[i].parameter], data[i].data[15][data[i].parameter],
+                                        data[i].data[17][data[i].parameter], data[i].data[19][data[i].parameter]]
+
+                            var max = Math.max.apply(this, dataInsertArray);
+                            var min = Math.min.apply(this, dataInsertArray);
+
+                            if(max < 0){
+                                max = max-(max*0.10);
+                            }else{max = max+(max*0.10);}
+
+                            if(min < 0){
+                                min = min+(min*0.10);
+                            }else{
+                                min = min-(min*0.10);
+                            }
 
 
+                            //max=Number(max).toFixed();
+                            //min=Number(min).toFixed();
                           //INIT Charts
                             options[i] ={
                                         legend: {
@@ -119,10 +144,9 @@ window.onload = function () {
 
                                             yAxes: [{
                                                 ticks: {
-                                                    beginAtZero: true,
-                                                    min: 0,
-                                                    max: 300,
-                                                    stepSize: 50
+
+                                                    min: min,
+                                                    max: max,
                                                         },
                                                 scaleLabel: {
                                                     display:true,
@@ -191,7 +215,12 @@ window.onload = function () {
                     headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                     //data: "check",
                     success: function(data_alarm){
-                        //To get ID
+
+                        if(data_alarm.length == 0){
+
+
+                        }else{
+                            //To get ID
                         var nodeProcessed = document.getElementsByClassName(data_alarm[0].serial);
                         var alarmTable = document.getElementById('alarmTable_' + nodeProcessed[0].id).getElementsByTagName('tbody')[0];
                         //Delete rows if exists
@@ -226,6 +255,8 @@ window.onload = function () {
 
 
 
+
+                        }
 
                         }
                     }
@@ -297,10 +328,10 @@ function requestAjax(id){
                         }
 
                         //initialize lcd charts
-                        var  lcd=[];
+
                         var options=[];
                         var chartDataSet=[];
-                        var chartObject = {};
+
                         for(var i=0; i< data.length; i++){
                             if(Object.keys(data[i].chart_prop).length === 0){
                                     var unit = '';
@@ -315,7 +346,7 @@ function requestAjax(id){
 
                         if(label.length > 13){var width = 120 + ((label.length - 13)*9); }else{ var width =120;}
 
-                          lcd[i] = new steelseries.DisplaySingle(lcdId, {
+                          lcd[lcdId] = new steelseries.DisplaySingle(lcdId, {
                             width: width,
                             height: 50,
                             unitString: unit,
@@ -324,8 +355,26 @@ function requestAjax(id){
                             headerString: label
                             });
 
-                          setLastValue(lcd[i], parseFloat(data[i].data[19][data[i].parameter]));
+                          setLastValue(lcd[lcdId], parseFloat(data[i].data[19][data[i].parameter]));
 
+                          var dataInsertArray = [data[i].data[1][data[i].parameter], data[i].data[3][data[i].parameter],
+                                        data[i].data[5][data[i].parameter], data[i].data[7][data[i].parameter],
+                                        data[i].data[9][data[i].parameter], data[i].data[11][data[i].parameter],
+                                        data[i].data[13][data[i].parameter], data[i].data[15][data[i].parameter],
+                                        data[i].data[17][data[i].parameter], data[i].data[19][data[i].parameter]]
+
+                            var max = Math.max.apply(this, dataInsertArray);
+                            var min = Math.min.apply(this, dataInsertArray);
+
+                            if(max < 0){
+                                max = max-(max*0.10);
+                            }else{max = max+(max*0.10);}
+
+                            if(min < 0){
+                                min = min+(min*0.10);
+                            }else{
+                                min = min-(min*0.10);
+                            }
 
                           //INIT Charts
                             options[i] ={
@@ -341,10 +390,8 @@ function requestAjax(id){
 
                                             yAxes: [{
                                                 ticks: {
-                                                    beginAtZero: true,
-                                                    min: 0,
-                                                    max: 300,
-                                                    stepSize: 50
+                                                    min: min,
+                                                    max: max
                                                         },
                                                 scaleLabel: {
                                                     display:true,
@@ -552,6 +599,8 @@ function loadAlarmHistoryLink(id){
 }
 
 function loadChartsLink(id){
+    var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
+        spinnerNode.classList.remove('lds-roller');
     var data = nodeParameters[id];
     var parentForm = document.getElementById('chartParameters_'+id);
 
@@ -567,16 +616,30 @@ function loadChartsLink(id){
 
         child1.className ='form-check';
         child2.className ='form-check-label';
-        if(data[i].chart_title == null){
-            if(data[i].chart_prop.length == 0){
-                child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data[i].parameter +"'>" + data[i].parameter;
-            }else{
-                child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data[i].parameter +"'>" + data[i].chart_prop[0].label;
-            }
+        if(i==0){
+                if(data[i].chart_title == null){
+                if(data[i].chart_prop.length == 0){
+                    child2.innerHTML = "<input type='radio' class='form-check-input' checked name='chartParameter' value='" + data[i].parameter +"'>" + data[i].parameter;
+                }else{
+                    child2.innerHTML = "<input type='radio' class='form-check-input' checked name='chartParameter' value='" + data[i].parameter +"'>" + data[i].chart_prop[0].label;
+                }
 
+            }else{
+                child2.innerHTML = "<input type='radio' class='form-check-input' checked name='chartParameter' value='" + data[i].parameter +"'>" + data[i].chart_title;
+            }
         }else{
-            child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data[i].parameter +"'>" + data[i].chart_title;
+                if(data[i].chart_title == null){
+                if(data[i].chart_prop.length == 0){
+                    child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data[i].parameter +"'>" + data[i].parameter;
+                }else{
+                    child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data[i].parameter +"'>" + data[i].chart_prop[0].label;
+                }
+
+            }else{
+                child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data[i].parameter +"'>" + data[i].chart_title;
+            }
         }
+
 
         //child3.type='radio';
         //child3.class='form-check-input';
@@ -588,16 +651,134 @@ function loadChartsLink(id){
 
         parentForm.appendChild(child1);
     }
+
+    //init input fields
+    $(function () {
+                //$('#startDateChart_'+id).datetimepicker();
+                //$('#endDateChart_'+id).datetimepicker();
+                 $('#startChartDate_'+id).datetimepicker();
+                 $('#endChartDate_'+id).datetimepicker();
+            });
+
+
 }
 
 function retrieveChart(id){
-    var idForm = 'chartForm_'+id + ' [name=chartParameter]';
+    document.getElementById('errorMessage_'+id).innerHTML = '';
+
+
+    var idForm = '#chartForm_'+id + ' [name=chartParameter]';
     var radio = $(idForm);
-    console.log(radio);
+
     for(var i=0; i< radio.length; i++){
         if(radio[i].checked){
             var chartParameter = radio[i].value;
-            console.log(chartParameter);
+
         }
     }
+    var startDate = $('[name= startDateInput_' + id + ']').val();
+    var endDate = $('[name= endDateInput_' + id + ']').val();
+
+    if(startDate=='' || endDate==''){
+        document.getElementById('errorMessage_'+id).innerHTML = '*Fill all the fields';
+    }else{
+            if(moment(endDate).diff(moment(startDate), 'months', true) > 1){
+                    document.getElementById('errorMessage_'+id).innerHTML = '*Date range must be 1 month maximum';
+                }else{
+                    //All accepted
+                    //Spinner
+                    var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
+                        spinnerNode.classList.add('lds-roller');
+                    var startEpoch = moment(startDate, 'M/D/YYYY h:mm a').unix();
+                    var endEpoch = moment(endDate, 'M/D/YYYY h:mm a').unix();
+
+                    console.log('radio: '+chartParameter);
+                    console.log('start: '+startDate+ ',   Epoch: '+startEpoch);
+                    console.log('end: '+endDate+ ',  Epoch: '+ endEpoch);
+
+                    ajaxRetrieveChart(id, chartParameter, startEpoch, endEpoch);
+                }
+    }
+
+
+
+
+}
+
+function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
+
+    //Clear old canvas
+    var canvas = document.getElementById('canvasWrapper_'+id);
+    canvas.innerHTML = '&nbsp;';
+    $('#canvasWrapper_'+id).append('<canvas id="retrievedChart_' + id +'" ><canvas>');
+
+    var ajaxCounts = Object.keys(ajaxRequests).length;
+        ajaxRequests[ajaxCounts] = $.ajax({
+                    type: "GET",
+                    url: 'https://api.cl-ds.com/retrieveChart/'+ id + '/' + parameter + '/' + startEpoch + '/' + endEpoch + '/',
+                    headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                    async: true,
+                    //data: "check",
+                    success: function(dataGot){
+                        var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
+                        spinnerNode.classList.remove('lds-roller');
+                        console.log(dataGot);
+
+                        //Chart append
+                        var labels = dataGot.map(function(e) {
+                               return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
+                            });
+                            var data = dataGot.map(function(e) {
+                               return e.data;
+                            });;
+
+                        var ctx = 'retrievedChart_'+id;
+                        var config = {
+                           type: 'line',
+                           data: {
+                              labels: labels,
+                              datasets: [{
+                                 label: 'Graph Line',
+                                 data: data,
+                                 fill: false,
+                                 lineTension: 0.5,
+                                 pointRadius: 0,
+                                 borderColor: "#5f76e8",
+                                 backgroundColor: 'rgba(0, 119, 204, 0.3)'
+                              }]
+                           },
+                           options:{
+                                scales:{
+                                    xAxes: [{
+                                        type:'time',
+                                        distribution: 'linear',
+                                        offset: false,
+                                        ticks: {
+                                            major:{
+                                                enabled: true,
+                                                fontStyle: 'bold'
+                                            },
+                                            source: 'auto',
+                                            autoSkip: true,
+                                            autoSkipPadding: 50,
+                                            maxRotation: 0,
+                                            sampleSize: 100
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        gridLines: {
+                                            drawBorder: false
+                                        },
+                                        scaleLabel:{
+                                            display:true,
+                                            labelString: 'Data Retrieved'
+                                        }
+                                    }]
+                                }
+                           }
+                        };
+
+                        var chart = new Chart(ctx, config);
+                    }
+                });
 }

@@ -207,22 +207,55 @@
                     </div>
 
                     <div id="chartInputs">
-                      <div class="form-check">
-                        <label for="startDateChart" class="inp">
-                          <input type="text" id="startDateChart" placeholder="&nbsp;">
-                          <span class="label">Start Date</span>
-                          <span class="focus-bg"></span>
-                        </label>
+                      <div class="container">
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <label for="startDate">Start Date</label>
+                              </div>
+                            </div>
+                            <div class="row">
+                                <div class='col-sm-6'>
+                                    <div class="form-group">
+                                        <div class='input-group date' id='startChartDate_{{node.device_id}}'>
+
+                                            <input type='text' name="startDateInput_{{node.device_id}}" class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                       </div>
-                      <div class="form-check">
-                        <label for="endDateChart" class="inp">
-                          <input type="text" id="endDateChart" placeholder="&nbsp;">
-                          <span class="label">Ended Date</span>
-                          <span class="focus-bg"></span>
-                        </label>
-                      </div>
-                      <div class="form-check">
+
+                      <div class="container">
+                            <div class="row">
+                              <div class="col-sm-6">
+                                <label for="endDate">End Date</label>
+                              </div>
+                            </div>
+                            <div class="row">
+                                <div class='col-sm-6'>
+                                    <div class="form-group">
+                                        <div class='input-group date' id='endChartDate_{{node.device_id}}'>
+
+                                            <input type='text' name="endDateInput_{{node.device_id}}" class="form-control" />
+                                            <span class="input-group-addon">
+                                                <span class="glyphicon glyphicon-calendar"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+
+                      <div class="form-check" style="display: flex;">
                         <button type="button" id="btnRetrieveChart_{{node.device_id}}" onclick="retrieveChart('{{node.device_id}}')" class="btn btn-primary" style="margin-top:5px;">Retrieve</button>
+                        <p id="errorMessage_{{node.device_id}}"style="color:red; font-size:13px; margin:5px; "></p>
                       </div>
                     </div>
 
@@ -231,8 +264,12 @@
                   </form>
                 </div>
 
-                <div style="flex:1;">
-                  <canvas id="retrievedChart_{{node.device_id}}"></canvas>
+                <div style="flex:1;" >
+                  <div id="spinnerRetrieveCharts_{{node.device_id}}" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                  <div id="canvasWrapper_{{node.device_id}}">
+                    <canvas id="retrievedChart_{{node.device_id}}"></canvas>
+                  </div>
+
                 </div>
               </div>
 
