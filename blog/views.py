@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Post
 from django.core import serializers
 from django.forms.models import model_to_dict
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login as user_login
 
 from django.utils import timezone
 import datetime
@@ -32,31 +33,24 @@ def trying(request):
 
 @login_required
 def main(request):
+    return render(request, 'blog/dashboard.html')
+
+def config(request):
     r = requests.get('https://api.cl-ds.com/getUserNode/bekzat/', headers= {'Authorization': 'Token 62990ac3b609e5601a678c1e133416e6da7f10db'})
     if r.status_code == 200:
-        context={"nodes": r.json()}
+        context={"allNodes": r.json()}
     else:
-        context={"nodes":''}
-
-    return render(request, 'blog/dashboard.html', convert(context))
-
-def config(request, device_id):
-    r = requests.get('https://api.cl-ds.com/getNodeInfo/'+ device_id + '/?format=json', headers= {'Authorization': 'Token 62990ac3b609e5601a678c1e133416e6da7f10db'})
-    if r.status_code == 200:
-        context={"info": r.json()}
-    else:
-        context={"info":''}
+        context={"allNodes":''}
 
     return render(request, 'blog/config.html', convert(context))
 
-def rawdata(request):
-    return render(request, 'blog/rawdata.html')
-def home(request):
-    context={
-        'posts': Post.objects.all()
-    }
-    return render(request, 'blog/home.html', context)
 
-def about(request):
-    return render(request, 'blog/about.html', {'title':'About'})
-
+def login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            user_login(request, user)
+            return redirect('/')
+    return render(request, 'blog/login_user.html')
