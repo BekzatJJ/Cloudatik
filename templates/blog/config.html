@@ -20,17 +20,37 @@
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
     <link href="{% static 'blog/css/bootstrap.css' %}" rel="stylesheet">
-    <link href="{% static 'blog/css/bootstrap-datetimepicker-standalone.css' %}" rel="stylesheet" type="text/css">
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
 
-<!-- Custom CSS -->
+
+<!-- srtDash CSS -->
+<link rel="shortcut icon" type="image/png" href="{%  static 'blog/assetsLogin_user/images/icon/favicon.ico' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/metisMenu.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/slicknav.min.css' %}">
+    <!-- amchart css -->
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <!-- others css -->
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/typography.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/default-css.css' %}">
+
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/responsive.css' %}">
+
+    <!-- Custom CSS -->
     <link href="{% static 'blog/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'blog/css/spinner.css' %}" rel="stylesheet">
+
+    <link href="{% static 'blog/css/rSlider.css' %}" rel="stylesheet">
+
+    <script src="{%  static 'blog/assetsLogin_user/js/vendor/modernizr-2.8.3.min.js' %}"></script>
+    <script src="{%  static 'blog/rSlider.js' %}"></script>
 </head>
 
 <body>
@@ -231,39 +251,116 @@
             <!-- Container fluid  -->
             <!-- ============================================================== -->
             <div class="container-fluid">
-                <section id="mainConfigSection">
+                     <div class="col-lg-6 mt-5">
+                                <div class="d-md-flex">
+                                    <div class="nav flex-column nav-pills mr-4 mb-3 mb-sm-0" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                        <a class="nav-link active" id="v-pills-alarmProp-tab" data-toggle="pill" href="#v-pills-alarmProp" role="tab" aria-controls="v-pills-alarmProp" aria-selected="true">Alarm</a>
+                                        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</a>
+                                    </div>
+                                    <div class="tab-content" id="v-pills-tabContent" style="width:100%">
+                                        <div class="tab-pane fade show active" id="v-pills-alarmProp" role="tabpanel" aria-labelledby="v-pills-alarmProp-tab">
+                                                           <div class="main-content-inner">
+
+                                                                            <div class="card" style="margin-bottom: 50px;">
+                                                                                <div class="card-header">
+                                                                                    <strong class="card-title">Chart Title</strong>
+                                                                                </div>
+                                                                                <div class="card-body">
+                                                                                    <div class="form-group" style="margin-top: 40px;">
+                                                                                        <input type="text" id="slider" class="slider">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
 
 
-                            <div class="container-fluid dashboard-content">
-                              <div class="card-group">
-                                {% for configNode in allNodes.node %}
-                                <div id="{{configNode.device_id}}"class="card border-success mb-3 node {{configNode.serial}}" style="max-width: 18rem;">
-                                  <div class="card-header bg-transparent border-success first" onclick="loadConfigNode(this)">{{configNode.tag}} <br> <p style="font-size:11px; color: black; margin-top:1px; margin-bottom:0;">{{node.serial}}</p></div>
-                                  <div class="card-body text-dark float-right">
 
-                                  </div>
+                                                                            <div class="card" style="margin-bottom: 50px;">
+                                                                                <div class="card-header">
+                                                                                    <strong class="card-title">Chart Title</strong>
+                                                                                </div>
+                                                                                <div class="card-body">
+                                                                                    <div class="form-group" style="margin-top: 40px;">
+                                                                                        <input type="text" id="slider2" class="slider">
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                           </div>
+                                        </div>
+
+
+
+
+                                        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+                                            <div class="col-12">
+                                                <div class="card mt-5">
+                                                    <div class="card-body" style="margin-top: 10px;">
+                                                        <h4 class="header-title">Node Information</h4>
+                                                        <form class="needs-validation" novalidate="">
+                                                            <div class="form-row">
+                                                                <div class="col-md-4 mb-3">
+                                                                    <label for="validationCustom01">Serial</label>
+                                                                    <input type="text" class="form-control" id="validationCustom01" placeholder="Serial"  required="">
+
+                                                                </div>
+                                                                <div class="col-md-4 mb-3">
+                                                                    <label for="validationCustom02">Sensor</label>
+                                                                    <input type="text" class="form-control" id="validationCustom02" placeholder="Sensor"  required="">
+
+                                                                </div>
+                                                                <div class="col-md-4 mb-3">
+                                                                    <label for="validationCustomUsername">Tag name</label>
+                                                                    <input type="text" class="form-control" id="validationCustomUsername" placeholder="Tag name" aria-describedby="inputGroupPrepend" required="">
+
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-row">
+                                                                <div class="col-md-6 mb-3">
+                                                                    <label for="validationCustom03">Location name</label>
+                                                                    <input type="text" class="form-control" id="validationCustom03" placeholder="City" required="">
+
+                                                                </div>
+                                                                <div class="col-md-3 mb-3">
+                                                                    <label for="validationCustom04">Longitude</label>
+                                                                    <input type="text" class="form-control" id="validationCustom04" placeholder="Long" required="">
+                                                                    <div class="invalid-feedback">
+                                                                        Please provide a valid state.
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-3 mb-3">
+                                                                    <label for="validationCustom05">Latitude</label>
+                                                                    <input type="text" class="form-control" id="validationCustom05" placeholder="Lat" required="">
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-row">
+                                                                <div class="col-md-6 mb-3">
+                                                                    <label for="validationCustom03">Address</label>
+                                                                    <input type="text" class="form-control" id="validationCustom06" placeholder="Address" required="">
+
+                                                                </div>
+                                                                <div class="col-md-3 mb-3">
+                                                                    <label for="validationCustom04">Premise</label>
+                                                                    <input type="text" class="form-control" id="validationCustom07" placeholder="premise" required="">
+
+                                                                </div>
+
+                                                            </div>
+                                                            <button class="btn btn-primary" type="submit">Save changes</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                {% endfor %}
+
+                    </div>
 
 
 
 
-
-
-                              </div>
-
-
-                            </div>
-
-                </section>
-
-                {% for nodeConfig in allNodes.node %}
-                <section id="config_{{nodeConfig.device_id}}" class="configSections" style="display:none;">
-
-                    <h1>{{nodeConfig.tag}}</h1>
-                    <div id="spinnerConfig_{{nodeConfig.device_id}}" class="spinnerConfig"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                </section>
-                {% endfor %}
 
             </div>
 
@@ -315,38 +412,30 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
 
+    <script src="{%  static 'blog/assetsLogin_user/js/owl.carousel.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/metisMenu.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/jquery.slimscroll.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/jquery.slicknav.min.js' %}"></script>
+
+
+    <!-- others plugins -->
+    <script src="{%  static 'blog/assetsLogin_user/js/plugins.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/scripts.js' %}"></script>
+
 <script type="text/javascript">
+    $( document ).ready(function() {
+            var mySlider1 = new rSlider({
+    target: '#slider',
+    values: [190, 195, 200, 205, 210, 215, 220, 225],
+    range: true // range slider
+});
+    var mySlider2 = new rSlider({
+    target: '#slider2',
+    values: [190, 195, 200, 205, 210, 215, 220, 225],
+    range: true // range slider
+});
+});
 
-    function mainConfigSection(){
-        var configSections= document.getElementsByClassName('configSections');
-        var spinnerConfig = document.getElementsByClassName('spinnerConfig');
-        for(var i=0; i< configSections.length; i++){
-            configSections[i].setAttribute('style', 'display:none;');
-            spinnerConfig[i].classList.remove('lds-roller');
-        }
-
-        document.getElementById('mainConfigSection').setAttribute('style', 'display:block');
-        var breadcrumb = document.getElementById('breadcrumbConfig');
-        breadcrumb.innerHTML = "<li class='breadcrumb-item' aria-current='page'><a href='/'>Dashboard</a></li>";
-"
-        breadcrumb.innerHTML += "<li class='breadcrumb-item active' onclick='mainConfigSection()' aria-current='page'><a href='#'>Settings</a>";
-
-    }
-    function loadConfigNode(elem){
-        var loadConfig = document.getElementById('config_'+ elem.parentNode.id);
-
-        document.getElementById('mainConfigSection').setAttribute('style', 'display:none');
-        loadConfig.setAttribute('style', 'display:block');
-        var spinnerConfig = document.getElementById('spinnerConfig_'+elem.parentNode.id);
-        spinnerConfig.classList.add('lds-roller');
-
-        var breadcrumb = document.getElementById('breadcrumbConfig');
-        var breadcrumbChild = "<li class='breadcrumb-item active' aria-current='page'><a href='#'' class='first'>" + elem.innerText + "</a></li>";
-        breadcrumb.innerHTML += breadcrumbChild;
-    }
-    function requestConfigNode(){
-
-    }
 </script>
 
 </body>

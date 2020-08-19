@@ -6,17 +6,30 @@ function createNodeCards(data){
         list.innerHTML='';
         secondLayer.innerHTML='';
 
+    //Check permissions on alarm
+    if(data.alarm == true){
+        var htmlAlarm = `<a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Alarm History"><i data-feather="clock" class="feather-icon"></i></a>`;
+    }else{
+        var htmlAlarm = ``;
+    }
+
     //Nodes List
     for(var i=0; i<data.node.length; i++){
-        var htmlNode = `<div id="${data.node[i].device_id}" class="card border-success mb-3 node ${data.node[i].serial}" style="max-width: 18rem;">
+        if(data.node[i].remote == true){
+            var htmlRemoteCtrl = `<a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Remote Control"><i data-feather="sliders" class="feather-icon"></i></a>`;
+        }else{
+            var htmlRemoteCtrl = ``;
+        }
+
+        var htmlNode = `<div id="${data.node[i].device_id}" class="card border-success mb-3 node ${data.node[i].serial}" style="">
                   <div class="card-header bg-transparent border-success first" onclick="section_node(this)"> ${data.node[i].tag} <br> <p style="font-size:11px; color: black; margin-top:1px; margin-bottom:0;"> ${data.node[i].serial}</p></div>
                   <div class="card-body text-dark float-right">
                     <canvas id="canvasLed_${data.node[i].serial}" class="leds" width="25" height="25"></canvas>
-                    <a href="" class="float-right mr-1" data-toggle="popover" data-placement="bottom" data-content="Node Configurations"><i data-feather="settings" class="feather-icon"></i></a>
-                    <a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Alarm History"><i data-feather="clock" class="feather-icon"></i></a>
-                    <a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Charts"><i data-feather="bar-chart-2" class="feather-icon"></i></a>
-                    <a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Remote Control"><i data-feather="sliders" class="feather-icon"></i></a>
-                  </div>
+                    <a href="" class="float-right mr-1" data-toggle="popover" data-placement="bottom" data-content="Node Configurations"><i data-feather="settings" class="feather-icon"></i></a>`+
+                    htmlAlarm +
+                    `<a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Charts"><i data-feather="bar-chart-2" class="feather-icon"></i></a>`+
+                    htmlRemoteCtrl+
+                  `</div>
                 </div>`;
 
                 //Append
@@ -25,8 +38,143 @@ function createNodeCards(data){
     }
 
 
+
     //Nodes Section
     for(var i=0; i<data.node.length; i++){
+
+        //Permissions for alarm, raw_data, remote_ctrl
+        //alarm and raw data
+        if((data.alarm) && (data.raw_data)){
+            var htmlAlarmHistoryLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'alarmHistory'); loadAlarmHistoryLink('${data.node[i].device_id}');" class="nav-item">
+                                            <a class="nav-link" href="#">Alarm History</a>
+                                        </li>`;
+            var htmlRawDataLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'rawData')" class="nav-item">
+                                        <a class="nav-link" href="#">Raw Data</a>
+                                    </li>`;
+
+            var htmlNewAlarm = `<div id="alarm_${data.node[i].device_id}" class="container" style="width:100%; margin-top:70px; overflow-x:auto; ">
+                                  <h1>New Alarm</h1>
+                                  <table id="alarmTable_${data.node[i].device_id}" class="table">
+                                    <thead>
+                                      <tr>
+                                        <th scope="col">Serial</th>
+                                        <th scope="col">Parameter</th>
+                                        <th scope="col">Date & Time</th>
+                                        <th scope="col">Value</th>
+                                        <th scope="col">Lower Limit</th>
+                                        <th scope="col">Upper Limit</th>
+                                        <th scope="col">Remove</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                  </table>
+                              </div>`;
+            var htmlAlarmHistorySection = `<section id="section_${data.node[i].device_id}_alarmHistory" class="sectionNodeLinks" style="display:none;">
+                                                <div id="alarmHistory_${data.node[i].device_id}" class="container" style="width:100%; margin-top:10px; overflow-x:auto;">
+                                                      <h1>Alarm History</h1>
+                                                      <table id="alarmHistoryTable_${data.node[i].device_id}" class="table">
+                                                        <thead>
+                                                          <tr>
+                                                            <th scope="col">Alarm Time</th>
+                                                            <th scope="col">Serial</th>
+                                                            <th scope="col">Parameter</th>
+                                                            <th scope="col">Value</th>
+                                                            <th scope="col">Lower Limit</th>
+                                                            <th scope="col">Upper Limit</th>
+                                                            <th scope="col">Acknowledged By</th>
+                                                            <th scope="col">Acknowledged Time</th>
+                                                          </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                        </tbody>
+                                                      </table>
+                                                      <div id="spinnerAlarmHistory_${data.node[i].device_id}" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                                                  </div>
+                                            </section>`;
+            var htmlRawDataSection = `<section id="section_${data.node[i].device_id}_rawData" class="sectionNodeLinks" style="display:none;">
+                                        <h1>rawData</h1>
+                                    </section>`;
+        }else if(data.alarm){
+            var htmlAlarmHistoryLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'alarmHistory'); loadAlarmHistoryLink('${data.node[i].device_id}');" class="nav-item">
+                                            <a class="nav-link" href="#">Alarm History</a>
+                                        </li>`;
+            var htmlRawDataLink = ``;
+
+            var htmlNewAlarm = `<div id="alarm_${data.node[i].device_id}" class="container" style="width:100%; margin-top:70px; overflow-x:auto;">
+                                  <h1>New Alarm</h1>
+                                  <table id="alarmTable_${data.node[i].device_id}" class="table">
+                                    <thead>
+                                      <tr>
+                                        <th scope="col">Serial</th>
+                                        <th scope="col">Parameter</th>
+                                        <th scope="col">Date & Time</th>
+                                        <th scope="col">Value</th>
+                                        <th scope="col">Lower Limit</th>
+                                        <th scope="col">Upper Limit</th>
+                                        <th scope="col">Remove</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                  </table>
+                              </div>`;
+
+            var htmlAlarmHistorySection = `<section id="section_${data.node[i].device_id}_alarmHistory" class="sectionNodeLinks" style="display:none;">
+                                                <div id="alarmHistory_${data.node[i].device_id}" class="container" style="width:100%; margin-top:10px; overflow-x:auto;">
+                                                      <h1>Alarm History</h1>
+                                                      <table id="alarmHistoryTable_${data.node[i].device_id}" class="table">
+                                                        <thead>
+                                                          <tr>
+                                                            <th scope="col">Alarm Time</th>
+                                                            <th scope="col">Serial</th>
+                                                            <th scope="col">Parameter</th>
+                                                            <th scope="col">Value</th>
+                                                            <th scope="col">Lower Limit</th>
+                                                            <th scope="col">Upper Limit</th>
+                                                            <th scope="col">Acknowledged By</th>
+                                                            <th scope="col">Acknowledged Time</th>
+                                                          </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                        </tbody>
+                                                      </table>
+                                                      <div id="spinnerAlarmHistory_${data.node[i].device_id}" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                                                  </div>
+                                            </section>`;;
+            var htmlRawDataSection = ``;
+        }else if(data.raw_data){
+            var htmlAlarmHistoryLink = ``;
+            var htmlRawDataLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'rawData')" class="nav-item">
+                                        <a class="nav-link" href="#">Raw Data</a>
+                                    </li>`
+
+            var htmlNewAlarm = ``;
+            var htmlAlarmHistorySection = ``;
+            var htmlRawDataSection = `<section id="section_${data.node[i].device_id}_rawData" class="sectionNodeLinks" style="display:none;">
+                                        <h1>rawData</h1>
+                                    </section>`;
+        }else{
+            var htmlAlarmHistoryLink = ``;
+            var htmlRawDataLink = ``;
+
+            var htmlNewAlarm = ``;
+            var htmlAlarmHistorySection = ``;
+            var htmlRawDataSection = ``;
+        }
+
+        //Remote ctrl permission
+         if(data.node[i].remote){
+            var htmlRemoteCtrlLink = `<li class="nav-item ">
+                                        <a class="nav-link" href="#">Remote Control</a>
+                                    </li>`;
+         }else{
+             var htmlRemoteCtrlLink = ``;
+         }
+
+
         var htmlSection = `<section id="section_${data.node[i].device_id}" class="sectionNode" style="display:none;">
             <div class="page-breadcrumb">
                 <div class="row">
@@ -54,9 +202,34 @@ function createNodeCards(data){
 
             <div class="container-fluid first-section" style="margin-top: 15px;">
               <div class="d-flex flex-row justify-content-between">
+
+
+                <div class="">
+                  <nav class="navbar navbar-expand-lg navbar-light float-right" style="margin-bottom:25px;">
+
+                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav" id="nodeLinks_${data.node[i].device_id}">`+
+                         htmlRemoteCtrlLink +
+                        `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'charts'); loadChartsLink('${data.node[i].device_id}');" class="nav-item">
+                            <a class="nav-link" href="#">Retrieve Charts</a>
+                        </li>`+
+                        htmlRawDataLink+
+                        htmlAlarmHistoryLink +
+
+                      `<li class="nav-item">
+                        <a class="nav-link" href="/configurations/${data.node[i].device_id}">Configurations</a>
+                      </li>
+                    </ul>
+                  </div>
+                </nav>
+                </div>
+
                 <div class="blabla ">
                   <nav class="navbar navbar-expand-lg navbar-light float-right" style="margin-bottom:25px;">
-                  <div class="collapse navbar-collapse" id="navbarNav">
+                  <div class="" id="navbarStatus">
                     <ul class="navbar-nav">
                       <li class="nav-item ">
                         <a class="nav-link"><canvas id="dashboardLed_${data.node[i].serial}" class="leds" width="25" height="25"></canvas></a>
@@ -69,96 +242,28 @@ function createNodeCards(data){
                 </nav>
                 </div>
 
-                <div class="">
-                  <nav class="navbar navbar-expand-lg navbar-light float-right" style="margin-bottom:25px;">
-
-                  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                  </button>
-                  <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav" id="nodeLinks_${data.node[i].device_id}">
-                        <li class="nav-item ">
-                          <a class="nav-link" href="#">Remote Control</a>
-                        </li>
-                      <li onClick="sectionNodeLinks('${data.node[i].device_id}', 'charts'); loadChartsLink('${data.node[i].device_id}');" class="nav-item">
-                        <a class="nav-link" href="#">Retrieve Charts</a>
-                      </li>
-                        <li onClick="sectionNodeLinks('${data.node[i].device_id}', 'rawData')" class="nav-item">
-                          <a class="nav-link" href="#">Raw Data</a>
-                        </li>
-                        <li onClick="sectionNodeLinks('${data.node[i].device_id}', 'alarmHistory'); loadAlarmHistoryLink('${data.node[i].device_id}');" class="nav-item">
-                          <a class="nav-link" href="#">Alarm History</a>
-                        </li>
-                      <li class="nav-item">
-                        <a class="nav-link" href="/configurations/">Configurations</a>
-                      </li>
-                    </ul>
-                  </div>
-                </nav>
-                </div>
-
-
               </div>
 
-            <section id="section_${data.node[i].device_id}_dashboard">
+            <section id="section_${data.node[i].device_id}_dashboard" class="nodeDash">
               <div id="spinner_${data.node[i].device_id}" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
               <div id="${data.node[i].serial}-parameters" class="container parameters" style="">
 
 
-              </div>
+              </div>`+
+
+              htmlNewAlarm+
 
 
-                  <div id="alarm_${data.node[i].device_id}" class="container" style="width:100%; margin-top:70px;">
-                      <h1>New Alarm</h1>
-                      <table id="alarmTable_${data.node[i].device_id}" class="table">
-                        <thead>
-                          <tr>
-                            <th scope="col">Serial</th>
-                            <th scope="col">Parameter</th>
-                            <th scope="col">Date & Time</th>
-                            <th scope="col">Value</th>
-                            <th scope="col">Lower Limit</th>
-                            <th scope="col">Upper Limit</th>
-                            <th scope="col">Remove</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                      </table>
-                  </div>
 
-            </section>
+            `</section>`+
 
-            <section id="section_${data.node[i].device_id}_alarmHistory" class="sectionNodeLinks" style="display:none;">
+            htmlAlarmHistorySection+
 
-               <div id="alarmHistory_${data.node[i].device_id}" class="container" style="width:100%; margin-top:10px;">
-                      <h1>Alarm History</h1>
-                      <table id="alarmHistoryTable_${data.node[i].device_id}" class="table">
-                        <thead>
-                          <tr>
-                            <th scope="col">Alarm Time</th>
-                            <th scope="col">Serial</th>
-                            <th scope="col">Parameter</th>
-                            <th scope="col">Value</th>
-                            <th scope="col">Lower Limit</th>
-                            <th scope="col">Upper Limit</th>
-                            <th scope="col">Acknowledged By</th>
-                            <th scope="col">Acknowledged Time</th>
-                          </tr>
-                        </thead>
-                        <tbody>
+            htmlRawDataSection+
 
-                        </tbody>
-                      </table>
-                      <div id="spinnerAlarmHistory_${data.node[i].device_id}" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                  </div>
-            </section>
 
-            <section id="section_${data.node[i].device_id}_rawData" class="sectionNodeLinks" style="display:none;">
-               <h1>rawData</h1>
-            </section>
 
-            <section id="section_${data.node[i].device_id}_charts" class="sectionNodeLinks" style="display:none;">
+            `<section id="section_${data.node[i].device_id}_charts" class="sectionNodeLinks" style="display:none;">
               <div class="wrapperForCharts" style="">
                 <div id="chartController_${data.node[i].device_id}" style="margin: 0 auto; width:80%;">
                   <form id="chartForm_${data.node[i].device_id}">

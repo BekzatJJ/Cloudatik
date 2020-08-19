@@ -35,14 +35,9 @@ def trying(request):
 def main(request):
     return render(request, 'blog/dashboard.html')
 
-def config(request):
-    r = requests.get('https://api.cl-ds.com/getUserNode/bekzat/', headers= {'Authorization': 'Token 62990ac3b609e5601a678c1e133416e6da7f10db'})
-    if r.status_code == 200:
-        context={"allNodes": r.json()}
-    else:
-        context={"allNodes":''}
-
-    return render(request, 'blog/config.html', convert(context))
+def config(request, device_id):
+    context = {'device_id':device_id}
+    return render(request, 'blog/config.html', context)
 
 
 def login(request):
