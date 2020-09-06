@@ -86,55 +86,15 @@
                                 id="bell" role="button" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
                                 <span><i data-feather="bell" class="svg-icon"></i></span>
-                                <span class="badge badge-primary notify-no rounded-circle">5</span>
+                                <span id="badgeAlarm" class="badge badge-primary notify-no rounded-circle"></span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-left mailbox animated bounceInDown">
                                 <ul class="list-style-none">
                                     <li>
-                                        <div class="message-center notifications position-relative">
-                                            <!-- Message -->
-                                            <a href="javascript:void(0)"
-                                                class="message-item d-flex align-items-center border-bottom px-3 py-2">
-                                                <div class="btn btn-warning rounded-circle btn-circle"><i
-                                                        data-feather="alert-triangle" class="text-white"></i></div>
-                                                <div class="w-75 d-inline-block v-middle pl-2">
-                                                    <h6 class="message-title mb-0 mt-1">Compressor Utilization</h6>
-                                                    <span class="font-12 text-nowrap d-block text-muted">Voltage</span>
-                                                    <span class="font-12 text-nowrap d-block text-muted">9:30 AM</span>
-                                                </div>
-                                            </a>
-                                            <!-- Message -->
-                                            <a href="javascript:void(0)"
-                                                class="message-item d-flex align-items-center border-bottom px-3 py-2">
-                                                <span class="btn btn-warning text-white rounded-circle btn-circle"><i
-                                                        data-feather="alert-triangle" class="text-white"></i></span>
-                                                <div class="w-75 d-inline-block v-middle pl-2">
-                                                    <h6 class="message-title mb-0 mt-1">Compressor Utilization</h6>
-                                                    <span
-                                                        class="font-12 text-nowrap d-block text-muted text-truncate">Current</span>
-                                                    <span class="font-12 text-nowrap d-block text-muted">9:10 AM</span>
-                                                </div>
-                                            </a>
-                                            <!-- Message -->
-                                            <a href="javascript:void(0)"
-                                                class="message-item d-flex align-items-center border-bottom px-3 py-2">
-                                                <span class="btn btn-info rounded-circle btn-circle"><i
-                                                        data-feather="alert-triangle" class="text-white"></i></span>
-                                                <div class="w-75 d-inline-block v-middle pl-2">
-                                                    <h6 class="message-title mb-0 mt-1">Control Box Env</h6>
-                                                    <span
-                                                        class="font-12 text-nowrap d-block text-muted text-truncate">Temperature</span>
-                                                    <span class="font-12 text-nowrap d-block text-muted">9:08 AM</span>
-                                                </div>
-                                            </a>
+                                        <div id="alarmHistoryList" class="message-center notifications position-relative">
+
 
                                         </div>
-                                    </li>
-                                    <li>
-                                        <a class="nav-link pt-3 text-center text-dark" href="javascript:void(0);">
-                                            <strong>Remove all notifications</strong>
-
-                                        </a>
                                     </li>
                                 </ul>
                             </div>
@@ -142,7 +102,7 @@
                         <!-- End Notification -->
                         <!-- ============================================================== -->
                         <!-- create new -->
-                        <!-- ============================================================== -->
+                        <!-- ==============================================================
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -154,7 +114,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#">Something else here</a>
                             </div>
-                        </li>
+                        </li> -->
 
                     </ul>
                     <!-- ============================================================== -->
@@ -163,7 +123,7 @@
                     <ul class="navbar-nav float-right">
                         <!-- ============================================================== -->
                         <!-- Search -->
-                        <!-- ============================================================== -->
+                        <!-- ==============================================================
                         <li class="nav-item d-none d-md-block">
                             <a class="nav-link" href="javascript:void(0)">
                                 <form>
@@ -174,7 +134,7 @@
                                     </div>
                                 </form>
                             </a>
-                        </li>
+                        </li>-->
                         <!-- ============================================================== -->
                         <!-- User profile and search -->
                         <!-- ============================================================== -->
@@ -188,7 +148,7 @@
                                         class="svg-icon"></i></span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
-                                <a class="dropdown-item" href="#"><i data-feather="user"
+                                <a class="dropdown-item" href="/profile"><i data-feather="user"
                                         class="svg-icon mr-2 ml-1"></i>
                                     My Profile</a>
                                 <a class="dropdown-item" href="#"><i data-feather="credit-card"
@@ -397,10 +357,18 @@
 
 
         $(document).ready(function(){
-            $('[data-toggle="popover"]').popover({ trigger: "hover" });
 
-            document.getElementById('salutation').innerHTML = `Good ` + getGreetingTime(moment()) + '!';
-            document.getElementById('currentDate').innerHTML = moment().format('MMM DD');
+
+
+            var salutation = document.getElementsByClassName('salutation');
+            for(var i=0; i< salutation.length; i++){
+                salutation[i].innerHTML = `Good ` + getGreetingTime(moment()) + '!';
+            }
+            var dateBadge = document.getElementsByClassName('dateBadge');
+            for(var i=0; i< dateBadge.length; i++){
+                dateBadge[i].innerHTML = moment().format('MMM DD');
+            }
+
 
           });
 

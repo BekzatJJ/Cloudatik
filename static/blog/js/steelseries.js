@@ -5915,7 +5915,7 @@ var steelseries = (function () {
                     unitWidth = mainCtx.measureText(unitString).width;
                 }
                 mainCtx.font = digitalFont ? lcdFont : stdFont;
-                var lcdText = value.toFixed(lcdDecimals);
+                var lcdText = value;
                 textWidth = mainCtx.measureText(lcdText).width;
                 var vPos = 0.38;
                 if (headerStringVisible) {
