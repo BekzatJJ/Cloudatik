@@ -6,6 +6,7 @@ urlpatterns = [
     path('trying/', views.trying, name='blog-trying'),
     path('configurations/<str:device_id>', views.config, name='blog-config'),
     path('login/', views.login, name='blog-login'),
-    path('profile/', views.profile, name='blog-profile')
+    path('profile/', views.profile, name='blog-profile'),
+    path('register/', views.register, name='blog-register')
 
 ]

@@ -53,3 +53,6 @@ def login(request):
             user_login(request, user)
             return redirect('/')
     return render(request, 'blog/login_user.html')
+
+def register(request):
+    return render(request, 'blog/register_user.html')

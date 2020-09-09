@@ -39,10 +39,10 @@ function renderConfigAlarm(data){
         }
 
         if(data.alarm_prop[i].chart_title == null){
-            var chartTitle = `<strong class="card-title">Title: </strong>
+            var chartTitle = `<strong class="card-title"></strong>
                                 <a href="#" id="${data.alarm_prop[i].parameter}_title" data-title="Enter Title">${data.alarm_prop[i].label}</a>`;
         }else{
-            var chartTitle = `<strong class="card-title">Title: </strong>
+            var chartTitle = `<strong class="card-title"></strong>
                             <a href="#" id="${data.alarm_prop[i].parameter}_title" data-title="Enter Title">${data.alarm_prop[i].chart_title}</a>`;}
         if(data.alarm_prop[i].slider_category == "slider"){
             var controller = `<div id="${data.alarm_prop[i].parameter}_slider" class="slider" style="margin-bottom:50px;"></div>

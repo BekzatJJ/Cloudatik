@@ -9,27 +9,51 @@ function createNodeCards(data){
     //Check permissions on alarm
     if(data.alarm == true){
         var htmlAlarm = `<a href="#" class="float-right mr-3 alarmHistoryDashLink" data-toggle="popover" data-placement="bottom" data-content="Alarm History"><i data-feather="clock" class="feather-icon"></i></a>`;
+        var htmlAlarmMobile = `<a href="#" class="float-right alarmHistoryDashLinkMobile dropdown-item">Alarm History</a>`;
     }else{
         var htmlAlarm = ``;
+        var htmlAlarmMobile = ``;
     }
 
     //Nodes List
     for(var i=0; i<data.node.length; i++){
         if(data.node[i].remote == true){
             var htmlRemoteCtrl = `<a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Remote Control"><i data-feather="sliders" class="feather-icon"></i></a>`;
+            var htmlRemoteCtrlMobile = `<a href="#" class="float-right dropdown-item">Remote Control</a>`;
+
         }else{
             var htmlRemoteCtrl = ``;
+            var htmlRemoteCtrlMobile = ``;
         }
 
         var htmlNode = `<div id="${data.node[i].device_id}" class="card border-success mb-3 node ${data.node[i].serial}" style="">
                   <div class="card-header bg-transparent border-success first" onclick="section_node(this)"> ${data.node[i].tag} <br> <p style="font-size:11px; color: black; margin-top:1px; margin-bottom:0;"> ${data.node[i].serial}</p></div>
                   <div class="card-body text-dark float-right">
                     <a href="#" id="canvasLedParent_${data.node[i].serial}" class="" data-toggle="popover" data-placement="bottom" data-content=""><canvas id="canvasLed_${data.node[i].serial}" class="leds" width="25" height="25"></canvas></a>
+
+                    <div class="mainDashLinksDesktop">
                     <a href="#" class="float-right mr-1 nodeConfigDashLink" data-toggle="popover" data-placement="bottom" data-content="Node Configurations"><i data-feather="settings" class="feather-icon"></i></a>`+
                     htmlAlarm +
                     `<a href="#" class="float-right mr-3 chartDashLink" data-toggle="popover" data-placement="bottom" data-content="Charts"><i data-feather="bar-chart-2" class="feather-icon"></i></a>`+
                     htmlRemoteCtrl+
-                  `</div>
+                    `</div>
+
+                    <div class="mainDashLinksMobile">
+                      <div class="dropdown-toggle threeDotsToggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="ti-more-alt"></i>
+                      </div>
+                      <div class="dropdown-menu">
+                        <a href="#" class="float-right  nodeConfigDashLinkMobile dropdown-item">Configurations</a>`+
+                        htmlAlarmMobile +
+                        `<a href="#" class="float-right  chartDashLinkMobile dropdown-item">Charts</a>`+
+                        htmlRemoteCtrlMobile+
+
+                      `</div>
+                    </div>
+
+
+
+                  </div>
                 </div>`;
 
                 //Append
@@ -397,14 +421,14 @@ function createNodeCards(data){
                 //Config
             $('.nodeConfigDashLink').on('click' ,function(){
 
-                var id = $(this).parents().eq(1).attr('id');
+                var id = $(this).parents().eq(2).attr('id');
                 window.location = "/configurations/" + id ;
             });
 
             //Charts
             $('.chartDashLink').on('click' ,function(){
 
-                var elem = $(this).parents().eq(0).prev();
+                var elem = $(this).parents().eq(1).prev();
 
                 section_node(elem[0]);
             });
@@ -412,7 +436,31 @@ function createNodeCards(data){
             //Alarm
             $('.alarmHistoryDashLink ').on('click' ,function(){
 
-                var elem = $(this).parents().eq(0).prev();
+                var elem = $(this).parents().eq(1).prev();
+
+                section_node(elem[0]);
+            });
+
+    //Dash link listener for mobile
+            //Config
+            $('.nodeConfigDashLinkMobile').on('click' ,function(){
+
+                var id = $(this).parents().eq(3).attr('id');
+                window.location = "/configurations/" + id ;
+            });
+
+            //Charts
+            $('.chartDashLinkMobile').on('click' ,function(){
+
+                var elem = $(this).parents().eq(2).prev();
+
+                section_node(elem[0]);
+            });
+
+            //Alarm
+            $('.alarmHistoryDashLinkMobile').on('click' ,function(){
+
+                var elem = $(this).parents().eq(2).prev();
 
                 section_node(elem[0]);
             });
