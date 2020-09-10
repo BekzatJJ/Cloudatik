@@ -26,9 +26,12 @@ window.onload = function () {
                     spinnerNode.classList.remove('lds-roller');
                     var parent = document.getElementById('nodesList');
                     if(data.node.length == 0){
-                        var childText = document.createElement('h1');
-                        childText.innerHTML = 'You dont have any nodes';
-                        parent.appendChild(childText);
+                        parent.innerHTML = ``;
+                        parent.innerHTML = `<div id="addNode" class="card border-success mb-3 node" style="">
+                                                  <div class="card-header bg-transparent border-success first" onclick="permissions();">Add node</div>
+                                                  <div class="card-body text-dark float-right">
+                                                  </div>
+                                                </div>`;
                     }else{
                         //console.log('here we go');
                         createNodeCards(data);
@@ -71,9 +74,12 @@ setInterval(function(){
                     spinnerNode.classList.remove('lds-roller');
                     var parent = document.getElementById('nodesList');
                     if(data.node.length == 0){
-                        var childText = document.createElement('h1');
-                        childText.innerHTML = 'You dont have any nodes';
-                        parent.appendChild(childText);
+                        parent.innerHTML = ``;
+                        parent.innerHTML = `<div id="addNode" class="card border-success mb-3 node" style="">
+                                                  <div class="card-header bg-transparent border-success first" onclick="permissions();">Add node</div>
+                                                  <div class="card-body text-dark float-right">
+                                                  </div>
+                                                </div>`;
                     }else{
                         if(document.getElementById('section_Dashboard').style.display === 'block'){
                             console.log('here we go');

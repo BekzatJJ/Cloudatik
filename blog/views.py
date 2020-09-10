@@ -56,3 +56,13 @@ def login(request):
 
 def register(request):
     return render(request, 'blog/register_user.html')
+
+def reg(request, device_id):
+    r = requests.get('https://api.cl-ds.com/checkSerial/'+ device_id + '/')
+    if r.status_code == 200:
+        context={"serial" : r.json()['serial']}
+        return render(request, 'blog/register_node.html', context)
+
+def range(request):
+    return render(request, 'blog/chart_range.html')
+

@@ -59,10 +59,16 @@ function createNodeCards(data){
                 //Append
         list.innerHTML += htmlNode;
         feather.replace();
-         $('[data-toggle="popover"]').popover({trigger:'hover'});
+
     }
 
+    list.innerHTML += `<div id="addNode" class="card border-success mb-3" style="">
+                  <div class="card-body text-dark float-right" onclick="permissions();" style="cursor:pointer; text-align:center; border:1px dashed #7c8798; padding-top:25px !important;">
+                  <span style="vertical-align: middle;">Add New Node</span>
+                  </div>
+                </div>`;
 
+                $('[data-toggle="popover"]').popover({trigger:'hover'});
 
     //Nodes Section
     for(var i=0; i<data.node.length; i++){

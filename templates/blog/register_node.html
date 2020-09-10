@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>Sign Up</title>
+    <title>Register Node</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="shortcut icon" type="image/png" href="{%  static 'blog/assetsLogin_user/images/icon/favicon.ico' %}">
 
@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/default-css.css' %}">
     <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/styles.css' %}">
     <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/responsive.css' %}">
-
+    <link href="{% static 'blog/css/spinner.css' %}" rel="stylesheet">
 
     <!-- modernizr css -->
     <script src="{%  static 'blog/assetsLogin_user/js/vendor/modernizr-2.8.3.min.js' %}"></script>
@@ -42,53 +42,37 @@
     <div class="login-area login-s2">
         <div class="container">
             <div class="login-box ptb--100">
-                <form id="signUpForm" method="post">
+                <form id="registerNode" method="post">
                     {% csrf_token %}
                     <div class="login-form-head">
-                        <h4>Sign Up</h4>
+                        <h4>Register Node</h4>
                     </div>
                     <div class="login-form-body">
                         <div class="form-gp">
+                            <label for="serial"></label>
+                            <input name = "serial" type="text" id="serial" readonly value="{{serial}}">
+                            <i class="ti-info-alt"></i>
+                            <div class="text-danger"></div>
+                        </div>
+                        <div class="form-gp">
                             <label for="username">Username</label>
-                            <input name = "username" type="username" id="username" required>
+                            <input name="username" type="text" id="username" required>
                             <i class="ti-user"></i>
                             <div class="text-danger"></div>
                         </div>
                         <div class="form-gp">
                             <label for="password">Password</label>
-                            <input name="password" type="password" id="password" required>
+                            <input name="password" type="password" id="pass" required>
                             <i class="ti-lock"></i>
                             <div class="text-danger"></div>
                         </div>
-                        <div class="form-gp">
-                            <label for="name">Full Name</label>
-                            <input name="name" type="text" id="name" required>
-                            <i class="ti-user"></i>
-                            <div class="text-danger"></div>
-                        </div>
-                        <div class="form-gp">
-                            <label for="email">Email</label>
-                            <input name="email" type="text" id="email" required>
-                            <i class="ti-email"></i>
-                            <div class="text-danger"></div>
-                        </div>
-                        <div class="form-gp">
-                            <label for="company">Company</label>
-                            <input name="company" type="text" id="company" required>
-                            <i class="ti-home"></i>
-                            <div class="text-danger"></div>
-                        </div>
-                        <div class="form-gp">
-                            <label for="phone">Phone</label>
-                            <input name="phone" type="text" id="phone" required>
-                            <i class="ti-mobile"></i>
-                            <div class="text-danger"></div>
-                        </div>
-                        <div class="submit-btn-area">
+                        <div id="nodeAddSuccess" class="alert alert-success fade-in" style="display:none;" role="alert"></div>
+                        <div id="nodeAddFail" class="alert alert-danger fade-in" style="display:none;" role="alert"></div>
+
+                        <div id="spinnerWait" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+                        <div id="submitArea" class="submit-btn-area">
                             <button id="form_submit" type="submit">Submit <i class="ti-arrow-right"></i></button>
-                        </div>
-                        <div class="form-footer text-center mt-5">
-                            <p class="text-muted">Do have an account? <a href="/">Sign in</a></p>
                         </div>
                     </div>
                 </form>
@@ -113,25 +97,49 @@
     <script src="{%  static 'blog/assetsLogin_user/js/scripts.js' %}"></script>
 
     <script type="text/javascript">
-        $('#signUpForm').on('submit', function(event){
+        var serial = '{{serial}}';
+        $('#registerNode').on('submit', function(event){
             event.preventDefault();
+            var spinnerWait = document.getElementById('spinnerWait');
+             spinnerWait.classList.add('lds-roller');
+             $('#submitArea').hide();
+            $('#nodeAddSuccess').css('display', 'none');
+            $('#nodeAddFail').css('display', 'none');
+            $('#form_submit').attr('disabled', true);
             var username = $('[name=username]').val();
             var password = $('[name=password]').val();
-            var name = $('[name=name]').val();
-            var email = $('[name=email]').val();
-            var company = $('[name=company]').val();
-            var phone = $('[name=phone]').val();
+            var serial = $('[name=serial]').val();
 
-            var data = {"username": username, "password":password, "company":company, "fullname":name, "email":email, "phone":phone};
+            var data = {"serial": serial, "username": username, "password":password};
             $.ajax({
                 type: "POST",
-                url: 'https://api.cl-ds.com/registerUser/',
+                url: 'https://api.cl-ds.com/registerNode/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                success: function(data){
-                    window.location.href = '/';
+                success: function(dataRcvd){
+                    var spinnerWait = document.getElementById('spinnerWait');
+                    spinnerWait.classList.remove('lds-roller');
+                    $('#submitArea').show();
+                    if(data.success){
+                        $('#nodeAddSuccess').css('display', 'block');
+                        $('#nodeAddSuccess').html(dataRcvd.message);
+                        $('#form_submit').attr('disabled', false);
+                    }else{
+                        $('#nodeAddFail').css('display', 'block');
+                        $('#nodeAddFail').html(dataRcvd.message);
+                        $('#form_submit').attr('disabled', false);
+                    }
+
+                },
+                error: function(request, status, error){
+                    $('#submitArea').show();
+                    var spinnerWait = document.getElementById('spinnerWait');
+                    spinnerWait.classList.remove('lds-roller');
+                    $('#nodeAddFail').css('display', 'block');
+                    $('#nodeAddFail').html(request.responseJSON.message);
+                    $('#form_submit').attr('disabled', false);
                 }
             });
         });

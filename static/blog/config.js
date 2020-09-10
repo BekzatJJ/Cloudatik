@@ -51,11 +51,10 @@ function renderConfigAlarm(data){
         }else if(data.alarm_prop[i].slider_category == "switch"){
             var controller = `<div id="${data.alarm_prop[i].parameter}_switch" class="switch" style="margin-bottom:25px;"></div>`;
         }else if(data.alarm_prop[i].slider_category == "threshold"){
-            var controller = `<div id="category_threshold" ><label  for="${data.alarm_prop[i].parameter}_threshold">Threshold</label>
-                            <input type="text" id="${data.alarm_prop[i].parameter}_threshold" class="threshold" ></div>`;
+            var controller = `<div id="${data.alarm_prop[i].parameter}_threshold" class="threshold" style="margin-bottom:50px;"></div>`;
         }
 
-        alarmHtml = `<div id="${data.alarm_prop[i].parameter}" class="card" style="margin-bottom: 50px;">
+        alarmHtml = `<div id="${data.alarm_prop[i].parameter}" class="card" style="margin-bottom: 50px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
                                                                                 <div class="card-header">`+
                                                                                     chartTitle +
                                                                                 `</div>
@@ -146,7 +145,37 @@ function renderConfigAlarm(data){
                 }
             });
         }else if(data.alarm_prop[i].slider_category == "threshold"){
-            document.getElementById(data.alarm_prop[i].parameter + '_threshold').value = data.alarm_prop[i].limit_high;
+
+             var threshold = document.getElementById(data.alarm_prop[i].parameter + '_threshold');
+
+                var start = parseInt(data.alarm_prop[i].limit_high);
+                if(data.alarm_prop[i].slider_max == null){
+                    var max = data.alarm_prop[i].limit_high;
+                }else{
+                    var max = data.alarm_prop[i].slider_max;
+                }
+
+                if(data.alarm_prop[i].slider_min == null){
+                    var min = data.alarm_prop[i].limit_low;
+                }else{
+                    var min = data.alarm_prop[i].slider_min;
+                }
+                   noUiSlider.create(threshold, {
+                        start: start,
+                        orientation: 'horizontal',
+                        step: 0.5,
+                        behaviour: 'tap',
+                        tooltips:false,
+                        range: {
+                            'min':  parseInt(min),
+                            'max':  parseInt(max)
+                        },
+                        pips: {
+                            mode: 'values',
+                            values: [0, 2, 1],
+                            density: 50
+                        }
+                    });
         }else if(data.alarm_prop[i].slider_category == "switch"){
 
             var switchSlider = document.getElementById(data.alarm_prop[i].parameter + '_switch');
@@ -168,8 +197,8 @@ function renderConfigAlarm(data){
                             'max': 1
                         },
                         pips: {
-                            mode: 'values',
-                            values: [0, 2, 1],
+                            mode: 'count',
+                            values: 2,
                             density: 50
                         }
                     });
@@ -191,7 +220,7 @@ function renderConfigAlarm(data){
     }
 
         //Threshold
-    var thresholds = document.getElementsByClassName('threshold');
+    /*var thresholds = document.getElementsByClassName('threshold');
     for(var i=0; i< thresholds.length; i++){
         console.log(thresholds[i].id);
         $('#'+thresholds[i].id).on('change keydown paste input',function(){
@@ -200,7 +229,7 @@ function renderConfigAlarm(data){
              document.getElementById('save').disabled=false;
             document.getElementById('clear').disabled=false;
         });
-    }
+    }*/
 
     //Switch
     var switches = document.getElementsByClassName('switch');
