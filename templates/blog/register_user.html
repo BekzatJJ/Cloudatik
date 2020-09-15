@@ -1,0 +1,141 @@
+{% load static %}
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Sign Up</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/png" href="{%  static 'blog/assetsLogin_user/images/icon/favicon.ico' %}">
+
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/metisMenu.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/slicknav.min.css' %}">
+
+    <!-- amchart css -->
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <!-- others css -->
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/typography.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/default-css.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/styles.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/responsive.css' %}">
+
+
+    <!-- modernizr css -->
+    <script src="{%  static 'blog/assetsLogin_user/js/vendor/modernizr-2.8.3.min.js' %}"></script>
+</head>
+
+<body>
+    <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+    <!-- preloader area start -->
+    <div id="preloader">
+        <div class="loader"></div>
+    </div>
+    <!-- preloader area end -->
+    <!-- login area start -->
+    <div class="login-area login-s2">
+        <div class="container">
+            <div class="login-box ptb--100">
+                <form id="signUpForm" method="post">
+                    {% csrf_token %}
+                    <div class="login-form-head">
+                        <h4>Sign Up</h4>
+                    </div>
+                    <div class="login-form-body">
+                        <div class="form-gp">
+                            <label for="username">Username</label>
+                            <input name = "username" type="username" id="username" required>
+                            <i class="ti-user"></i>
+                            <div class="text-danger"></div>
+                        </div>
+                        <div class="form-gp">
+                            <label for="password">Password</label>
+                            <input name="password" type="password" id="password" required>
+                            <i class="ti-lock"></i>
+                            <div class="text-danger"></div>
+                        </div>
+                        <div class="form-gp">
+                            <label for="name">Full Name</label>
+                            <input name="name" type="text" id="name" required>
+                            <i class="ti-user"></i>
+                            <div class="text-danger"></div>
+                        </div>
+                        <div class="form-gp">
+                            <label for="email">Email</label>
+                            <input name="email" type="text" id="email" required>
+                            <i class="ti-email"></i>
+                            <div class="text-danger"></div>
+                        </div>
+                        <div class="form-gp">
+                            <label for="company">Company</label>
+                            <input name="company" type="text" id="company" required>
+                            <i class="ti-home"></i>
+                            <div class="text-danger"></div>
+                        </div>
+                        <div class="form-gp">
+                            <label for="phone">Phone</label>
+                            <input name="phone" type="text" id="phone" required>
+                            <i class="ti-mobile"></i>
+                            <div class="text-danger"></div>
+                        </div>
+                        <div class="submit-btn-area">
+                            <button id="form_submit" type="submit">Submit <i class="ti-arrow-right"></i></button>
+                        </div>
+                        <div class="form-footer text-center mt-5">
+                            <p class="text-muted">Do have an account? <a href="/">Sign in</a></p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- login area end -->
+
+    <!-- jquery latest version -->
+    <script src="{%  static 'blog/assetsLogin_user/js/vendor/jquery-2.2.4.min.js' %}"></script>
+    <!-- bootstrap 4 js -->
+    <script src="{%  static 'blog/assetsLogin_user/js/popper.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/bootstrap.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/owl.carousel.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/metisMenu.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/jquery.slimscroll.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/jquery.slicknav.min.js' %}"></script>
+
+
+    <!-- others plugins -->
+    <script src="{%  static 'blog/assetsLogin_user/js/plugins.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/scripts.js' %}"></script>
+
+    <script type="text/javascript">
+        $('#signUpForm').on('submit', function(event){
+            event.preventDefault();
+            var username = $('[name=username]').val();
+            var password = $('[name=password]').val();
+            var name = $('[name=name]').val();
+            var email = $('[name=email]').val();
+            var company = $('[name=company]').val();
+            var phone = $('[name=phone]').val();
+
+            var data = {"username": username, "password":password, "company":company, "fullname":name, "email":email, "phone":phone};
+            $.ajax({
+                type: "POST",
+                url: 'https://api.cl-ds.com/registerUser/',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(data){
+                    window.location.href = '/';
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,416 @@
+{% load static %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/images/favicon.png' %}">
+    <title>App Cloud Platform</title>
+    <!-- Custom CSS -->
+    <link href="{%  static 'blog/assets/extra-libs/c3/c3.min.css' %}" rel="stylesheet">
+    <link href="{% static 'blog/assets/libs/chartist/dist/chartist.min.css' %}" rel="stylesheet">
+    <link href="{% static 'blog/assets/extra-libs/jvector/jquery-jvectormap-2.0.2.css' %}" rel="stylesheet" />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+
+    <link href="{% static 'blog/css/bootstrap.css' %}" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+<!-- srtDash CSS -->
+<link rel="shortcut icon" type="image/png" href="{%  static 'blog/assetsLogin_user/images/icon/favicon.ico' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/metisMenu.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/slicknav.min.css' %}">
+    <!-- amchart css -->
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <!-- others css -->
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/typography.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/default-css.css' %}">
+
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/responsive.css' %}">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'blog/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'blog/css/spinner.css' %}" rel="stylesheet">
+
+    <link href="{% static 'blog/css/nouislider.css' %}" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <script src="{%  static 'blog/assetsLogin_user/js/vendor/modernizr-2.8.3.min.js' %}"></script>
+    <script src="{%  static 'blog/nouislider.js' %}"></script>
+
+
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+        <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <header class="topbar" data-navbarbg="skin6">
+            <nav class="navbar top-navbar navbar-expand-md">
+                <!-- ============================================================== -->
+                <!-- End Logo -->
+                <!-- ============================================================== -->
+                <div class="navbar-collapse collapse" id="navbarSupportedContent">
+                    <!-- ============================================================== -->
+                    <!-- toggle and nav items -->
+                    <!-- ============================================================== -->
+
+                    <!-- ============================================================== -->
+                    <!-- Right side toggle and nav items -->
+                    <!-- ============================================================== -->
+
+                </div>
+            </nav>
+        </header>
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+
+        <!-- ============================================================== -->
+        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="page-breadcrumb">
+                                <div class="row">
+                                    <div class="col-7 align-self-center">
+                                        <div class="d-flex align-items-center">
+                                            <nav aria-label="breadcrumb">
+                                                <ol  id="breadcrumbConfig" class="breadcrumb m-0 p-0">
+                                                    <li class="breadcrumb-item" aria-current="page"><a href="/">Dashboard</a>
+                                                    </li>
+
+                                                </ol>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+              <section id="section_id" class="nodeDash">
+              <div id="spinner" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+              <div id="parameters" class="container parameters" style="">
+
+
+              </div>
+
+
+
+            </section>
+            </div>
+
+
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+            <footer class="footer text-center text-muted">
+                All Rights Reserved by Cloudatik. Designed</a>.
+            </footer>
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="{% static 'blog/assets/libs/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/popper.js/dist/umd/popper.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- apps -->
+    <!-- apps -->
+    <script src="{% static 'blog/js/app-style-switcher.js' %}"></script>
+    <script src="{% static 'blog/js/feather.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js' %}"></script>
+    <script src="{% static 'blog/js/sidebarmenu.js' %}"></script>
+    <!--Custom JavaScript -->
+    <script src="{% static 'blog/js/custom.min.js' %}"></script>
+    <!--This page JavaScript -->
+    <script src="{% static 'blog/assets/extra-libs/c3/d3.min.js' %}"></script>
+    <script src="{% static 'blog/assets/extra-libs/c3/c3.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/chartist/dist/chartist.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+    <script src="{% static 'blog/assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js' %}"></script>
+    <script src="{% static 'blog/assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js' %}"></script>
+    <script src="{% static 'blog/js/pages/dashboards/dashboard1.min.js' %}"></script>
+    <script src="{% static 'blog/js/steelseries.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script src="{%  static 'blog/assetsLogin_user/js/owl.carousel.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/metisMenu.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/jquery.slimscroll.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/jquery.slicknav.min.js' %}"></script>
+
+
+    <!-- others plugins -->
+    <script src="{%  static 'blog/assetsLogin_user/js/plugins.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/scripts.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="{% static 'blog/render.js' %}"></script>
+    <script src="{% static 'blog/statusLED.js' %}"></script>
+    <script src="{% static 'blog/singleLCD.js' %}"></script>
+    <script src="{% static 'blog/dynamicChartsRange.js' %}"></script>
+    <script src="{% static 'blog/removeAlarm.js' %}"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+        window.ajaxRequests={};
+        window.ajaxNodeProcess={};
+        window.ajaxAlarmHistoryProcess={};
+        window.nodeParameters={};
+
+        //LCDs and charts
+        window.lcd={};
+        window.chartObject = {};
+           $.ajax({
+                type: "GET",
+                url: 'https://api.cl-ds.com/getDashboardDataSetInterval/kTOP4t/',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                //data: "check",
+                success: function(data){
+
+                    //Spinner disable and Links enable
+                    var spinnerNode = document.getElementById('spinner');
+                    spinnerNode.classList.remove('lds-roller');
+
+
+                    //Append DOM
+                        for(var i=0; i< data.length;i++){
+                            var parent = document.getElementById('parameters');
+                            let child = document.createElement('div');
+                            let canvasLcd = document.createElement('canvas');
+                            let title = document.createElement('h3');
+                            let canvasChart = document.createElement('canvas');
+                            child.id = data[i].id;
+                            child.className = 'd-inline float-left parameters-module';
+                            canvasLcd.id = 'lcd_' + data[i].id;
+                            canvasLcd.className = 'lcd-parameters';
+                            title.id = 'chartTitle_' + data[i].id;
+                                if(data[i].chart_title == null){
+                                    if(Object.keys(data[i].chart_prop).length === 0){title.innerHTML = '';}else{
+                                       title.innerHTML = data[i].chart_prop[0].label;
+                                    }
+                                }else{
+                                    title.innerHTML = data[i].chart_title;
+                                }
+
+                            title.className = 'chartTitle';
+                            canvasChart.id = 'chart_' + data[i].id;
+
+                            child.appendChild(canvasLcd);
+                            child.appendChild(title);
+                            child.appendChild(canvasChart);
+
+                            parent.appendChild(child);
+
+                        }
+
+                        //initialize lcd charts
+
+
+
+                        for(var i=0; i< data.length; i++){
+
+                            if(Object.keys(data[i].chart_prop).length === 0){
+                                    var unit = '';
+                                    var label = '';
+                                    var category = 'line';
+                                }else{
+                                    if(data[i].chart_prop[0].unit == null){var unit = '';}else{var unit = data[i].chart_prop[0].unit;}
+                                    var label= data[i].chart_prop[0].label;
+                                    var category= data[i].chart_prop[0].category;
+                                }
+                          var lcdId = 'lcd_'+data[i].id;
+
+                        if(label.length > 13){
+                            var width = 120 + ((label.length - 13)*9);
+                        }else{
+                            var width =120;
+                            if(unit.length > 1){
+                                width +=  (unit.length - 1)*9;
+                            }
+                        }
+
+                          lcd[lcdId] = new steelseries.DisplaySingle(lcdId, {
+                            width: width,
+                            height: 50,
+                            unitString: unit,
+                            unitStringVisible: true,
+                            headerStringVisible: true,
+                            headerString: label
+                            });
+
+                          if(typeof data[i].data[19][data[i].parameter] === 'boolean' ){
+                            setLastValue(lcd[lcdId], data[i].data[19][data[i].parameter]);
+                          }else{
+                            setLastValue(lcd[lcdId], parseFloat(data[i].data[19][data[i].parameter]));
+                          }
+
+
+
+
+                                //INIT Charts
+
+                                var chartTemp = 'chart_' + data[i].id;
+
+                                var reverseData = data[i].data;
+                                var reverseData = reverseData.reverse();
+
+                            var labels = reverseData.map(function(e) {
+                               return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
+                            });
+
+
+                            console.log(reverseData);
+                            var dataChart = reverseData.map(function(e) {
+                               return e[data[i].parameter];
+                            });;
+
+
+
+
+                            var config = {
+                           type: category,
+                           data: {
+                              labels: labels,
+                              datasets: [{
+                                 label: 'Graph Line',
+                                 data: dataChart,
+                                 fill: false,
+                                 lineTension: 0.1,
+                                 pointRadius: 2,
+                                 borderColor: "#5f76e8",
+                                 borderWidth:1,
+                                 backgroundColor: 'rgba(0, 119, 204, 0.3)'
+                              }]
+                           },
+                           options:{
+                                scales:{
+                                    xAxes: [{
+                                        type:'time',
+                                        distribution: 'linear',
+                                        offset: false,
+                                        bounds: 'data',
+                                        time:{
+                                            stepSize: 0.5
+                                        },
+                                        ticks: {
+                                            major:{
+                                                enabled: true,
+                                                fontStyle: 'bold'
+                                            },
+                                            minor:{
+                                                enabled:true
+                                            },
+                                            source: 'auto',
+                                            autoSkip: true,
+                                            autoSkipPadding: 0,
+                                            maxRotation: 0,
+                                            sampleSize: 100,
+
+                                        }
+                                    }],
+                                    yAxes: [{
+                                        gridLines: {
+                                            drawBorder: false
+                                        },
+                                        scaleLabel:{
+                                            display:true,
+                                            labelString: 'Data Retrieved'
+                                        }
+                                    }]
+                                }
+                           }
+                        };
+
+                                //Run chart
+
+
+                                chartObject[chartTemp] = new Chart(chartTemp, config);
+
+                                // based on my answer here: https://stackoverflow.com/questions/47146427
+
+
+
+
+                                //Last update text:
+
+
+                        }
+
+
+
+
+
+
+                }
+
+            });
+
+
+});
+
+
+
+</script>
+
+</body>
+
+</html>
