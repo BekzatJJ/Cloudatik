@@ -685,6 +685,7 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                     success: function(dataGot){
                         var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
                         spinnerNode.classList.remove('lds-roller');
+                        $('#saveRetrievedChart_'+id).removeAttr('disabled');
                         console.log(dataGot);
 
                         //Chart append

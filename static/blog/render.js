@@ -364,7 +364,7 @@ function createNodeCards(data){
                 </div>
 
                 <div style="flex:1;" >
-                <button id="saveRetrievedChart_${data.node[i].device_id}" class="btn downloadChart" style="float:right;">Download</button>
+                <button id="saveRetrievedChart_${data.node[i].device_id}" class="btn downloadChart" style="float:right;" disabled>Download</button>
                   <div id="spinnerRetrieveCharts_${data.node[i].device_id}" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                   <div id="canvasWrapper_${data.node[i].device_id}">
                     <canvas id="retrievedChart_${data.node[i].device_id}"></canvas>
