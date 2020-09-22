@@ -476,7 +476,361 @@ function requestAjax(id){
             }
 }
 
+//Offline ajax id request
+function requestAjaxOffline(id){
+    var ajaxCounts = Object.keys(ajaxRequests).length;
+    ajaxRequests[ajaxCounts] = $.ajax({
+                type: "GET",
+                url: 'https://api.cl-ds.com/getDashboardData/' + id + '/',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                //data: "check",
+                success: function(data){
 
+                    //console.log('success for  '+ data[0].serial);
+                    var nodeProcessed = document.getElementsByClassName(data[0].serial);
+                    ajaxNodeProcess[nodeProcessed[0].id] = true;
+                    console.log('processes' + data[0].serial + ':' + ajaxNodeProcess[nodeProcessed[0].id]);
+
+                    //Spinner disable and Links enable
+                    var spinnerNode = document.getElementById('spinner_'+nodeProcessed[0].id);
+                    spinnerNode.classList.remove('lds-roller');
+
+                    var navLinks = document.getElementById('nodeLinks_'+nodeProcessed[0].id);
+                    for(var i=0; i< navLinks.children.length; i++){
+                        navLinks.children[i].setAttribute('style', 'pointer-events:all');
+                    }
+                    //store node parameters
+                    nodeParameters[nodeProcessed[0].id] = data;
+                    //console.log(nodeParameters);
+
+                    //Append DOM
+                        for(var i=0; i< data.length;i++){
+                            var parent = document.getElementById(data[0].serial + '-parameters');
+                            let child = document.createElement('div');
+                            let canvasLcd = document.createElement('canvas');
+                            let title = document.createElement('h3');
+                            let canvasChart = document.createElement('canvas');
+                            child.id = data[i].id;
+                            child.className = 'd-inline float-left parameters-module';
+                            canvasLcd.id = 'lcd_' + data[i].id;
+                            canvasLcd.className = 'lcd-parameters';
+                            title.id = 'chartTitle_' + data[i].id;
+                                if(data[i].chart_title == null){
+                                    if(Object.keys(data[i].chart_prop).length === 0){title.innerHTML = '';}else{
+                                       title.innerHTML = data[i].chart_prop[0].label;
+                                    }
+                                }else{
+                                    title.innerHTML = data[i].chart_title;
+                                }
+
+                            title.className = 'chartTitle';
+                            canvasChart.id = 'chart_' + data[i].id;
+
+                            child.appendChild(canvasLcd);
+                            child.appendChild(title);
+                            child.appendChild(canvasChart);
+
+                            parent.appendChild(child);
+
+                        }
+
+                        //initialize lcd charts
+
+                        var options=[];
+                        var chartDataSet=[];
+
+                        for(var i=0; i< data.length; i++){
+                            if(Object.keys(data[i].chart_prop).length === 0){
+                                    var unit = '';
+                                    var label = '';
+                                    var category = 'line';
+                                }else{
+                                    if(data[i].chart_prop[0].unit == null){var unit = '';}else{var unit = data[i].chart_prop[0].unit;}
+                                    var label= data[i].chart_prop[0].label;
+                                    var category= data[i].chart_prop[0].category;
+                                }
+                          var lcdId = 'lcd_'+data[i].id;
+
+                        if(label.length > 13){
+                            var width = 120 + ((label.length - 13)*9);
+                        }else{
+                            var width =120;
+                            if(unit.length > 1){
+                                width +=  (unit.length - 1)*9;
+                            }
+                        }
+
+                          lcd[lcdId] = new steelseries.DisplaySingle(lcdId, {
+                            width: width,
+                            height: 50,
+                            unitString: unit,
+                            unitStringVisible: true,
+                            headerStringVisible: true,
+                            headerString: label
+                            });
+
+                          if(typeof data[i].data[data[i].parameter] === 'boolean' ){
+                            setLastValue(lcd[lcdId], data[i].data[data[i].parameter]);
+                          }else{
+                            setLastValue(lcd[lcdId], parseFloat(data[i].data[data[i].parameter]));
+                          }
+
+
+
+                            var labels = [];
+
+
+
+                            var dataChart = [];
+
+                            if(typeof data[i].data[data[i].parameter]=== 'boolean'){
+                                var max = 1;
+                                var min = 0;
+
+                                //INIT Charts
+                                    options[i] ={
+                                                legend: {
+                                                    display: false,
+                                                    position: 'top',
+                                                    labels:{
+                                                        boxWidth: 80,
+                                                        fontColor: 'black'
+                                                        }
+                                                    },
+                                                scales:{
+
+                                                    yAxes: [{
+                                                        ticks: {
+                                                            min: min,
+                                                            max: max,
+                                                            stepSize: 1
+                                                                },
+                                                        scaleLabel: {
+                                                            display:true,
+                                                            labelString: label + '(' + unit + ')'
+                                                                }
+                                                        }],
+                                                        xAxes: [{
+                                                                type:'time',
+                                                                distribution: 'linear',
+                                                                offset: false,
+                                                                bounds: 'data',
+                                                                time:{
+                                                                    stepSize: 0.5
+                                                                },
+                                                                ticks: {
+                                                                    major:{
+                                                                        enabled: true,
+                                                                        fontStyle: 'bold'
+                                                                    },
+                                                                    minor:{
+                                                                        enabled:true
+                                                                    },
+                                                                    source: 'auto',
+                                                                    autoSkip: true,
+                                                                    autoSkipPadding: 0,
+                                                                    maxRotation: 0,
+                                                                    sampleSize: 100,
+
+                                                                }
+                                                            }],
+
+                                                    }
+                                    };
+                            }else{
+                                var max = Math.max.apply(this, dataChart);
+                                var min = Math.min.apply(this, dataChart);
+
+                                if(max < 0){
+                                    max = max-(max*0.10);
+                                }else{max = max+(max*0.10);}
+
+                                if(min < 0){
+                                    min = min+(min*0.10);
+                                }else{
+                                    min = min-(min*0.10);
+                                }
+
+                                //INIT Charts
+                                    options[i] ={
+                                                legend: {
+                                                    display: false,
+                                                    position: 'top',
+                                                    labels:{
+                                                        boxWidth: 80,
+                                                        fontColor: 'black'
+                                                        }
+                                                    },
+                                                scales:{
+
+                                                    yAxes: [{
+                                                        ticks: {
+                                                            min: min,
+                                                            max: max
+                                                                },
+                                                        offset:true,
+                                                        scaleLabel: {
+                                                            display:true,
+                                                            labelString: label + '(' + unit + ')'
+                                                                }
+                                                        }],
+                                                         xAxes: [{
+                                                                type:'time',
+                                                                distribution: 'linear',
+                                                                offset: false,
+                                                                bounds: 'data',
+                                                                time:{
+                                                                    stepSize: 0.5
+                                                                },
+                                                                ticks: {
+                                                                    major:{
+                                                                        enabled: true,
+                                                                        fontStyle: 'bold'
+                                                                    },
+                                                                    minor:{
+                                                                        enabled:true
+                                                                    },
+                                                                    source: 'auto',
+                                                                    autoSkip: true,
+                                                                    autoSkipPadding: 0,
+                                                                    maxRotation: 0,
+                                                                    sampleSize: 100,
+
+                                                                }
+                                                            }],
+
+                                                    }
+                                    };
+                            }
+
+
+                            Chart.plugins.register({
+                                afterDraw: function(chart) {
+                                console.log('After draw: ', chart);
+                                if (chart.data.datasets[0].data.length === 0) {
+                                    // No data is present
+                                  var ctx = chart.chart.ctx;
+                                  var width = chart.chart.width;
+                                  var height = chart.chart.height
+                                  chart.clear();
+
+                                  ctx.save();
+                                  ctx.textAlign = 'center';
+                                  ctx.textBaseline = 'middle';
+                                  ctx.font = "16px normal 'Helvetica Nueue'";
+                                  ctx.fillText('Node is offline', width / 2, height / 2);
+                                  ctx.restore();
+                                }
+                              }
+                            });
+
+                           chartDataSet[i]= {
+                                    labels: labels,
+                                    datasets:[{
+                                        label: data[i].parameter,
+                                        data: dataChart,
+                                        fill: false,
+                                        lineTension: 0.5,
+                                        borderColor: 'rgba(151, 190, 252,0.8)'
+                                    }]
+                                };
+
+                                //Run chart
+                                var chartTemp = 'chart_' + data[i].id;
+                                chartObject[chartTemp] = new Chart(chartTemp, {
+                                        type: category,
+                                        data: chartDataSet[i],
+                                        options: options[i]
+                                    });
+
+                                // based on my answer here: https://stackoverflow.com/questions/47146427
+
+
+
+
+                                //Last update text:
+                                //$('#lastUpdate_'+data[i].serial).text('Last update: ' + moment(data[i].data[19].datetime).calendar());
+
+                        }
+
+
+
+
+
+
+                }
+
+            });
+
+                       //Request Alarm
+            var alarmSection = document.getElementById('alarm_'+id);
+
+            //Check permission
+            if (typeof(alarmSection) != 'undefined' && alarmSection != null){
+            var ajaxCounts = Object.keys(ajaxRequests).length;
+            ajaxRequests[ajaxCounts] = $.ajax({
+                    type: "GET",
+                    url: 'https://api.cl-ds.com/getAlarm/' + id + '/?format=json',
+                    headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                    //data: "check",
+                    success: function(data_alarm){
+
+                        if(data_alarm.length == 0){
+                             var text = document.createElement('h3');
+                             text.innerHTML = 'No new alarms available';
+                             document.getElementById('alarm_'+ id).appendChild(text);
+
+                        }else{
+                            //To get ID
+                        var nodeProcessed = document.getElementsByClassName(data_alarm[0].serial);
+                        var alarmTable = document.getElementById('alarmTable_' + nodeProcessed[0].id).getElementsByTagName('tbody')[0];
+
+                        for(var i = alarmTable.rows.length - 1; i >= 0; i--)
+                        {
+                            alarmTable.deleteRow(i);
+                        }
+
+                        for(var a=0; a<data_alarm.length; a++){
+                            var newRow   = alarmTable.insertRow(a);
+
+                            // Insert a cell in the row at index 0
+                            var parameter  = newRow.insertCell(0);
+                            var date  = newRow.insertCell(1);
+                            var time = newRow.insertCell(2)
+                            var value  = newRow.insertCell(3);
+                            var lower_lim  = newRow.insertCell(4);
+                            var upper_lim  = newRow.insertCell(5);
+                            var remove  = newRow.insertCell(6);
+                            console.log('inserted Alarm');
+
+                            //Split datetime
+                            var datetime = data_alarm[a].datetime.split(/,/);
+                            var timeString = datetime[0];
+                            var dateString = datetime[1];
+
+                            parameter.innerHTML=data_alarm[a].parameter;
+                            date.innerHTML=dateString;
+                            time.innerHTML= timeString;
+                            value.innerHTML=data_alarm[a].value;
+                            lower_lim.innerHTML=data_alarm[a].limitLower;
+                            upper_lim.innerHTML=data_alarm[a].limitUpper;
+
+                            var rmvBtn= document.createElement('button');
+                            rmvBtn.id = data_alarm[a].id;
+                            rmvBtn.className = 'btn btn-primary dashboardRemoveAlarm';
+                            rmvBtn.innerHTML = 'Remove';
+                            remove.appendChild(rmvBtn);
+
+
+
+
+                        }
+                        }
+
+                    }
+                });
+            }
+}
 
 function loadAlarmHistoryLink(id){
 
@@ -613,11 +967,12 @@ function loadChartsLink(id){
                 //$('#startDateChart_'+id).datetimepicker();
                 //$('#endDateChart_'+id).datetimepicker();
                  $('#startChartDate_'+id).datetimepicker({
-
+                    defaultDate: moment().subtract(1, "days").format('MM/DD/YYYY h:mm A'),
                     sideBySide: true,
                     ignoreReadonly: true
                  });
                  $('#endChartDate_'+id).datetimepicker({
+                    defaultDate: moment().format('MM/DD/YYYY h:mm A'),
                     sideBySide: true,
                     ignoreReadonly: true
                  });

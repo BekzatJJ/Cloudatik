@@ -30,6 +30,27 @@ def trying(request):
         return HttpResponse(context, content_type="application/json")
     return HttpResponse('Could not save data')
 
+@login_required
+def adminDash(request):
+    if request.user.is_superuser:
+        return render(request, 'blog/admin_dashboard.html')
+    else:
+       return HttpResponse('You are not authorised!')
+
+@login_required
+def newNode(request):
+    if request.user.is_superuser:
+        return render(request, 'blog/admin_newNode.html')
+    else:
+       return HttpResponse('You are not authorised!')
+
+@login_required
+def newSensor(request):
+    if request.user.is_superuser:
+        return render(request, 'blog/admin_newSensor.html')
+    else:
+       return HttpResponse('You are not authorised!')
+
 
 @login_required
 def main(request):

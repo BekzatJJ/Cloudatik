@@ -25,10 +25,14 @@ function requestConfigAlarm(){
 
 function renderConfigAlarm(data){
     var parent = document.getElementById('alarmProp');
+    var titleParent = document.getElementById('chartTitle');
+    titleParent.innerHTML=``;
     parent.innerHTML='';
     var alarmHtml=``;
+    var titleHTML=``;
 
-    for(var i=0; i< data.alarm_prop.length; i++){
+    if(data.alarm_permit){
+        for(var i=0; i< data.alarm_prop.length; i++){
 
         if(data.alarm_prop[i].alarm_enabled){
             var alarmEnabled = `<input type="checkbox" class="custom-control-input enabler" id="${data.alarm_prop[i].parameter}_enable" checked>
@@ -39,24 +43,24 @@ function renderConfigAlarm(data){
         }
 
         if(data.alarm_prop[i].chart_title == null){
-            var chartTitle = `<strong class="card-title"></strong>
-                                <a href="#" id="${data.alarm_prop[i].parameter}_title" data-title="Enter Title">${data.alarm_prop[i].label}</a>`;
+            var chartTitle = `<a href="#" id="${data.alarm_prop[i].parameter}_title" data-title="Enter Title">${data.alarm_prop[i].label}</a>`;
+            var chartTitleAlarm = `<a href="#" data-title="Enter Title">${data.alarm_prop[i].label}</a>`;
         }else{
-            var chartTitle = `<strong class="card-title"></strong>
-                            <a href="#" id="${data.alarm_prop[i].parameter}_title" data-title="Enter Title">${data.alarm_prop[i].chart_title}</a>`;}
+            var chartTitle = `<a href="#" id="${data.alarm_prop[i].parameter}_title" data-title="Enter Title">${data.alarm_prop[i].chart_title}</a>`;
+            var chartTitleAlarm = `<a href="#" data-title="Enter Title">${data.alarm_prop[i].chart_title}</a>`;}
         if(data.alarm_prop[i].slider_category == "slider"){
             var controller = `<div id="${data.alarm_prop[i].parameter}_slider" class="slider" style="margin-bottom:50px;"></div>
-                                <span id="${data.alarm_prop[i].parameter}_lowLabel" class="slider-labels"></span>
-                                <span id="${data.alarm_prop[i].parameter}_highLabel" class="slider-labels"></span>`;
+                                <span id="${data.alarm_prop[i].parameter}_lowLabel" class="slider-labels"><div class="" style="width:20%;">Max <input type="text" class="form-control" name="${data.alarm_prop[i].parameter}_max"></div></span>
+                                <span id="${data.alarm_prop[i].parameter}_highLabel" class="slider-labels"><div style="width:20%;">Min <input type="text" class="form-control" name="${data.alarm_prop[i].parameter}_min"></div></span>`;
         }else if(data.alarm_prop[i].slider_category == "switch"){
             var controller = `<div id="${data.alarm_prop[i].parameter}_switch" class="switch" style="margin-bottom:25px;"></div>`;
         }else if(data.alarm_prop[i].slider_category == "threshold"){
             var controller = `<div id="${data.alarm_prop[i].parameter}_threshold" class="threshold" style="margin-bottom:50px;"></div>`;
         }
 
-        alarmHtml = `<div id="${data.alarm_prop[i].parameter}" class="card" style="margin-bottom: 50px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+        alarmHtml = `<div id="${data.alarm_prop[i].parameter}" class="card" style="display: flex; margin-bottom: 50px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
                                                                                 <div class="card-header">`+
-                                                                                    chartTitle +
+                                                                                    chartTitleAlarm +
                                                                                 `</div>
                                                                                 <div class="card-body parameter" style="margin-top:5px;">
                                                                                     <!-- switch -->
@@ -69,9 +73,42 @@ function renderConfigAlarm(data){
 
                                                                                 </div>
                                                                             </div>`;
+        titleHTML= `<div class="card" style="margin-bottom: 10px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+                                                                                <div class="card-body parameter" style="margin-top:5px;">`+
+                                                                                   chartTitle +
+
+                                                                                `</div>
+                                                                            </div>`;
         parent.innerHTML+= alarmHtml;
 
     }
+    }
+
+    for(var i=0; i< data.alarm_prop.length; i++){
+
+
+        if(data.alarm_prop[i].chart_title == null){
+            var chartTitle = `<a href="#" id="${data.alarm_prop[i].parameter}_title" data-title="Enter Title">${data.alarm_prop[i].label}</a>`;
+        }else{
+            var chartTitle = `<a href="#" id="${data.alarm_prop[i].parameter}_title" data-title="Enter Title">${data.alarm_prop[i].chart_title}</a>`;}
+
+        titleHTML= `<div class="card" style="margin-bottom: 10px; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+                                                                                <div class="card-body parameter" style="margin-top:5px;">`+
+                                                                                   chartTitle +
+
+                                                                                `</div>
+                                                                            </div>`;
+        titleParent.innerHTML += titleHTML;
+
+
+    }
+
+//Remove Node
+
+var serialRemoveNode = data.serial;
+document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
+
+
     $.fn.editable.defaults.mode = 'inline';
     $.fn.editableform.buttons =
 '<button type="submit" class="btn btn-primary btn-sm editable-submit">' +
@@ -135,15 +172,44 @@ function renderConfigAlarm(data){
                 }
             });
 
-           document.getElementById(data.alarm_prop[i].parameter + '_slider').noUiSlider.on('update', function(values, handle){
+            $('[name='+ data.alarm_prop[i].parameter + '_max]').val(data.alarm_prop[i].slider_max);
+            $('[name='+ data.alarm_prop[i].parameter + '_min]').val(data.alarm_prop[i].slider_min);
 
-                switch(handle){
-                    case 0: this.target.parentNode.childNodes[2].innerHTML = 'Low Limit: ' + values[handle];
-                    break;
-                    case 1: this.target.parentNode.childNodes[4].innerHTML = 'High Limit: ' + values[handle];
-                    break;
-                }
+            $('[name='+ data.alarm_prop[i].parameter + '_max]').keyup(function(){
+                var id = $(this).parents().eq(1).attr('id');
+                var par = id.split("_");
+                par = par[0];
+                console.log(par);
+                console.log($('[name='+ par + '_max]').val());
+                var slider = document.getElementById(par+'_slider');
+                slider.noUiSlider.updateOptions({
+                    range:{
+                        'max':  parseInt($('[name='+ par + '_max]').val()),
+                        'min':  parseInt($('[name='+ par + '_min]').val())
+                    }
+                });
             });
+            $('[name='+ data.alarm_prop[i].parameter + '_min]').keyup(function(){
+                var id = $(this).parents().eq(1).attr('id');
+                var par = id.split("_");
+                par = par[0];
+                var slider = document.getElementById(par+'_slider');
+                slider.noUiSlider.updateOptions({
+                    range:{
+                        'max':  parseInt($('[name='+ par + '_max]').val()),
+                        'min':  parseInt($('[name='+ par + '_min]').val())
+                    }
+                });
+            });
+           //document.getElementById(data.alarm_prop[i].parameter + '_slider').noUiSlider.on('update', function(values, handle){
+
+                //switch(handle){
+                    //case 0: this.target.parentNode.childNodes[2].innerHTML = 'Low Limit: ' + values[handle];
+                    //break;
+                    //case 1: this.target.parentNode.childNodes[4].innerHTML = 'High Limit: ' + values[handle];
+                    //break;
+                //}
+            //});
         }else if(data.alarm_prop[i].slider_category == "threshold"){
 
              var threshold = document.getElementById(data.alarm_prop[i].parameter + '_threshold');
@@ -401,4 +467,36 @@ function requestNodeInfo(){
                 }
 
             });
+}
+
+function removeNode(){
+    document.getElementById('removeNodeButton').innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`;
+    var usernameRemoveNode = $('[name=username]').val();
+    var password = $('[name=password]').val();
+
+
+   var data = {"device_id": device_id, "username": usernameRemoveNode, "password":password};
+
+    $.ajax({
+                type: "DELETE",
+                url: 'https://api.cl-ds.com/deleteNode',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(resp){
+                    document.getElementById('removeNodeButton').innerHTML = `Remove Node`;
+                    if(resp.success){
+                        alert('Removed Successfully');
+
+                    }else{
+                         alert('Failed to remove');
+                    }
+                },
+                error: function(request, status, error){
+                    document.getElementById('removeNodeButton').innerHTML = `Remove Node`;
+                    alert(request.responseJSON.message);
+                }
+            });
+
 }

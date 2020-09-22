@@ -9,6 +9,10 @@ urlpatterns = [
     path('profile/', views.profile, name='blog-profile'),
     path('register/', views.register, name='blog-register'),
     path('reg/<str:device_id>/', views.reg, name="blog-reg"),
-    path('chart-range', views.range, name="blog-range")
+    path('chart-range', views.range, name="blog-range"),
+    path('admin/dashboard', views.adminDash, name="blog-admin"),
+    path('admin/new/node', views.newNode, name="blog-newNode"),
+    path('admin/new/sensor', views.newSensor, name="blog-newSensor")
+
 
 ]

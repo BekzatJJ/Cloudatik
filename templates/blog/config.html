@@ -205,6 +205,8 @@
                                     <div class="nav flex-column nav-pills mr-4 mb-3 mb-sm-0" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                                         <a class="nav-link active" id="v-pills-alarmProp-tab" data-toggle="pill" href="#v-pills-alarmProp" role="tab" aria-controls="v-pills-alarmProp" aria-selected="true">Alarm</a>
                                         <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Profile</a>
+                                        <a class="nav-link" id="v-pills-title-tab" data-toggle="pill" href="#v-pills-title" role="tab" aria-controls="v-pills-title" aria-selected="false">Title</a>
+                                        <a class="nav-link" id="v-pills-delete-tab" data-toggle="pill" href="#v-pills-delete" role="tab" aria-controls="v-pills-delete" aria-selected="false">Remove</a>
                                     </div>
                                     <div class="tab-content" id="v-pills-tabContent" style="width:100%">
                                         <div class="tab-pane fade show active" id="v-pills-alarmProp" role="tabpanel" aria-labelledby="v-pills-alarmProp-tab">
@@ -282,7 +284,12 @@
                                                                 </div>
                                                                 <div class="col-md-3 mb-3">
                                                                     <label for="premise">Premise</label>
-                                                                    <input type="text" class="form-control" id="premise" placeholder="premise" required="">
+                                                                    <select class="form-control" id="premise" placeholder="premise" required="">
+                                                                        <option value="">Select...</option>
+                                                                        <option value="comercial">comercial</option>
+                                                                        <option value="industrial">industrial</option>
+                                                                        <option value="residential">residential</option>
+                                                                    </select>
 
                                                                 </div>
 
@@ -292,6 +299,32 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="v-pills-title" role="tabpanel" aria-labelledby="v-pills-title-tab">
+                                                           <div class="font-color:black; font-size:5px;">*Click on title to edit</div>
+                                                           <div class="main-content-inner" id="chartTitle">
+
+
+
+                                                           </div>
+
+                                        </div>
+                                        <div class="tab-pane fade" id="v-pills-delete" role="tabpanel" aria-labelledby="v-pills-delete-tab">
+                                                           <div class="main-content-inner" id="removeNode">
+                                                                <div class="card mx-auto" style="display:block; width:300px;">
+                                                                    <div id="removeNodeHeader" class="card-header" style="text-align:center;"></div>
+                                                                    <div class="card-body"  style="text-align:center; padding-top:25px !important;">
+                                                                        <label for="username">Username</label>
+                                                                        <input type="text" name="username">
+                                                                        <label for="password">Password</label>
+                                                                        <input type="password" name="password">
+                                                                        <button id="removeNodeButton" onclick="removeNode();" class="btn btn-danger" style="margin:auto; margin-top: 10px; display:block; width:90%;">Remove Node</button>
+                                                                    </div>
+                                                                </div>
+
+
+                                                           </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -361,6 +394,121 @@
         </div>
       </div>
     </div>
+
+  <!-- Modal -->
+    <div class="modal fade" id="myProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">My Profile</h5><br>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="profileModal" class="modal-body">
+            <div id="profileCardSpinner" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+                    <div id="profileCard">
+
+                    </div>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- EditModal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalEdit" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalEdit">Edit Profile</h5><br>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="profileModalEdit" class="modal-body">
+                    <div id="editProfileCard">
+                        <form id="editProfileForm">
+                            <div class="row">
+                                <label for="username" class="col-3">Username</label>
+                                <span id="userNameEdit" style="color:black;"></span>
+                            </div>
+                            <div class="row">
+                                <label for="name" class="col-3">Name</label>
+                                <input type="text" class="col-6" name="name" required >
+                            </div>
+                            <div class="row">
+                                <label for="company" class="col-3" class="">Company</label>
+                                <input type="text" class="col-6" name="company" required>
+                            </div>
+                            <div class="row">
+                                <label for="email" class="col-3" class="">Email</label>
+                                <input type="text" class="col-6" name="email" required>
+                            </div>
+                            <div class="row">
+                                <label for="phone" class="col-3" class="">Phone</label>
+                                <input type="text" class="col-6" name="phone" required>
+                            </div>
+
+                        </form>
+                    </div>
+        </div>
+          <div class="modal-footer">
+            <div id="spinnerProfileSave" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <div id="savedProfileSuccess" style="display:none;" class="alert alert-success" role="alert"></div>
+            <div id="savedProfileFail" style="display:none;" class="alert alert-danger" role="alert"></div>
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="saveProfile" onclick="saveProfile();" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EditModal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalEdit" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="changePasswordTitle">Change Password</h5><br>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="changePassword" class="modal-body">
+                    <div id="pass">
+                        <form id="formChangePass">
+                            <div class="row">
+                                <label for="oldPass" class="col-4">Old</label>
+                                <input type="password" class="col-6" name="oldPass">
+                            </div>
+                            <div class="row">
+                                <label for="newPass" class="col-4">New</label>
+                                <input type="password" class="col-6" name="newPass">
+                            </div>
+                            <div class="row">
+                                <label for="confirmPass" class="col-4" class="">Confirm</label>
+                                <input type="password" class="col-6" name="confirmPass">
+                            </div>
+
+                        </form>
+                    </div>
+        </div>
+          <div class="modal-footer">
+            <div id="savedPassSuccess" style="display:none;" class="alert alert-success" role="alert"></div>
+            <div id="savedPassFail" style="display:none;" class="alert alert-danger" role="alert"></div>
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="savePass" onclick="savePass();" class="btn btn-primary" disabled>Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- All Jquery -->
     <!-- ============================================================== -->
     <script src="{% static 'blog/assets/libs/jquery/dist/jquery.min.js' %}"></script>
@@ -402,7 +550,7 @@
 <script type="text/javascript">
     var device_id = '{{device_id}}';
     var username = '{{ user.get_username }}';
-
+    window.profile = {};
             $(document).ready(function(){
 
             document.getElementById('currentDate').innerHTML = moment().format('MMM DD');
@@ -411,6 +559,138 @@
 
 
 
+</script>
+
+
+<script type="text/javascript">
+    //Profile request and store
+function profileExec(){
+    $('#myProfile').modal('show');
+
+    if(Object.keys(profile).length === 0){
+        //ajax request profile
+        $.ajax({
+                type: "GET",
+                url: 'https://api.cl-ds.com/getUserInfo/' + username + '/',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                //data: "check",
+                success: function(data){
+                    var spinnerNode = document.getElementById('profileCardSpinner');
+                    spinnerNode.classList.remove('lds-roller');
+
+                    profile = data;
+                    var parent = document.getElementById('profileCard');
+
+                    var usernameProfile = data.username;
+                    var fullname = data.fullname;
+                    var company = data.company;
+                    var email = data.email;
+                    var phone = data.phone;
+
+                    var child = `<div class="cardProfile">
+
+                                      <h1>${fullname}</h1>
+                                      <p class="titleProfile">Company: ${company}</p>
+                                      <p>Username: ${usernameProfile}</p>
+                                      <p>Email: ${email}</p>
+                                      <p>Phone: ${phone}</p>
+
+                                      <p><button id="editProfile" onclick="editProfile();" class="btn btn-primary">Edit Profile</button></p>
+                                    </div>`;
+                    parent.innerHTML = child;
+                }
+            });
+    }else{
+        var spinnerNode = document.getElementById('profileCardSpinner');
+                    spinnerNode.classList.remove('lds-roller');
+
+                    var parent = document.getElementById('profileCard');
+
+                    var usernameProfile = profile.username;
+                    var fullname = profile.fullname;
+                    var company = profile.company;
+                    var email = profile.email;
+                    var phone = profile.phone;
+
+                    var child = `<div class="cardProfile">
+
+                                      <h1>${fullname}</h1>
+                                      <p class="titleProfile">Company: ${company}</p>
+                                      <p>Username: ${usernameProfile}</p>
+                                      <p>Email: ${email}</p>
+                                      <p>Phone: ${phone}</p>
+
+                                      <p><button id="editProfile" onclick="editProfile();" class="btn btn-primary">Edit Profile</button></p>
+                                    </div>`;
+                    parent.innerHTML = child;
+    }
+}
+
+function editProfile(){
+    $('#myProfile').modal('hide');
+
+    $('#editProfileModal').modal('show')
+
+    $('#savedProfileSuccess').html('');
+    $('#savedProfileFail').html('');
+    $('#savedProfileSuccess').removeAttr("style").hide();
+    $('#savedProfileFail').removeAttr("style").hide();
+    $("#saveProfile").html('Save');
+    $("#saveProfile").attr("disabled", false);
+
+    $('#userNameEdit').html();
+    $('#userNameEdit').html(profile.username);
+    $('[name=name]').val(profile.fullname);
+    $('[name=company]').val(profile.company);
+    $('[name=email]').val(profile.email);
+    $('[name=phone]').val(profile.phone);
+
+}
+
+function saveProfile(){
+    $('#savedProfileSuccess').html('');
+    $('#savedProfileFail').html('');
+    $('#savedProfileSuccess').removeAttr("style").hide();
+    $('#savedProfileFail').removeAttr("style").hide();
+    $("#saveProfile").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+    $("#saveProfile").attr("disabled", true);
+
+    var fullname = $('[name=name]').val();
+    var username = profile.username;
+    var company = $('[name=company]').val();
+    var email = $('[name=email]').val();
+    var phone = $('[name=phone]').val();
+
+   var data = {"username": username, "company":company, "fullname":fullname, "email":email, "phone":phone};
+
+    $.ajax({
+                type: "PUT",
+                url: 'https://api.cl-ds.com/saveUserInfo/' + username + '/?format=json',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(resp){
+                    if(resp.success){
+                        $("#saveProfile").html('Save');
+                        $('#savedProfileSuccess').show();
+                        $('#savedProfileSuccess').html('Saved successfully!');
+                        $("#saveProfile").removeAttr("disabled");
+
+                        var parent = document.getElementById('profileCard');
+                        parent.innerHTML = '';
+                        var spinnerNode = document.getElementById('profileCardSpinner');
+                        spinnerNode.classList.add('lds-roller');
+                        profile = {};
+
+                    }else{
+                        $('#savedProfileFail').show();
+                        $('#savedProfileFail').html('Failed to save, try again later!');
+                    }
+                }
+            });
+
+}
 </script>
 
 </body>

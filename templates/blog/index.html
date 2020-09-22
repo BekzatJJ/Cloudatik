@@ -243,7 +243,7 @@
                         <form id="editProfileForm">
                             <div class="row">
                                 <label for="username" class="col-3">Username</label>
-                                <input type="text" class="col-6" name="username" required readonly>
+                                <span id="userNameEdit" style="color:black;"></span>
                             </div>
                             <div class="row">
                                 <label for="name" class="col-3">Name</label>
@@ -266,6 +266,7 @@
                     </div>
         </div>
           <div class="modal-footer">
+            <div id="spinnerProfileSave" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
             <div id="savedProfileSuccess" style="display:none;" class="alert alert-success" role="alert"></div>
             <div id="savedProfileFail" style="display:none;" class="alert alert-danger" role="alert"></div>
 
@@ -441,7 +442,15 @@
                         ajaxRequests[i].abort();
                          console.log('aborted')
                     }
-                requestAjax(elem.id);
+                if(nodeStatus[elem.id]){
+                    requestAjax(elem.id);
+                }else{
+                    requestAjaxOffline(elem.id);
+                }
+
+
+
+
                 console.log('aborted all and requested current')
 
             }else{
@@ -602,9 +611,12 @@ function editProfile(){
     $('#savedProfileFail').html('');
     $('#savedProfileSuccess').removeAttr("style").hide();
     $('#savedProfileFail').removeAttr("style").hide();
+    $("#saveProfile").html('Save');
+    $("#saveProfile").attr("disabled", false);
 
+    $('#userNameEdit').html();
+    $('#userNameEdit').html(profile.username);
     $('[name=name]').val(profile.fullname);
-    $('[name=username]').val(profile.username);
     $('[name=company]').val(profile.company);
     $('[name=email]').val(profile.email);
     $('[name=phone]').val(profile.phone);
@@ -616,11 +628,11 @@ function saveProfile(){
     $('#savedProfileFail').html('');
     $('#savedProfileSuccess').removeAttr("style").hide();
     $('#savedProfileFail').removeAttr("style").hide();
-
+    $("#saveProfile").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
     $("#saveProfile").attr("disabled", true);
 
     var fullname = $('[name=name]').val();
-    var username = $('[name=username]').val();
+    var username = profile.username;
     var company = $('[name=company]').val();
     var email = $('[name=email]').val();
     var phone = $('[name=phone]').val();
@@ -636,6 +648,7 @@ function saveProfile(){
                 dataType: "json",
                 success: function(resp){
                     if(resp.success){
+                        $("#saveProfile").html('Save');
                         $('#savedProfileSuccess').show();
                         $('#savedProfileSuccess').html('Saved successfully!');
                         $("#saveProfile").removeAttr("disabled");
