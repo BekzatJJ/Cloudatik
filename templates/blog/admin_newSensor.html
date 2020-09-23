@@ -1,0 +1,721 @@
+{% load static %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/images/favicon.png' %}">
+    <title>App Cloud Admin</title>
+    <!-- Custom CSS -->
+    <link href="{%  static 'blog/assets/extra-libs/c3/c3.min.css' %}" rel="stylesheet">
+    <link href="{% static 'blog/assets/libs/chartist/dist/chartist.min.css' %}" rel="stylesheet">
+    <link href="{% static 'blog/assets/extra-libs/jvector/jquery-jvectormap-2.0.2.css' %}" rel="stylesheet" />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+
+    <link href="{% static 'blog/css/bootstrap.css' %}" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+<!-- srtDash CSS -->
+<link rel="shortcut icon" type="image/png" href="{%  static 'blog/assetsLogin_user/images/icon/favicon.ico' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/metisMenu.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/slicknav.min.css' %}">
+    <!-- amchart css -->
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <!-- others css -->
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/typography.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/default-css.css' %}">
+
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/responsive.css' %}">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'blog/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'blog/css/spinner.css' %}" rel="stylesheet">
+
+    <link href="{% static 'blog/css/nouislider.css' %}" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <script src="{%  static 'blog/assetsLogin_user/js/vendor/modernizr-2.8.3.min.js' %}"></script>
+    <script src="{%  static 'blog/nouislider.js' %}"></script>
+
+
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+        <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <header class="topbar" data-navbarbg="skin6">
+           <nav class="navbar top-navbar navbar-expand navbar-light" style="border-bottom: 1px #00000014 solid;">
+
+
+                <!-- ============================================================== -->
+                <!-- End Logo -->
+                <!-- ============================================================== -->
+                <!--<div class="navbar-collapse collapse" id="navbarSupportedContent">-->
+                    <!-- ============================================================== -->
+                    <!-- toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav float-left mr-auto ml-3 pl-1">
+                        <!-- Notification -->
+                        <!-- End Notification -->
+                        <!-- ============================================================== -->
+                        <!-- create new -->
+                        <!-- ==============================================================
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="settings" class="svg-icon"></i>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
+                        </li> -->
+
+                    </ul>
+                    <!-- ============================================================== -->
+                    <!-- Right side toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav float-right mr-3 pr-1">
+                        <!-- ============================================================== -->
+                        <!-- Search -->
+                        <!-- ==============================================================
+                        <li class="nav-item d-none d-md-block">
+                            <a class="nav-link" href="javascript:void(0)">
+                                <form>
+                                    <div class="customize-input">
+                                        <input class="form-control custom-shadow custom-radius border-0 bg-white"
+                                            type="search" placeholder="Search" aria-label="Search">
+                                        <i class="form-control-icon" data-feather="search"></i>
+                                    </div>
+                                </form>
+                            </a>
+                        </li>-->
+                        <!-- ============================================================== -->
+                        <!-- User profile and search -->
+                        <!-- ============================================================== -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                <img src="{% static 'blog/avatar.png' %}" alt="user" class="rounded-circle"
+                                    width="40">
+                                <span class="ml-2 d-none d-lg-inline-block"><span>Hello,</span> <span
+                                        class="text-dark"> {{ user.get_username }}</span> <i data-feather="chevron-down"
+                                        class="svg-icon"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
+                                <a class="dropdown-item" href="#" onclick="profileExec();"><i data-feather="user"
+                                        class="svg-icon mr-2 ml-1"></i>
+                                    My Profile</a>
+                                <a class="dropdown-item" href="#" onclick="$('#changePasswordModal').modal('show');"><i data-feather="credit-card"
+                                        class="svg-icon mr-2 ml-1"></i>
+                                    Change Password</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/logout"><i data-feather="power"
+                                        class="svg-icon mr-2 ml-1"></i>
+                                    Logout</a>
+                            </div>
+                        </li>
+                        <!-- ============================================================== -->
+                        <!-- User profile and search -->
+                        <!-- ============================================================== -->
+                    </ul>
+             <!--</div>-->
+            </nav>
+        </header>
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+         <aside class="left-sidebar" data-sidebarbg="skin6" style="background: #f9fbfd;">
+            <!-- Sidebar scroll-->
+            <div class="scroll-sidebar" data-sidebarbg="skin6">
+                <!-- Sidebar navigation-->
+                <nav class="sidebar-nav">
+                    <ul id="sidebarnav">
+                        <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/dashboard"
+                                aria-expanded="false"><i data-feather="home" class="feather-icon"></i><span
+                                    class="hide-menu">Dashboard</span></a></li>
+                        <li class="list-divider"></li>
+                        <li class="nav-small-cap"><span class="hide-menu">New</span></li>
+
+                        <li class="sidebar-item"> <a class="sidebar-link" href="/admin/new/node"
+                                aria-expanded="false"><i data-feather="tag" class="feather-icon"></i><span
+                                    class="hide-menu">Node
+                                </span></a>
+                        </li>
+                        <li class="sidebar-item"> <a class="sidebar-link sidebar-link" href="/admin/new/sensor"
+                                aria-expanded="false"><i data-feather="message-square" class="feather-icon"></i><span
+                                    class="hide-menu">Sensor</span></a></li>
+
+                        <li class="list-divider"></li>
+                        <li class="nav-small-cap"><span class="hide-menu">Update/Edit</span></li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="javascript:void(0)"
+                                aria-expanded="false"><i data-feather="tag" class="feather-icon"></i><span
+                                    class="hide-menu">Node </span></a>
+                        </li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="javascript:void(0)"
+                                aria-expanded="false"><i data-feather="message-square" class="feather-icon"></i><span
+                                    class="hide-menu">Sensor </span></a>
+                        </li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="javascript:void(0)"
+                                aria-expanded="false"><i data-feather="user" class="feather-icon"></i><span
+                                    class="hide-menu">User </span></a>
+                        </li>
+                        <li class="sidebar-item"> <a class="sidebar-link" href="javascript:void(0)"
+                                aria-expanded="false"><i data-feather="user-check" class="feather-icon"></i><span
+                                    class="hide-menu">User-Node </span></a>
+                        </li>
+
+                    </ul>
+                </nav>
+                <!-- End Sidebar navigation -->
+            </div>
+            <!-- End Sidebar scroll-->
+        </aside>
+        <!-- ============================================================== -->
+        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        <div class="page-wrapper" style="margin-left:260px;">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="page-breadcrumb">
+                                <div class="row">
+                                    <div class="col-7 align-self-center">
+                                        <div class="d-flex align-items-center">
+                                            <nav aria-label="breadcrumb">
+                                                <ol  id="breadcrumbConfig" class="breadcrumb m-0 p-0">
+                                                    <li class="breadcrumb-item" aria-current="page"><a href="/admin/dashboard">Dashboard</a>
+                                                    </li>
+                                                    <li class="breadcrumb-item" aria-current="page"><a href="/admin/new/sensor">New-Sensor</a>
+                                                    </li>
+
+                                                </ol>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                    <div class="col-5 align-self-center">
+                                        <div class="customize-input float-right">
+                                            <div id="currentDate" class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius"></div>
+                                        </div>
+                                    </div>
+                                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <div id="addSensorSpinnerList" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                <div id="newSensorContent" >
+                    <div id="preSerial" style="display:none;">
+                        <div class="form-group row">
+                        <label for="prefix" class="col-sm-2 col-form-label">Serial Prefix</label>
+                        <div class="col-sm-10">
+                          <select id="prefix" name="prefix">
+
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="serial" class="col-sm-2 col-form-label">Serial</label>
+                        <div class="col-sm-10">
+                          <select id="serial" name="serial">
+
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+
+                <div id="addSensorSpinnerSelect" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                <div id="sensorSelection" style="display:none;">
+                    <div id="firstSensor">
+                        <div class="card fade-in sensorsCount" style="display: block;">
+                        <div class="card-header">
+                            <span>Sensor 1</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group row">
+
+                                <div class="col-sm-2">
+                                  <label for="parameter" class="col-form-label" style="margin-bottom:0;">Parameter</label>
+                                  <select id="parameter" class="sensorParameter" name="parameter">
+
+                                  </select>
+                                </div>
+
+                                <div class="col-sm-2">
+                                  <label for="category" class="col-form-label" style="margin-bottom:0;">Category</label>
+                                  <select id="category" class="sensorCategory" name="category">
+
+                                  </select>
+                                </div>
+
+
+
+                              </div>
+
+                              <div class="form-group row">
+                                 <div class="col-sm-3">
+                                  <input type="checkbox" name="alarm">
+                                  <label for="alarm" class="">Alarm Enable</label>
+
+                                </div>
+
+                                <div class="col-sm-3">
+                                    <input type="checkbox" name="slider">
+                                    <label for="slider" class="">Slider Enable</label>
+
+                                </div>
+
+                                <div class="col-sm-3">
+                                  <input type="checkbox" name="visual">
+                                  <label for="visual" class="">Visual Enable</label>
+
+                                </div>
+
+                                <div class="col-sm-3">
+                                  <input type="checkbox" name="chart">
+                                  <label for="chart" class="">Chart Enable</label>
+
+                                </div>
+
+
+                              </div>
+
+
+
+
+                              <div class="form-group row">
+
+                                <div class="col-sm-4">
+                                  <label for="visualization" class="col-form-label" style="margin-bottom:0;">Visualization</label>
+                                  <select id="visualization" class="sensorVisualization" name="visualization">
+
+                                  </select>
+                                </div>
+
+                                <div class="col-sm-2">
+                                  <label for="modbus" class="col-form-label" style="margin-bottom:0;">modbus factor</label>
+                                  <input type="text" name="modbus" value="*1">
+                                </div>
+
+                                <div class="col-sm-2">
+                                  <label for="coeff" class=" col-form-label" style="margin-bottom:0;">cal coeff</label>
+                                  <input type="text" name="coeff" value="1">
+                                </div>
+
+                                <div class="col-sm-2">
+                                  <label for="const" class=" col-form-label" style="margin-bottom:0;">cal const</label>
+                                  <input type="text" name="const" value="0">
+                                </div>
+                              </div>
+                        </div>
+                    </div>
+                    </div>
+
+
+                    <div id="addedSensor" class="addedSensor">
+
+                    </div>
+
+                    <div class="card" style="display: block;">
+                        <div class="card-header">
+
+                            <button class="btn btn-primary" onclick="removeSensor();"><i class="fas fa-minus" style="display:block;"></i></button>
+                            <button class="btn btn-primary" style="float:right;" onclick="addNewSensor();"><i class="fas fa-plus" style="display:block;"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- username and submit-->
+                <div class="form-group row">
+                        <label for="username" class="col-sm-2 col-form-label">Username</label>
+                        <div class="col-sm-10">
+                          <input type="text" name="username" required>
+                        </div>
+                </div>
+                <div class="form-group row">
+                        <label for="password" class="col-sm-2 col-form-label">Password</label>
+                        <div class="col-sm-10">
+                          <input type="password" name="password" required>
+                        </div>
+                </div>
+
+
+
+                    <button id="addSensor" onclick="registerSensor();" class="btn btn-primary">Register Sensor</button>
+
+                </div>
+
+
+
+            </div>
+
+
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+            <footer class="footer text-center text-muted">
+                All Rights Reserved by Cloudatik. Designed</a>.
+            </footer>
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- Modal -->
+    <div class="modal fade" id="summary" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Summary</h5><br>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="summaryModal" class="modal-body">
+            <table id="summaryTable" class="table">
+                 <thead>
+                          <tr>
+                            <th scope="col">Parameter</th>
+                            <th scope="col">Enabled</th>
+                            <th scope="col">Limit Low</th>
+                            <th scope="col">Limit High</th>
+                          </tr>
+                 </thead>
+                 <tbody id="bodySummaryTable">
+
+                 </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <div id="modalSpinner" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="confirmAlarm" type="button" onclick="submitToSaveAlarm();" class="btn btn-primary">Confirm</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="{% static 'blog/assets/libs/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/popper.js/dist/umd/popper.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- apps -->
+    <!-- apps -->
+    <script src="{% static 'blog/js/app-style-switcher.js' %}"></script>
+    <script src="{% static 'blog/js/feather.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js' %}"></script>
+    <script src="{% static 'blog/js/sidebarmenu.js' %}"></script>
+    <!--Custom JavaScript -->
+    <script src="{% static 'blog/js/custom.min.js' %}"></script>
+    <!--This page JavaScript -->
+    <script src="{% static 'blog/assets/extra-libs/c3/d3.min.js' %}"></script>
+    <script src="{% static 'blog/assets/extra-libs/c3/c3.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/chartist/dist/chartist.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+    <script src="{% static 'blog/assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js' %}"></script>
+    <script src="{% static 'blog/assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js' %}"></script>
+    <script src="{% static 'blog/js/pages/dashboards/dashboard1.min.js' %}"></script>
+    <script src="{% static 'blog/js/steelseries.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script src="{%  static 'blog/assetsLogin_user/js/owl.carousel.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/metisMenu.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/jquery.slimscroll.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/jquery.slicknav.min.js' %}"></script>
+
+
+    <!-- others plugins -->
+    <script src="{%  static 'blog/assetsLogin_user/js/plugins.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/scripts.js' %}"></script>
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script type="text/javascript">
+
+    var username = '{{ user.get_username }}';
+
+            $(document).ready(function(){
+            window.serials = {};
+            requestNodeList();
+                $('#prefix').on('change', function(event) {
+                var parentSerial = document.getElementById('serial');
+                        for(var i=0; i<serials.length; i++){
+                            var opt =  document.createElement('option');
+                            opt.value= serials[i];
+                            opt.innerHTML = serials[i];
+                            parentSerial.appendChild(opt);
+                        }
+
+                    $('#serial option').each(function(){
+                        if(this.value.substring(0,2) != event.target.value){
+                            $("#serial option[value='" + this.value +"']").remove();
+                        }
+                    });
+
+                });
+          });
+
+function requestNodeList(){
+ $.ajax({
+                type: "GET",
+                url: 'https://api.cl-ds.com/adminGetNodeList/',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                success: function(data){
+                    var spinnerNode = document.getElementById('addSensorSpinnerList');
+                    spinnerNode.classList.remove('lds-roller');
+                    var parent = document.getElementById('preSerial');
+                    parent.style.display = "block";
+
+                    serials = data.serial;
+                    //DB
+                    var parentPrefix = document.getElementById('prefix');
+                    for(var i=0; i<data.prefix.length; i++){
+                        var opt =  document.createElement('option');
+                        opt.value= data.prefix[i];
+                        opt.innerHTML = data.prefix[i];
+                        parentPrefix.appendChild(opt);
+                    }
+
+                    //DTable
+                    var parentSerial = document.getElementById('serial');
+                    for(var i=0; i<data.serial.length; i++){
+                        var opt =  document.createElement('option');
+                        opt.value= data.serial[i];
+                        opt.innerHTML = data.serial[i];
+                        parentSerial.appendChild(opt);
+                    }
+
+                    $('#serial option').each(function(){
+                        if(this.value.substring(0,2) != $('#prefix').val()){
+                            $("#serial option[value='" + this.value +"']").remove();
+                        }
+                    });
+
+
+                }
+            });
+
+
+
+ $.ajax({
+                type: "GET",
+                url: 'https://api.cl-ds.com/adminGetSensorSelection/',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                success: function(data){
+                    var spinnerNode = document.getElementById('addSensorSpinnerSelect');
+                    spinnerNode.classList.remove('lds-roller');
+                    var parent = document.getElementById('sensorSelection');
+                    parent.style.display = "block";
+
+                    //DB
+                    var parentParameter = document.getElementsByClassName('sensorParameter');
+                    for(var x=0; x< parentParameter.length; x++){
+                            for(var i=0; i<data.parameter.length; i++){
+                            var opt =  document.createElement('option');
+                            opt.value= data.parameter[i];
+                            opt.innerHTML = data.parameter[i];
+                            parentParameter[x].appendChild(opt);
+                        }
+                    }
+
+
+                    //DTable
+                    var parentCategory = document.getElementsByClassName('sensorCategory');
+                    for(var x=0; x< parentCategory.length; x++){
+                            for(var i=0; i<data.category.length; i++){
+                            var opt =  document.createElement('option');
+                            opt.value= data.category[i];
+                            opt.innerHTML = data.category[i];
+                            parentCategory[x].appendChild(opt);
+                        }
+                    }
+
+
+                    //Visual
+                    var parentVisual = document.getElementsByClassName('sensorVisualization');
+                    for(var x=0; x< parentVisual.length; x++){
+                            for(var i=0; i<data.visualization.length; i++){
+                            var opt =  document.createElement('option');
+                            opt.value= data.visualization[i];
+                            opt.innerHTML = data.visualization[i];
+                            parentVisual[x].appendChild(opt);
+                        }
+                    }
+
+
+
+                }
+            });
+}
+
+function registerSensor(){
+    document.getElementById('addSensor').innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+  <span class="sr-only">Loading...</span>`;
+
+    var serial = $('[name=serial]').val();
+    var username= $('[name=username]').val();
+    var password= $('[name=password]').val();
+
+    var sensorsTotal = document.getElementsByClassName('sensorsCount');
+
+    //Values
+    var parameter= [];
+    var category= [];
+    var visualization= [];
+    var alarm = [];
+    var slider = [];
+    var visual = [];
+    var chart = [];
+    var modbus= [];
+    var coeff= [];
+    var constant= [];
+
+    for(var i=0; i< sensorsTotal.length; i++){
+         parameter[i]= $('[name=parameter]').get(i).value;
+         category[i]= $('[name=category]').get(i).value;
+         visualization[i]= $('[name=visualization]').get(i).value;
+         alarm[i]= $('[name=alarm]').get(i).checked;
+         slider[i]= $('[name=slider]').get(i).checked;
+         visual[i]= $('[name=visual]').get(i).checked;
+         chart[i]= $('[name=chart]').get(i).checked;
+         modbus[i]= $('[name=modbus]').get(i).value;
+         coeff[i]= $('[name=coeff]').get(i).value;
+         constant[i]= $('[name=const]').get(i).value;
+    }
+    var sensor=[];
+    for(var i=0; i< sensorsTotal.length; i++){
+        sensor[i]=  {
+            "parameter": parameter[i],
+            "category": category[i],
+            "alarm_enable": alarm[i],
+            "slider_enable": slider[i],
+            "visual_enable": visual[i],
+            "chart_enable": chart[i],
+            "visualization": visualization[i],
+            "modbus_factor": modbus[i],
+            "cal_coeff": coeff[i],
+            "cal_const": constant[i]
+        }
+    }
+    /*var parameter= $('[name=parameter]').val();
+    var category= $('[name=category]').val();
+    var visualization= $('[name=visualization]').val();
+    var alarm = $('[name=alarm]').is(':checked');
+    var slider = $('[name=slider]').is(':checked');
+    var visual = $('[name=visual]').is(':checked');
+    var chart = $('[name=chart]').is(':checked');
+    var modbus= $('[name=modbus]').val();
+    var coeff= $('[name=coeff]').val();
+    var constant= $('[name=const]').val();*/
+
+var data = {
+    "serial": serial,
+    "admin_username": username,
+    "password": password,
+    "sensor": sensor
+}
+
+console.log(data);
+$.ajax({
+                type: "POST",
+                url: 'https://api.cl-ds.com/adminRegisterSensor/?format=json',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(dataRcvd){
+                    document.getElementById('addSensor').innerHTML = `Register Sensor`;
+                    if(dataRcvd.success){
+                        alert(dataRcvd.message);
+                    }else{
+                        alert(dataRcvd.message);
+                    }
+
+                },
+                error: function(request, status, error){
+                    document.getElementById('addSensor').innerHTML = `Register Sensor`;
+                    if(error){
+                         alert(error);
+                    }else{
+                        alert(request.responseJSON.message);
+                    }
+
+                 }
+            });
+
+}
+
+function addNewSensor(){
+    var cloned = document.getElementById('firstSensor');
+    var addPlace = document.getElementById('addedSensor');
+    addPlace.innerHTML += cloned.innerHTML;
+}
+
+function removeSensor(){
+    var addPlace = document.getElementById('addedSensor');
+    addPlace.removeChild(addPlace.lastElementChild);
+}
+
+
+</script>
+
+</body>
+
+</html>
