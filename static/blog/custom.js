@@ -132,7 +132,7 @@ function requestAjax(id){
     var ajaxCounts = Object.keys(ajaxRequests).length;
     ajaxRequests[ajaxCounts] = $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardDataSetInterval/' + id + '/',
+                url: 'https://api.cl-ds.com/getDashboardDataSetIntervalV2/' + id + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
@@ -198,7 +198,7 @@ function requestAjax(id){
                                 }else{
                                     if(data[i].chart_prop[0].unit == null){var unit = '';}else{var unit = data[i].chart_prop[0].unit;}
                                     var label= data[i].chart_prop[0].label;
-                                    var category= data[i].chart_prop[0].category;
+                                    var category= data[i].chart_prop[0].chart_category;
                                 }
                           var lcdId = 'lcd_'+data[i].id;
 

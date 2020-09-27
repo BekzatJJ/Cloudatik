@@ -44,7 +44,7 @@ for(var b=0; b< nodes.length; b++){
             //Request Ajax
          $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardData/' + nodes[b].id + '/',
+                url: 'https://api.cl-ds.com/getDashboardDataV2/' + nodes[b].id + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){

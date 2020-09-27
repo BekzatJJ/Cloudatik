@@ -35,21 +35,21 @@ def adminDash(request):
     if request.user.is_superuser:
         return render(request, 'blog/admin_dashboard.html')
     else:
-       return HttpResponse('You are not authorised!')
+       return render(request, 'blog/notSuperUser.html')
 
 @login_required
 def newNode(request):
     if request.user.is_superuser:
         return render(request, 'blog/admin_newNode.html')
     else:
-       return HttpResponse('You are not authorised!')
+       return render(request, 'blog/notSuperUser.html')
 
 @login_required
 def newSensor(request):
     if request.user.is_superuser:
         return render(request, 'blog/admin_newSensor.html')
     else:
-       return HttpResponse('You are not authorised!')
+       return render(request, 'blog/notSuperUser.html')
 
 
 @login_required
@@ -87,3 +87,5 @@ def reg(request, device_id):
 def range(request):
     return render(request, 'blog/chart_range.html')
 
+def map(request):
+    return render(request, 'blog/map.html')

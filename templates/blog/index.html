@@ -416,7 +416,7 @@
         function section_node(elem){
             var nodes = document.getElementsByClassName('sectionNode');
             var sectionLinks = document.getElementsByClassName('sectionNodeLinks');
-            var node = document.getElementById('section_'+elem.id);
+            var node = document.getElementById('section_'+elem.parentNode.id);
             for(var i=0; i< nodes.length; i++){
                 nodes[i].setAttribute('style', 'display:none;');
             }
@@ -424,28 +424,28 @@
                 sectionLinks[i].setAttribute('style', 'display:none;');
             }
             document.getElementById('section_Dashboard').setAttribute('style', 'display:none;');
-            document.getElementById('section_'+ elem.id + '_dashboard').setAttribute('style', 'display:block');
+            document.getElementById('section_'+ elem.parentNode.id + '_dashboard').setAttribute('style', 'display:block');
             node.setAttribute('style', 'display:block;');
 
             //Request Ajax for this node and abort all other
 
 
-            if(ajaxNodeProcess[elem.id] == false){
+            if(ajaxNodeProcess[elem.parentNode.id] == false){
                 //disable links
-                var navLinks = document.getElementById('nodeLinks_'+elem.id);
+                var navLinks = document.getElementById('nodeLinks_'+elem.parentNode.id);
                 for(var i=0; i< navLinks.children.length; i++){
                     navLinks.children[i].setAttribute('style', 'pointer-events:none');
                 }
-                var spinnerNode = document.getElementById('spinner_'+elem.id);
+                var spinnerNode = document.getElementById('spinner_'+elem.parentNode.id);
                 spinnerNode.classList.add('lds-roller');
                 for(var i=0; i< Object.keys(ajaxRequests).length; i++){
                         ajaxRequests[i].abort();
                          console.log('aborted')
                     }
-                if(nodeStatus[elem.id]){
-                    requestAjax(elem.id);
+                if(nodeStatus[elem.parentNode.id]){
+                    requestAjax(elem.parentNode.id);
                 }else{
-                    requestAjaxOffline(elem.id);
+                    requestAjaxOffline(elem.parentNode.id);
                 }
 
 
@@ -778,6 +778,9 @@ function addserialNode(){
                         $('#nodeAddSuccess').css('display', 'block');
                         $('#nodeAddSuccess').html(dataRcvd.message);
                         $('#addSerialNode').attr('disabled', false);
+                        setTimeout(function() {
+                              window.location.href = '/';
+                            }, 800);
                     }else{
                         $('#nodeAddFail').css('display', 'block');
                         $('#nodeAddFail').html(dataRcvd.message);

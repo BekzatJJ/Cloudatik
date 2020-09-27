@@ -26,9 +26,9 @@ function createNodeCards(data){
             var htmlRemoteCtrlMobile = ``;
         }
 
-        var htmlNode = `<div id="${data.node[i].device_id}" class="card border-success mb-3 node ${data.node[i].serial}" onclick="section_node(this)" style="">
-                  <div class="card-header bg-transparent border-success first"> ${data.node[i].tag} <br> <p style="font-size:11px; color: black; margin-top:1px; margin-bottom:0;"> ${data.node[i].serial}</p></div>
-                  <div class="card-body text-dark float-right">
+        var htmlNode = `<div id="${data.node[i].device_id}" class="card border-success mb-3 node ${data.node[i].serial}"  style="">
+                  <div class="card-header bg-transparent border-success first" onclick="section_node(this)"> ${data.node[i].tag} <br> <p style="font-size:11px; color: black; margin-top:1px; margin-bottom:0;"> ${data.node[i].serial}</p></div>
+                  <div class="card-body text-dark float-right" style="padding:12px !important; background-color: #e8e6e6 !important;">
                     <a href="#" id="canvasLedParent_${data.node[i].serial}" class="" data-toggle="popover" data-placement="bottom" data-content=""><canvas id="canvasLed_${data.node[i].serial}" class="leds" width="25" height="25"></canvas></a>
 
                     <div class="mainDashLinksDesktop">

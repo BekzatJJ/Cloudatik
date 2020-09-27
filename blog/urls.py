@@ -12,7 +12,8 @@ urlpatterns = [
     path('chart-range', views.range, name="blog-range"),
     path('admin/dashboard', views.adminDash, name="blog-admin"),
     path('admin/new/node', views.newNode, name="blog-newNode"),
-    path('admin/new/sensor', views.newSensor, name="blog-newSensor")
+    path('admin/new/sensor', views.newSensor, name="blog-newSensor"),
+    path('map/', views.map, name="blog-map")
 
 
 ]

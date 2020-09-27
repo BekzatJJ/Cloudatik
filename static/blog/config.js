@@ -50,8 +50,9 @@ function renderConfigAlarm(data){
             var chartTitleAlarm = `<a href="#" data-title="Enter Title">${data.alarm_prop[i].chart_title}</a>`;}
         if(data.alarm_prop[i].slider_category == "slider"){
             var controller = `<div id="${data.alarm_prop[i].parameter}_slider" class="slider" style="margin-bottom:50px;"></div>
-                                <span id="${data.alarm_prop[i].parameter}_lowLabel" class="slider-labels"><div class="" style="width:20%;">Max <input type="text" class="form-control" name="${data.alarm_prop[i].parameter}_max"></div></span>
-                                <span id="${data.alarm_prop[i].parameter}_highLabel" class="slider-labels"><div style="width:20%;">Min <input type="text" class="form-control" name="${data.alarm_prop[i].parameter}_min"></div></span>`;
+
+                                <span id="${data.alarm_prop[i].parameter}_lowLabel" class="slider-labels" style="float:left;"><div style="width:50%;">Min <input type="text" class="form-control" name="${data.alarm_prop[i].parameter}_min"></div></span>
+                                <span id="${data.alarm_prop[i].parameter}_highLabel" class="slider-labels" style="float:right;"><div class="" style="width:50%; float:right;"><span style="float:right;">Max</span> <input type="text" class="form-control" name="${data.alarm_prop[i].parameter}_max"></div></span>`;
         }else if(data.alarm_prop[i].slider_category == "switch"){
             var controller = `<div id="${data.alarm_prop[i].parameter}_switch" class="switch" style="margin-bottom:25px;"></div>`;
         }else if(data.alarm_prop[i].slider_category == "threshold"){
@@ -155,14 +156,28 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
             }else if((parseFloat(data.alarm_prop[i].limit_high) - parseFloat(data.alarm_prop[i].limit_low)) <= 100){
                 var step= 10;
             }
+
+            if(data.alarm_prop[i].alarm_max == null){
+                var alarmMax = data.alarm_prop[i].slider_max;
+            }else{
+                var alarmMax = data.alarm_prop[i].alarm_max;
+            }
+
+            if(data.alarm_prop[i].alarm_min == null){
+                var alarmMin = data.alarm_prop[i].slider_min;
+            }else{
+                var alarmMin = data.alarm_prop[i].alarm_min;
+            }
+
+
             noUiSlider.create(slider, {
                 start: [parseFloat(data.alarm_prop[i].limit_low) , parseFloat(data.alarm_prop[i].limit_high)],
                 connect: true,
                 tooltips: true,
                 step: step,
                 range: {
-                    'min': parseInt(data.alarm_prop[i].slider_min),
-                    'max': parseInt(data.alarm_prop[i].slider_max)
+                    'min': parseFloat(alarmMin),
+                    'max': parseFloat(alarmMax)
                 },
                 pips:{
                     mode: 'count',
@@ -172,8 +187,8 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
                 }
             });
 
-            $('[name='+ data.alarm_prop[i].parameter + '_max]').val(data.alarm_prop[i].slider_max);
-            $('[name='+ data.alarm_prop[i].parameter + '_min]').val(data.alarm_prop[i].slider_min);
+            $('[name='+ data.alarm_prop[i].parameter + '_max]').val(alarmMax);
+            $('[name='+ data.alarm_prop[i].parameter + '_min]').val(alarmMin);
 
             $('[name='+ data.alarm_prop[i].parameter + '_max]').keyup(function(){
                 var id = $(this).parents().eq(1).attr('id');
@@ -237,9 +252,9 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
                             'max':  parseInt(max)
                         },
                         pips: {
-                            mode: 'values',
-                            values: [0, 2, 1],
-                            density: 50
+                            mode: 'count',
+                            values: 2,
+                            density: 5
                         }
                     });
         }else if(data.alarm_prop[i].slider_category == "switch"){
@@ -332,6 +347,8 @@ function saveAlarm(){
         var enabled = document.getElementById(parameter + '_enable').checked;
         var categoryId = $('#'+parameter+' .card-body .controller').children(1).attr('id').split(/_/);
         var category = categoryId[1];
+        var alarmMax = $('[name='+ changed[i].id + '_max]').val();
+        var alarmMin = $('[name='+ changed[i].id + '_min]').val();
 
         if(category == 'threshold'){
 
@@ -365,7 +382,9 @@ function saveAlarm(){
           "category":category,
            "limit_low": lowLimit,
             "limit_high": highLimit,
-             "username": username};
+             "username": username,
+                "alarm_max": alarmMax,
+                "alarm_min": alarmMin};
 
 
     }
@@ -488,7 +507,9 @@ function removeNode(){
                     document.getElementById('removeNodeButton').innerHTML = `Remove Node`;
                     if(resp.success){
                         alert('Removed Successfully');
-
+                        setTimeout(function() {
+                              window.location.href = '/';
+                            }, 800);
                     }else{
                          alert('Failed to remove');
                     }
@@ -499,4 +520,45 @@ function removeNode(){
                 }
             });
 
+}
+
+
+function saveNodeProfile(){
+    $("#saveNodeProfile").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+    $("#saveNodeProfile").attr("disabled", true);
+
+                    var serial = $("#serial").val();
+                    var sensor = $("#sensor").val();
+                    var tagname = $("#tagname").val();
+                    var location = $("#locationname").val();
+                    var longitude = $("#longitude").val();
+                    var latitude = $("#latitude").val();
+                    var address = $("#address").val();
+                    var premise = $("#premise").val();
+
+    var data = {
+        "serial": serial,
+        "sensor": sensor,
+        "tag_name": tagname,
+        "location_name": location,
+        "address": address,
+        "latitude": latitude,
+        "longitude": longitude,
+        "premise": premise
+    }
+
+    $.ajax({
+                type: "PUT",
+                url: 'https://api.cl-ds.com/saveNodeInfo/' + device_id + '/',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(resp){
+                    $("#saveNodeProfile").html('Save changes');
+                    $("#saveNodeProfile").attr("disabled", false);
+
+                    alert('Success saved');
+                }
+            });
 }
