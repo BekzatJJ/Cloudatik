@@ -32,7 +32,6 @@ ALLOWED_HOSTS = ['codenroll.hopto.org', 'localhost', '.cl-ds.com','.cloudatik.co
 
 INSTALLED_APPS = [
     'blog.apps.BlogConfig',
-    'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
