@@ -27,7 +27,7 @@ function createNodeCards(data){
         }
 
         var htmlNode = `<div id="${data.node[i].device_id}" class="card border-success mb-3 node ${data.node[i].serial}"  style="">
-                  <div class="card-header bg-transparent border-success first" onclick="section_node(this)"> ${data.node[i].tag} <br> <p style="font-size:11px; color: black; margin-top:1px; margin-bottom:0;"> ${data.node[i].serial}</p></div>
+                  <div class="card-header bg-transparent border-success first" onclick="section_node(this)"> ${data.node[i].tag_name} <br> <p style="font-size:11px; color: black; margin-top:1px; margin-bottom:0;"> ${data.node[i].serial}</p></div>
                   <div class="card-body text-dark float-right" style="padding:12px !important; background-color: #e8e6e6 !important;">
                     <a href="#" id="canvasLedParent_${data.node[i].serial}" class="" data-toggle="popover" data-placement="bottom" data-content=""><canvas id="canvasLed_${data.node[i].serial}" class="leds" width="25" height="25"></canvas></a>
 
@@ -402,21 +402,31 @@ function createNodeCards(data){
 
     //Status and LED initialize
     for(var i=0; i< data.node.length; i++){
-
-    if(moment(data.node[i].last_update).format() < moment().subtract(10,'minutes').format()){
+      if(data.node[i].last_update == null){
         nodeStatus[data.node[i].device_id] = false;
-      $('#lastUpdate_'+data.node[i].serial).text('Last update: ' + moment(data.node[i].last_update).calendar());
-       setLED('canvasLed_'+ data.node[i].serial, false);
-       setLED('dashboardLed_'+ data.node[i].serial, false);
-    }else{
-      nodeStatus[data.node[i].device_id] = true;
-      $('#lastUpdate_'+data.node[i].serial).text('Last update: ' + moment(data.node[i].last_update).calendar());
-       setLED('canvasLed_'+ data.node[i].serial, true);
-       setLED('dashboardLed_'+ data.node[i].serial, true);
-    }
+        $('#lastUpdate_'+data.node[i].serial).text('Last update: ' + moment('2000-01-01T00:00:00').calendar());
+         setLED('canvasLed_'+ data.node[i].serial, false);
+         setLED('dashboardLed_'+ data.node[i].serial, false);
+         var popContent = 'Last update: '+ moment('2000-01-01T00:00:00').fromNow();
+          $('a#canvasLedParent_'+data.node[i].serial).attr("data-content", popContent);
+      }else{
+            if(moment(data.node[i].last_update).add(8, 'hours').format() < moment().subtract(10,'minutes').format()){
+              nodeStatus[data.node[i].device_id] = false;
+            $('#lastUpdate_'+data.node[i].serial).text('Last update: ' + moment(data.node[i].last_update).add(8, 'hours').calendar());
+             setLED('canvasLed_'+ data.node[i].serial, false);
+             setLED('dashboardLed_'+ data.node[i].serial, false);
+          }else{
+            nodeStatus[data.node[i].device_id] = true;
+            $('#lastUpdate_'+data.node[i].serial).text('Last update: ' + moment(data.node[i].last_update).add(8, 'hours').calendar());
+             setLED('canvasLed_'+ data.node[i].serial, true);
+             setLED('dashboardLed_'+ data.node[i].serial, true);
+          }
 
-    var popContent = 'Last update: '+ moment(data.node[i].last_update).fromNow();
-    $('a#canvasLedParent_'+data.node[i].serial).attr("data-content", popContent);
+          var popContent = 'Last update: '+ moment(data.node[i].last_update).add(8, 'hours').fromNow();
+          $('a#canvasLedParent_'+data.node[i].serial).attr("data-content", popContent);
+      }
+
+
 
   }
 

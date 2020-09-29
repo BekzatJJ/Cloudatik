@@ -19,7 +19,7 @@ window.onload = function () {
     //console.log('requested');
     $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getUserNode/' + username + '/',
+                url: 'https://api.cl-ds.com/getUserNodeV4/' + username + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
@@ -66,7 +66,7 @@ setInterval(function(){
         //Request Ajax
          $.ajax({
                 type: "GET",
-                url:'https://api.cl-ds.com/getUserNode/' + username + '/',
+                url:'https://api.cl-ds.com/getUserNodeV4/' + username + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
