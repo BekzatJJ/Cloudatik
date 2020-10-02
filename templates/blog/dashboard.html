@@ -24,8 +24,20 @@
                 </div>
             </div>
 
-            <div class="container-fluid dashboard-content">
+              <div class="row" style="margin-bottom: 10px; margin-top:10px;">
+                <div class="col-md-12 text-center">
+                  <div class="btn-group" role="group" aria-label="DashLayout">
+                    <button id="dashGrid" onclick="dashLayout();" type="button" class="btn btn-secondary">Grid</button>
+                    <button id="dashMap" onclick="mapClickEvent();" type="button" class="btn btn-secondary">Map</button>
+                  </div>
+                </div>
+              </div>
+
+            <div id="dashboard-content" class="container-fluid dashboard-content">
+
+
               <div id="spinnerMain" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
               <div class="card-group" id="nodesList">
                 <!--
                 {% for node in nodes.node %}
@@ -52,6 +64,17 @@
 
               </div>
 
+
+            </div>
+
+            <div id="map-content" class="container-fluid map-content" style="display:none;">
+
+               <div id="mapSpinner" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+               <div id="mapWrapper" style="display:block;">
+                  <div id="map" style="height:400px;">
+
+                  </div>
+               </div>
 
             </div>
 

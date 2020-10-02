@@ -9099,7 +9099,7 @@ strong {
   visibility: visible;
 }
 .dashboard-content{
-  margin-top: 40px;
+  margin-top: 10px;
 }
 
 .card-header{
@@ -9378,4 +9378,83 @@ animation: fadeIn ease 1s;
 @-ms-keyframes fadeIn {
 0% {opacity:0; transform: scale(0.5);}
 100% {opacity:1; transform: scale(1.0);}
+}
+
+.marker-cluster-small {
+background-color: rgba(115, 253, 151, 0.6) !important;
+}
+.marker-cluster-small div {
+background-color: rgba(115, 253, 151, 0.6) !important;
+}
+
+
+.marker-cluster-large {
+background-color: rgba(218, 94, 94, 0.6) !important;
+}
+.marker-cluster-large div {
+background-color: rgba(218, 94, 94, 0.6) !important;
+color: white;
+}
+
+.blink-alarm div{
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+
+.alarm span{
+    animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+
+@keyframes blink-animation {
+  0% {opacity: 0;}
+  100%{opacity: 1;}
+}
+@-webkit-keyframes blink-animation {
+  0% {opacity: 0;}
+  100%{opacity: 1;}
+}
+
+.my-div-icon-off span{
+  padding: 3px;
+  color: white;
+  background-color: #98150b;
+  border-top: 2px solid #98150b;
+  border-radius: 5px;
+}
+
+.my-div-icon-off span:after{
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #98150b;
+    clear: both;
+}
+
+
+.my-div-icon-on span{
+  padding: 3px;
+  color: white;
+  background-color: #31e238;
+    border-top: 2px solid #31e238;
+  border-radius: 5px;
+}
+
+.my-div-icon-on span:after{
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #31e238;
+    clear: both;
+}
+
+
+@media only screen and (max-width: 500px){
+  .btn-group{
+  width:100%;
+}
 }
