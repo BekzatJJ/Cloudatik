@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '0kj#$nn)mq0lx#s%_67jr8-@sf**j8nsgzxv&zok$yzk+8(*+l'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['codenroll.hopto.org', 'localhost', '.cl-ds.com','.cloudatik.com']
 
@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['codenroll.hopto.org', 'localhost', '.cl-ds.com','.cloudatik.co
 
 INSTALLED_APPS = [
     'blog.apps.BlogConfig',
+    'users.apps.UsersConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
