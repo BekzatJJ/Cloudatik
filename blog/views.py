@@ -89,3 +89,6 @@ def range(request):
 
 def map(request):
     return render(request, 'blog/map.html')
+
+def rmt(request):
+    return render(request, 'blog/rmt.html')

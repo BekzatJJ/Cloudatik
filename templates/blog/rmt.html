@@ -1,0 +1,567 @@
+{% load static %}
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'assets/images/favicon.png' %}">
+    <title>App Cloud Platform</title>
+    <!-- Custom CSS -->
+    <link href="{%  static 'blog/assets/extra-libs/c3/c3.min.css' %}" rel="stylesheet">
+    <link href="{% static 'blog/assets/libs/chartist/dist/chartist.min.css' %}" rel="stylesheet">
+    <link href="{% static 'blog/assets/extra-libs/jvector/jquery-jvectormap-2.0.2.css' %}" rel="stylesheet" />
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+
+    <link href="{% static 'blog/css/bootstrap.css' %}" rel="stylesheet">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+
+<!-- srtDash CSS -->
+<link rel="shortcut icon" type="image/png" href="{%  static 'blog/assetsLogin_user/images/icon/favicon.ico' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/metisMenu.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/slicknav.min.css' %}">
+    <!-- amchart css -->
+    <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+    <!-- others css -->
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/typography.css' %}">
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/default-css.css' %}">
+
+    <link rel="stylesheet" href="{%  static 'blog/assetsLogin_user/css/responsive.css' %}">
+
+    <!-- Custom CSS -->
+    <link href="{% static 'blog/css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'blog/css/spinner.css' %}" rel="stylesheet">
+
+    <link href="{% static 'blog/css/nouislider.css' %}" rel="stylesheet">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <script src="{%  static 'blog/assetsLogin_user/js/vendor/modernizr-2.8.3.min.js' %}"></script>
+    <script src="{%  static 'blog/nouislider.js' %}"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+      <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.3.0/dist/MarkerCluster.Default.css" />
+
+  <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="lds-ripple">
+            <div class="lds-pos"></div>
+            <div class="lds-pos"></div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <div id="main-wrapper" data-theme="light" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
+        data-sidebar-position="fixed" data-header-position="fixed" data-boxed-layout="full">
+        <!-- ============================================================== -->
+        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <header class="topbar" data-navbarbg="skin6">
+           <nav class="navbar top-navbar navbar-expand navbar-light" style="border-bottom: 1px #00000014 solid;">
+
+
+                <!-- ============================================================== -->
+                <!-- End Logo -->
+                <!-- ============================================================== -->
+                <!--<div class="navbar-collapse collapse" id="navbarSupportedContent">-->
+                    <!-- ============================================================== -->
+                    <!-- toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav float-left mr-auto ml-3 pl-1">
+                        <!-- Notification -->
+                        <!-- End Notification -->
+                        <!-- ============================================================== -->
+                        <!-- create new -->
+                        <!-- ==============================================================
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i data-feather="settings" class="svg-icon"></i>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="#">Action</a>
+                                <a class="dropdown-item" href="#">Another action</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Something else here</a>
+                            </div>
+                        </li> -->
+
+                    </ul>
+                    <!-- ============================================================== -->
+                    <!-- Right side toggle and nav items -->
+                    <!-- ============================================================== -->
+                    <ul class="navbar-nav float-right mr-3 pr-1">
+                        <!-- ============================================================== -->
+                        <!-- Search -->
+                        <!-- ==============================================================
+                        <li class="nav-item d-none d-md-block">
+                            <a class="nav-link" href="javascript:void(0)">
+                                <form>
+                                    <div class="customize-input">
+                                        <input class="form-control custom-shadow custom-radius border-0 bg-white"
+                                            type="search" placeholder="Search" aria-label="Search">
+                                        <i class="form-control-icon" data-feather="search"></i>
+                                    </div>
+                                </form>
+                            </a>
+                        </li>-->
+                        <!-- ============================================================== -->
+                        <!-- User profile and search -->
+                        <!-- ============================================================== -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                                <img src="{% static 'blog/avatar.png' %}" alt="user" class="rounded-circle"
+                                    width="40">
+                                <span class="ml-2 d-none d-lg-inline-block"><span>Hello,</span> <span
+                                        class="text-dark"> {{ user.get_username }}</span> <i data-feather="chevron-down"
+                                        class="svg-icon"></i></span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
+                                <a class="dropdown-item" href="#" onclick="profileExec();"><i data-feather="user"
+                                        class="svg-icon mr-2 ml-1"></i>
+                                    My Profile</a>
+                                <a class="dropdown-item" href="#" onclick="$('#changePasswordModal').modal('show');"><i data-feather="credit-card"
+                                        class="svg-icon mr-2 ml-1"></i>
+                                    Change Password</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/logout"><i data-feather="power"
+                                        class="svg-icon mr-2 ml-1"></i>
+                                    Logout</a>
+                            </div>
+                        </li>
+                        <!-- ============================================================== -->
+                        <!-- User profile and search -->
+                        <!-- ============================================================== -->
+                    </ul>
+             <!--</div>-->
+            </nav>
+        </header>
+        <!-- ============================================================== -->
+        <!-- End Topbar header -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+
+        <!-- ============================================================== -->
+        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        <div class="page-wrapper">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="page-breadcrumb">
+                                <div class="row">
+                                    <div class="col-7 align-self-center">
+                                        <div class="d-flex align-items-center">
+                                            <nav aria-label="breadcrumb">
+                                                <ol  id="breadcrumbConfig" class="breadcrumb m-0 p-0">
+                                                    <li class="breadcrumb-item" aria-current="page"><a href="/">Dashboard</a>
+                                                    </li>
+                                                    <li class="breadcrumb-item active" onclick="mainConfigSection()" aria-current="page"><a href="#">Settings</a>
+                                                    </li>
+                                                </ol>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                    <div class="col-5 align-self-center">
+                                        <div class="customize-input float-right">
+                                            <div id="currentDate" class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius"></div>
+                                        </div>
+                                    </div>
+                                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Container fluid  -->
+            <!-- ============================================================== -->
+            <div class="container-fluid">
+                <div id="rmt" style="width:50%; margin:auto;">
+                    <h3>Status: <span id="status"></span></h3>
+                    <canvas id="canvasLed" width="50" height="50"></canvas>
+                    <button class="btn-primary" onclick="sendMQTT()">Switch</button>
+
+                    <div id="sett">
+
+                    </div>
+                    <button class="btn btn-primary" onclick="readSett()">Read</button>
+                </div>
+            </div>
+
+
+
+
+            </div>
+
+
+            <!-- ============================================================== -->
+            <!-- End Container fluid  -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- footer -->
+            <!-- ============================================================== -->
+            <footer class="footer text-center text-muted">
+                All Rights Reserved by Cloudatik. Designed</a>.
+            </footer>
+            <!-- ============================================================== -->
+            <!-- End footer -->
+            <!-- ============================================================== -->
+        </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- Modal -->
+    <div class="modal fade" id="summary" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Summary</h5><br>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="summaryModal" class="modal-body">
+            <table id="summaryTable" class="table">
+                 <thead>
+                          <tr>
+                            <th scope="col">Parameter</th>
+                            <th scope="col">Enabled</th>
+                            <th scope="col">Limit Low</th>
+                            <th scope="col">Limit High</th>
+                          </tr>
+                 </thead>
+                 <tbody id="bodySummaryTable">
+
+                 </tbody>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <div id="modalSpinner" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="confirmAlarm" type="button" onclick="submitToSaveAlarm();" class="btn btn-primary">Confirm</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- Modal -->
+    <div class="modal fade" id="myProfile" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">My Profile</h5><br>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="profileModal" class="modal-body">
+            <div id="profileCardSpinner" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+                    <div id="profileCard">
+
+                    </div>
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- EditModal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalEdit" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalEdit">Edit Profile</h5><br>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="profileModalEdit" class="modal-body">
+                    <div id="editProfileCard">
+                        <form id="editProfileForm">
+                            <div class="row">
+                                <label for="username" class="col-3">Username</label>
+                                <span id="userNameEdit" style="color:black;"></span>
+                            </div>
+                            <div class="row">
+                                <label for="name" class="col-3">Name</label>
+                                <input type="text" class="col-6" name="name" required >
+                            </div>
+                            <div class="row">
+                                <label for="company" class="col-3" class="">Company</label>
+                                <input type="text" class="col-6" name="company" required>
+                            </div>
+                            <div class="row">
+                                <label for="email" class="col-3" class="">Email</label>
+                                <input type="text" class="col-6" name="email" required>
+                            </div>
+                            <div class="row">
+                                <label for="phone" class="col-3" class="">Phone</label>
+                                <input type="text" class="col-6" name="phone" required>
+                            </div>
+
+                        </form>
+                    </div>
+        </div>
+          <div class="modal-footer">
+            <div id="spinnerProfileSave" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            <div id="savedProfileSuccess" style="display:none;" class="alert alert-success" role="alert"></div>
+            <div id="savedProfileFail" style="display:none;" class="alert alert-danger" role="alert"></div>
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="saveProfile" onclick="saveProfile();" class="btn btn-primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EditModal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalEdit" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="changePasswordTitle">Change Password</h5><br>
+
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="changePassword" class="modal-body">
+                    <div id="pass">
+                        <form id="formChangePass">
+                            <div class="row">
+                                <label for="oldPass" class="col-4">Old</label>
+                                <input type="password" class="col-6" name="oldPass">
+                            </div>
+                            <div class="row">
+                                <label for="newPass" class="col-4">New</label>
+                                <input type="password" class="col-6" name="newPass">
+                            </div>
+                            <div class="row">
+                                <label for="confirmPass" class="col-4" class="">Confirm</label>
+                                <input type="password" class="col-6" name="confirmPass">
+                            </div>
+
+                        </form>
+                    </div>
+        </div>
+          <div class="modal-footer">
+            <div id="savedPassSuccess" style="display:none;" class="alert alert-success" role="alert"></div>
+            <div id="savedPassFail" style="display:none;" class="alert alert-danger" role="alert"></div>
+
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button id="savePass" onclick="savePass();" class="btn btn-primary" disabled>Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="{% static 'blog/assets/libs/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/popper.js/dist/umd/popper.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+    <!-- apps -->
+    <!-- apps -->
+    <script src="{% static 'blog/js/app-style-switcher.js' %}"></script>
+    <script src="{% static 'blog/js/feather.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js' %}"></script>
+    <script src="{% static 'blog/js/sidebarmenu.js' %}"></script>
+    <!--Custom JavaScript -->
+    <script src="{% static 'blog/js/custom.min.js' %}"></script>
+    <!--This page JavaScript -->
+    <script src="{% static 'blog/assets/extra-libs/c3/d3.min.js' %}"></script>
+    <script src="{% static 'blog/assets/extra-libs/c3/c3.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/chartist/dist/chartist.min.js' %}"></script>
+    <script src="{% static 'blog/assets/libs/chartist-plugin-tooltips/dist/chartist-plugin-tooltip.min.js' %}"></script>
+    <script src="{% static 'blog/assets/extra-libs/jvector/jquery-jvectormap-2.0.2.min.js' %}"></script>
+    <script src="{% static 'blog/assets/extra-libs/jvector/jquery-jvectormap-world-mill-en.js' %}"></script>
+    <script src="{% static 'blog/js/pages/dashboards/dashboard1.min.js' %}"></script>
+    <script src="{% static 'blog/js/steelseries.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script src="{%  static 'blog/assetsLogin_user/js/owl.carousel.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/metisMenu.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/jquery.slimscroll.min.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/jquery.slicknav.min.js' %}"></script>
+
+
+    <!-- others plugins -->
+    <script src="{%  static 'blog/assetsLogin_user/js/plugins.js' %}"></script>
+    <script src="{%  static 'blog/assetsLogin_user/js/scripts.js' %}"></script>
+
+
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    username = '{{ user.get_username }}';
+
+        $(document).ready(function(){
+            document.getElementById('currentDate').innerHTML = moment().format('MMM DD');
+             led1 = new steelseries.Led('canvasLed', {
+                            width: 50,
+                            height: 50
+                            });
+             led1.setLedColor(steelseries.LedColor.RED_LED);
+            connectMqtt();
+          });
+</script>
+
+
+<script type="text/javascript">
+
+function connectMqtt(){
+
+    // Create a client instance
+    client = new Paho.MQTT.Client("mqtt.hphttech.com", Number(9001), "bekzat");
+
+    // set callback handlers
+    //client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
+
+    // connect the client
+    client.connect({onSuccess:onConnect, useSSL: true});
+
+    // called when the client connects
+    function onConnect() {
+    // Once a connection has been made, make a subscription and send a message.
+      serial = "HT0098";
+      console.log("connected");
+      client.subscribe("World");
+      client.subscribe("env/ack/HT0098");
+      client.subscribe("env/aswa/HT0098");
+      client.subscribe("env"  + "/mprp/" + serial);
+      message = new Paho.MQTT.Message("");
+      message.destinationName = "env/hb/HT0098";
+      client.send(message);
+    }
+}
+
+    function onMessageArrived(message) {
+          console.log("Message Arrived: " + message.payloadString);
+          console.log("Topic:     " + message.destinationName);
+          console.log(message.destinationName.split("/")[1]);
+          if(message.destinationName.split("/")[1] == "ack"){
+            status(message.payloadString);
+          }
+          if(message.destinationName.split("/")[1] == "aswa"){
+            state(message.payloadString);
+          }
+          if(message.destinationName.split("/")[1] == "mprp"){
+            sett(message.payloadString);
+          }
+
+}
+
+function sett(data){
+ var data = JSON.parse(data);
+ var html = `
+itv:` + data.itv +`<br>
+md:` + data.md +`<br>
+ttl:` + data.ttl +`<br>
+tth:` + data.tth +`<br>
+htl:` + data.htl +`<br>
+hth:` + data.hth+`<br>
+do0:` + data.do0;
+
+document.getElementById('sett').innerHTML = html;
+}
+function status(data){
+    var data = JSON.parse(data);
+
+    if(data.online){
+        document.getElementById('status').innerHTML = `Online`
+    }else{
+        document.getElementById('status').innerHTML = `Offline`
+    }
+
+    if(data.do0){
+        led1.setLedColor(steelseries.LedColor.GREEN_LED);
+        led1.setLedOnOff(true)
+        document.getElementById('status').className = "on";
+    }else{
+        led1.setLedColor(steelseries.LedColor.RED_LED);
+        led1.setLedOnOff(false)
+        document.getElementById('status').className = "off";
+    }
+}
+
+function state(data){
+    var data = JSON.parse(data);
+    if(data.do0){
+        led1.setLedColor(steelseries.LedColor.GREEN_LED);
+        led1.setLedOnOff(true);
+        document.getElementById('status').className = "on";
+    }else{
+        led1.setLedColor(steelseries.LedColor.RED_LED);
+        led1.setLedOnOff(false);
+        document.getElementById('status').className = "off";
+    }
+
+}
+function sendMQTT(){
+    if(document.getElementById("status").className == "on"){
+            message = new Paho.MQTT.Message('{"do0":"0"}');
+        message.destinationName = "env/aswr/HT0098";
+        client.send(message);
+    }else{
+        message = new Paho.MQTT.Message('{"do0":"1"}');
+        message.destinationName = "env/aswr/HT0098";
+        client.send(message);
+    }
+
+    console.log("sent");
+
+}
+
+function readSett(){
+    message = new Paho.MQTT.Message('{"do0":"0"}');
+    message.destinationName = "env/mprd/HT0098";
+    client.send(message);
+}
+
+</script>
+
+</body>
+
+</html>

@@ -49,7 +49,7 @@ for(var b=0; b< nodes.length; b++){
                 //data: "check",
                 success: function(data){
                     //addData(stackedLine, moment().format('LT'), data[0].data.v)
-
+                    data = reConstructJSON(data);
                     //console.log('Updated: '+ data[0].serial);
                     for(var i=0; i< data.length; i++){
                         var chartTemp = 'chart_' + data[i].id;

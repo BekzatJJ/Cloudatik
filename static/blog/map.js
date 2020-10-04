@@ -1,14 +1,17 @@
+        window.mapData= {};
+        window.mapMarkers = {};
+
 function mapClickEvent(){
-            var dash = document.getElementById('dashboard-content');
+            var dash = document.getElementById('section_Dashboard');
             var map = document.getElementById('map-content');
 
             dash.setAttribute('style', 'display:none');
             map.setAttribute('style', 'display:block');
 
+    if(Object.keys(mapData).length == 0 && $('#mapWrapper').length){
+        callMap();
+    }
 
-    window.mapData= {};
-    window.mapMarkers = {};
-    callMap();
 }
 
 
@@ -19,6 +22,7 @@ function callMap(){
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
+                    console.log('map updated');
                     mapData = data;
                     var spinner = document.getElementById('mapSpinner');
                     spinner.classList.remove('lds-roller');
@@ -30,7 +34,7 @@ function callMap(){
 }
 
 function mapSet(data){
-
+    document.getElementById('mapWrapper').innerHTML = `<div id="map" style="height:400px;"></div>`;
     var map = L.map('map').setView([5.3249, 100.2807], 50);
              L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -66,20 +70,29 @@ function mapSet(data){
 
     for(var i=0; i< data.node.length; i++){
         var alarm = "";
+
         for(var x=0; x< data.alarm.length; x++){
             if(data.node[i].serial == data.alarm[x].serial){
                 alarm = "alarm"
             }
         }
+
+        var lat = data.node[i].location_lat;
+        var long = data.node[i].location_long;
+
+        if(lat == null || long == null){
+            lat = "6.075008";
+            long = "102.669476";
+        }
         if(moment(data.node[i].last_update).add(8, 'hours').format() < moment().subtract(10,'minutes').format()){
-           mapMarkers["marker_"+data.node[i].serial] = L.marker(new L.LatLng(data.node[i].location_lat, data.node[i].location_long),{
+           mapMarkers["marker_"+data.node[i].serial] = L.marker(new L.LatLng(lat, long),{
                 icon: new L.DivIcon({
                     className: 'my-div-icon-off '+ alarm,
                     html: '<span class="'+data.node[i].serial+'_'+data.node[i].device_id+'">'+ data.node[i].serial +'</span>'
                 })
             });
         }else{
-           mapMarkers["marker_"+data.node[i].serial] = L.marker(new L.LatLng(data.node[i].location_lat, data.node[i].location_long),{
+           mapMarkers["marker_"+data.node[i].serial] = L.marker(new L.LatLng(lat, long),{
                 icon: new L.DivIcon({
                     className: 'my-div-icon-on '+alarm,
                     html: '<span class="'+data.node[i].serial+'_'+data.node[i].device_id+'">'+ data.node[i].serial +'</span>'
@@ -110,20 +123,53 @@ function mapSet(data){
              map.fitBounds(markers.getBounds());
 }
 
+//Data
 function callMapData(id){
+    //Data
              $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardDataV2/' + id + '/',
+                url: 'https://api.cl-ds.com/getDashboardDataV3/' + id + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
-                    var html = `<span>`+data[0].serial+`</span> <br>
-                    <span>Last update: `+moment(data[0].data.datetime).calendar() +`</span><br><br>`;
+                    var html = `<span>`+data.chart_prop[0].serial+`</span> <br>
+                    <span>Last update: `+moment(data.data.datetime).calendar() +`</span><br><br>`;
 
-                    for(var i=0; i<data.length; i++){
-                        html += `<span>`+data[i].parameter+`:  `+ data[i].data[data[i].parameter]+`</span><br>`
+                    for(var i=0; i<data.chart_prop.length; i++){
+                        if(data.chart_prop[i].chart_title == null){
+                            var label = data.chart_prop[i].label;
+                        }else{
+                            var label = data.chart_prop[i].chart_title;
+                        }
+                        var val = parseFloat(data.data[data.chart_prop[i].parameter]);
+                        html += `<tr><td style="border-right: 1px solid black;">`+label+`</td><td style="border-right: 1px solid black;">  `+ val.toFixed(2) +`</td><td style="border-right: 1px solid black;"><button class="btn">Details</button></td><td><button class="btn">ACK</button></td></tr>`
                     }
-                    mapMarkers["marker_" + data[0].serial]._popup.setContent(html);
+                    var table = `
+                        <table>
+                           <tbody>`+
+                                html +
+                           `</tbody>
+                        </table>
+                    `;
+                    mapMarkers["marker_" + data.chart_prop[0].serial]._popup.setContent(table);
                 }
             });
+    //Alarm
+
 }
+
+
+//Update one min
+setInterval(function(){
+
+    if(document.getElementById('map-content').style.display === 'block' && $('#mapWrapper').length){
+        //Request Ajax
+        callMap();
+    }else{
+        console.log('not active Map');
+    }
+
+
+
+
+}, 60000);

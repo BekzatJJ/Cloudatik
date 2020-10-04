@@ -13,7 +13,8 @@ urlpatterns = [
     path('admin/dashboard', views.adminDash, name="blog-admin"),
     path('admin/new/node', views.newNode, name="blog-newNode"),
     path('admin/new/sensor', views.newSensor, name="blog-newSensor"),
-    path('map/', views.map, name="blog-map")
+    path('map/', views.map, name="blog-map"),
+    path('rmt/', views.rmt, name="blog-rmt")
 
 
 ]

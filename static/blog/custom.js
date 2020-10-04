@@ -128,15 +128,57 @@ setInterval(function(){
 }, 60000);
 //abort all and current RequestAjax  after interrupt , resume all aborted requests
 
+/*
+        "chart_prop":[{}],
+        "chart_title": "",
+        "data":[{}],
+        "id":"",
+        "parameter":"",
+        "section":"",
+        "serial":""
+*/
+function reConstructJSON(data){
+    var newData = [{}];
+
+    for(var i=0; i<data.chart_prop.length; i++){
+        var chartProp = [];
+        chartProp[0] = data.chart_prop[i];
+        var chart_title = data.chart_prop[i].chart_title;
+        var id = data.chart_prop[i].serial + "_" + data.chart_prop[i].parameter;
+        var parameter = data.chart_prop[i].parameter;
+        var section = "";
+        var serial = data.chart_prop[i].serial;
+        var nodeData = [{}];
+        for(var x=0; x < data.data.length; x++){
+            nodeData[x] = {
+                "datetime": data.data[x].datetime,
+                [parameter]: data.data[x][parameter]
+            }
+        }
+
+        newData[i] = {
+            "chart_prop": chartProp,
+            "chart_title": chart_title,
+            "data": nodeData,
+            "id": id,
+            "parameter": parameter,
+            "section": section,
+            "serial": serial
+        }
+    }
+
+    console.log(newData);
+    return newData
+}
 function requestAjax(id){
     var ajaxCounts = Object.keys(ajaxRequests).length;
     ajaxRequests[ajaxCounts] = $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardDataSetIntervalV2/' + id + '/',
+                url: 'https://api.cl-ds.com/getDashboardDataSetIntervalV3/' + id + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
-
+                    data = reConstructJSON(data);
                     //console.log('success for  '+ data[0].serial);
                     var nodeProcessed = document.getElementsByClassName(data[0].serial);
                     ajaxNodeProcess[nodeProcessed[0].id] = true;
@@ -481,11 +523,11 @@ function requestAjaxOffline(id){
     var ajaxCounts = Object.keys(ajaxRequests).length;
     ajaxRequests[ajaxCounts] = $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardData/' + id + '/',
+                url: 'https://api.cl-ds.com/getDashboardDataV3/' + id + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
-
+                    data = reConstructJSON(data);
                     //console.log('success for  '+ data[0].serial);
                     var nodeProcessed = document.getElementsByClassName(data[0].serial);
                     ajaxNodeProcess[nodeProcessed[0].id] = true;
@@ -547,7 +589,7 @@ function requestAjaxOffline(id){
                                 }else{
                                     if(data[i].chart_prop[0].unit == null){var unit = '';}else{var unit = data[i].chart_prop[0].unit;}
                                     var label= data[i].chart_prop[0].label;
-                                    var category= data[i].chart_prop[0].category;
+                                    var category= data[i].chart_prop[0].chart_category;
                                 }
                           var lcdId = 'lcd_'+data[i].id;
 
