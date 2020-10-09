@@ -44,12 +44,12 @@ for(var b=0; b< nodes.length; b++){
             //Request Ajax
          $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardDataV2/' + nodes[b].id + '/',
+                url: 'https://api.cl-ds.com/getDashboardDataV3/' + nodes[b].id + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
                     //addData(stackedLine, moment().format('LT'), data[0].data.v)
-                    data = reConstructJSON(data);
+                    data = reConstructSingleJSON(data);
                     //console.log('Updated: '+ data[0].serial);
                     for(var i=0; i< data.length; i++){
                         var chartTemp = 'chart_' + data[i].id;

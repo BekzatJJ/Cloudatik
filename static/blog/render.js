@@ -280,11 +280,68 @@ function createNodeCards(data){
 
         //Remote ctrl permission
          if(data.node[i].remote){
-            var htmlRemoteCtrlLink = `<li class="nav-item ">
+            var htmlRemoteCtrlLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'remote')" class="nav-item">
                                         <a class="nav-link" href="#">Remote Control</a>
                                     </li>`;
+            var htmlRemoteSection = `<section id="section_${data.node[i].device_id}_remote" class="sectionNodeLinks" style="display:none;">
+                                      <div id="connectionAlert_${data.node[i].device_id}" class="connectionAlert">
+
+                                      </div>
+
+                                      <div id="${data.node[i].device_id}_control" class="container-fluid">
+                                        <div class="card" style="display:block; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                                          <div id="remoteHeader" class="card-header" style="text-align:center;"></div>
+                                          <div id="remoteSwitch" class="d-flex" style="justify-content: space-around;">
+                                            <canvas id="canvasLed" width="100" height="100"></canvas>
+                                            <div style="display: flex; align-items: center; justify-content: center;"><button onclick="switchToggle();" class="btn btn-success">Toggle</button></div>
+
+                                          </div>
+                                          <hr>
+
+                                          <div id="remoteSettings" style="display:grid;">
+                                            <span style="text-align:center;">Settings</span>
+                                              <div class="form-group row" style="margin:auto; margin-top:20px;">
+                                                <label for="remoteInterval" class="col-md-4 col-form-label">Interval</label>
+                                                <div class="col-md-6">
+                                                  <input type="text"  name="remoteInterval" placeholder="seconds">sec
+                                                </div>
+                                              </div>
+
+                                              <div class="form-group row" style="margin:auto; margin-top:20px;">
+                                                <label for="modeBtn" class="col-md-4 col-form-label">Mode</label>
+                                                <div class="col-md-6">
+                                                  <div class="btn-group">
+                                                        <button id="mode_1" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn">Remote</button>
+                                                        <button id="mode_2" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn" data-toggle="collapse" data-target="#tth-content" aria-expanded="false" aria-controls="tth-content" >T-TH</button>
+                                                        <button id="mode_3" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn" data-toggle="collapse" data-target="#tt-content" aria-expanded="false" aria-controls="tt-content" >T-T</button>
+                                                        <button id="mode_4" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn"  data-toggle="collapse" data-target="#th-content" aria-expanded="false" aria-controls="th-content">T-H</button>
+                                                  </div>
+
+                                                </div>
+                                              </div>
+                                              <div class="slider-holder" style="margin:auto; margin-top:20px; width:50%;">
+                                                <div class="collapse" id="tth-content">
+                                                    <div style="margin:20px;" id="slider-tth-t"></div>
+                                                    <div style="margin:20px;" id="slider-tth-h"></div>
+                                                  </div>
+                                                  <div class="collapse" id="tt-content">
+                                                    <div style="margin:20px;" id="slider-tt"></div>
+                                                  </div>
+                                                  <div class="collapse" id="th-content">
+                                                    <div style="margin:20px;" id="slider-th"></div>
+                                                  </div>
+                                              </div>
+                                              <div class="form-group row" style="margin:auto; margin-top:20px;">
+                                                <button class="btn btn-success">Save Settings</button>
+                                              </div>
+                                          </div>
+                                        </div>
+
+                                      </div>
+                                    </section>`;
          }else{
              var htmlRemoteCtrlLink = ``;
+             var htmlRemoteSection = ``;
          }
 
 
@@ -374,6 +431,7 @@ function createNodeCards(data){
 
             htmlRawDataSection+
 
+            htmlRemoteSection+
 
 
             `<section id="section_${data.node[i].device_id}_charts" class="sectionNodeLinks" style="display:none;">
@@ -469,6 +527,8 @@ function createNodeCards(data){
         secondLayer.innerHTML += htmlSection;
 
     }
+    //collapse
+
 
     //Salute and dateBadge
             var salutation = document.getElementsByClassName('salutation');

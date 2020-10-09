@@ -7763,7 +7763,7 @@ Preloader
 *******************/
 .topbar {
   position: relative;
-  z-index: 50;
+  z-index: 5000;
   transition: 0.2s ease-in;
   background: transparent; }
   .topbar .navbar-collapse {
@@ -9415,6 +9415,9 @@ color: white;
   100%{opacity: 1;}
 }
 
+.my-div-icon-off{
+  padding-top: 10px;
+}
 .my-div-icon-off span{
   padding: 3px;
   color: white;
@@ -9423,7 +9426,7 @@ color: white;
   border-radius: 5px;
 }
 
-.my-div-icon-off span:after{
+/*.my-div-icon-off span:after{
     content: '';
     position: absolute;
     width: 0;
@@ -9431,18 +9434,20 @@ color: white;
     border-right: 20px solid transparent;
     border-top: 20px solid #98150b;
     clear: both;
+}*/
+.my-div-icon-on{
+  padding-top: 10px;
 }
-
 
 .my-div-icon-on span{
   padding: 3px;
   color: white;
-  background-color: #31e238;
-    border-top: 2px solid #31e238;
+  background-color: #168c1b;
+    border-top: 2px solid #168c1b;
   border-radius: 5px;
 }
 
-.my-div-icon-on span:after{
+/*.my-div-icon-on span:after{
     content: '';
     position: absolute;
     width: 0;
@@ -9450,7 +9455,7 @@ color: white;
     border-right: 20px solid transparent;
     border-top: 20px solid #31e238;
     clear: both;
-}
+}*/
 
 
 @media only screen and (max-width: 500px){
@@ -9458,3 +9463,6 @@ color: white;
   width:100%;
 }
 }
+
+
+

@@ -170,6 +170,40 @@ function reConstructJSON(data){
     console.log(newData);
     return newData
 }
+
+function reConstructSingleJSON(data){
+    var newData = [{}];
+
+    for(var i=0; i<data.chart_prop.length; i++){
+        var chartProp = [];
+        chartProp[0] = data.chart_prop[i];
+        var chart_title = data.chart_prop[i].chart_title;
+        var id = data.chart_prop[i].serial + "_" + data.chart_prop[i].parameter;
+        var parameter = data.chart_prop[i].parameter;
+        var section = "";
+        var serial = data.chart_prop[i].serial;
+        var nodeData = {};
+            nodeData = {
+                "datetime": data.data.datetime,
+                [parameter]: data.data[parameter]
+            }
+
+
+        newData[i] = {
+            "chart_prop": chartProp,
+            "chart_title": chart_title,
+            "data": nodeData,
+            "id": id,
+            "parameter": parameter,
+            "section": section,
+            "serial": serial
+        }
+    }
+
+    console.log(newData);
+    return newData
+}
+
 function requestAjax(id){
     var ajaxCounts = Object.keys(ajaxRequests).length;
     ajaxRequests[ajaxCounts] = $.ajax({

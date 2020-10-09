@@ -34,13 +34,22 @@ function callMap(){
 }
 
 function mapSet(data){
-    document.getElementById('mapWrapper').innerHTML = `<div id="map" style="height:400px;"></div>`;
+    document.getElementById('mapWrapper').innerHTML = `<div id="map" style="height: calc(100vh - 100px);"></div>`;
     var map = L.map('map').setView([5.3249, 100.2807], 50);
              L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 }).addTo(map);
 
+    L.easyButton('fa fa-crosshairs', function(btn, map){
+            map.setView(markers.getBounds().getCenter());
+             map.fitBounds(markers.getBounds());
+        }).addTo(map);
+
     var markers = L.markerClusterGroup({
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        spiderfyOnMaxZoom: true,
+        spiderfyDistanceMultiplier: 2,
         iconCreateFunction: function (cluster) {
             var markers = cluster.getAllChildMarkers();
             var statusAll = true; //all markers are online
@@ -84,7 +93,14 @@ function mapSet(data){
             lat = "6.075008";
             long = "102.669476";
         }
-        if(moment(data.node[i].last_update).add(8, 'hours').format() < moment().subtract(10,'minutes').format()){
+        if(data.node[i].last_update == null){
+            mapMarkers["marker_"+data.node[i].serial] = L.marker(new L.LatLng(lat, long),{
+                icon: new L.DivIcon({
+                    className: 'my-div-icon-off '+ alarm,
+                    html: '<span class="'+data.node[i].serial+'_'+data.node[i].device_id+'">'+ data.node[i].serial +'</span>'
+                })
+            });
+        }else if(moment(data.node[i].last_update).add(8, 'hours').format() < moment().subtract(10,'minutes').format()){
            mapMarkers["marker_"+data.node[i].serial] = L.marker(new L.LatLng(lat, long),{
                 icon: new L.DivIcon({
                     className: 'my-div-icon-off '+ alarm,
@@ -126,41 +142,61 @@ function mapSet(data){
 //Data
 function callMapData(id){
     //Data
-             $.ajax({
+            $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardDataV3/' + id + '/',
+                url: 'https://api.cl-ds.com/getAlarm/' + id + '/?format=json',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
-                success: function(data){
-                    var html = `<span>`+data.chart_prop[0].serial+`</span> <br>
-                    <span>Last update: `+moment(data.data.datetime).calendar() +`</span><br><br>`;
+                success: function(alarm){
+                    dataAlarm = alarm;
+                                             $.ajax({
+                                                    type: "GET",
+                                                    url: 'https://api.cl-ds.com/getDashboardDataV3/' + id + '/',
+                                                    headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                                                    //data: "check",
+                                                    success: function(data){
+                                                        var html = `<span>`+data.chart_prop[0].serial+`</span> <br>
+                                                        <span>Last update: `+moment(data.data.datetime).calendar() +`</span><br><br>`;
 
-                    for(var i=0; i<data.chart_prop.length; i++){
-                        if(data.chart_prop[i].chart_title == null){
-                            var label = data.chart_prop[i].label;
-                        }else{
-                            var label = data.chart_prop[i].chart_title;
-                        }
-                        var val = parseFloat(data.data[data.chart_prop[i].parameter]);
-                        html += `<tr><td style="border-right: 1px solid black;">`+label+`</td><td style="border-right: 1px solid black;">  `+ val.toFixed(2) +`</td><td style="border-right: 1px solid black;"><button class="btn">Details</button></td><td><button class="btn">ACK</button></td></tr>`
-                    }
-                    var table = `
-                        <table>
-                           <tbody>`+
-                                html +
-                           `</tbody>
-                        </table>
-                    `;
-                    mapMarkers["marker_" + data.chart_prop[0].serial]._popup.setContent(table);
+                                                        for(var i=0; i<data.chart_prop.length; i++){
+                                                            if(data.chart_prop[i].chart_title == null){
+                                                                var label = data.chart_prop[i].label;
+                                                            }else{
+                                                                var label = data.chart_prop[i].chart_title;
+                                                            }
+                                                            var val = parseFloat(data.data[data.chart_prop[i].parameter]);
+
+                                                            //Alarm lookfor
+
+                                                            html += `<tr><td style="padding: 0px; padding-right: 2px; vertical-align: middle;">`+label+`</td>
+                                                                    <td style="padding: 0px; padding-right: 2px; vertical-align: middle;">  `+ val.toFixed(2) +`</td>
+                                                                    <td style="padding: 0px; padding-right: 2px; vertical-align: middle;"><button class="btn" data-toggle="popoverClick" title="Alarm Details" data-content="No alarm details">Details</button></td>
+                                                                    <td style="padding: 0px; padding-right: 2px; vertical-align: middle;><button class="btn">ack</button></td></tr>`
+                                                        }
+                                                        var table = `
+                                                            <table class="table">
+                                                               <tbody>`+
+                                                                    html +
+                                                               `</tbody>
+                                                            </table>
+                                                        `;
+                                                        mapMarkers["marker_" + data.chart_prop[0].serial]._popup.setContent(table);
+                                                        $('[data-toggle="popoverClick"]').popover();
+                                                    }
+
+                                                });
                 }
             });
+
+
+
     //Alarm
 
 }
 
 
 //Update one min
-setInterval(function(){
+/*setInterval(function(){
 
     if(document.getElementById('map-content').style.display === 'block' && $('#mapWrapper').length){
         //Request Ajax
@@ -172,4 +208,4 @@ setInterval(function(){
 
 
 
-}, 60000);
+}, 60000);*/
