@@ -293,22 +293,22 @@ function createNodeCards(data){
                                           <div id="remoteHeader" class="card-header" style="text-align:center;"></div>
                                           <div id="remoteSwitch" class="d-flex" style="justify-content: space-around;">
                                             <canvas id="canvasLed" width="100" height="100"></canvas>
-                                            <div style="display: flex; align-items: center; justify-content: center;"><button onclick="switchToggle();" class="btn btn-success">Toggle</button></div>
+                                            <div style="display: flex; align-items: center; justify-content: center;"><button id="switch-refresh" onclick="switchToggle();" class="btn btn-success"></button></div>
 
                                           </div>
                                           <hr>
 
                                           <div id="remoteSettings" style="display:grid;">
                                             <span style="text-align:center;">Settings</span>
-                                              <div class="form-group row" style="margin:auto; margin-top:20px;">
-                                                <label for="remoteInterval" class="col-md-4 col-form-label">Interval</label>
+                                              <div class="form-group row" style=" margin-top:20px;">
+                                                <label for="remoteInterval" class="col-md-2 col-form-label">Interval(sec)</label>
                                                 <div class="col-md-6">
-                                                  <input type="text"  name="remoteInterval" placeholder="seconds">sec
+                                                  <input type="text"  name="remoteInterval" placeholder="seconds">
                                                 </div>
                                               </div>
 
-                                              <div class="form-group row" style="margin:auto; margin-top:20px;">
-                                                <label for="modeBtn" class="col-md-4 col-form-label">Mode</label>
+                                              <div class="form-group row" style=" margin-top:20px;">
+                                                <label for="modeBtn" class="col-md-2 col-form-label">Mode</label>
                                                 <div class="col-md-6">
                                                   <div class="btn-group">
                                                         <button id="mode_1" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn">Remote</button>
@@ -319,20 +319,44 @@ function createNodeCards(data){
 
                                                 </div>
                                               </div>
-                                              <div class="slider-holder" style="margin:auto; margin-top:20px; width:50%;">
+
                                                 <div class="collapse" id="tth-content">
-                                                    <div style="margin:20px;" id="slider-tth-t"></div>
-                                                    <div style="margin:20px;" id="slider-tth-h"></div>
-                                                  </div>
-                                                  <div class="collapse" id="tt-content">
-                                                    <div style="margin:20px;" id="slider-tt"></div>
-                                                  </div>
-                                                  <div class="collapse" id="th-content">
-                                                    <div style="margin:20px;" id="slider-th"></div>
-                                                  </div>
-                                              </div>
-                                              <div class="form-group row" style="margin:auto; margin-top:20px;">
-                                                <button class="btn btn-success">Save Settings</button>
+                                                    <div class="form-group row" style=" margin-top:20px;">
+                                                      <label for="slider-tth-t" class="col-md-2 col-form-label">Temperature</label>
+                                                      <div class="col-md-6">
+
+                                                        <div class="d-inline-block" style="margin:13px; width:80%;" id="slider-tth-t"></div>
+
+                                                      </div>
+                                                    </div>
+                                                    <div class="form-group row" style=" margin-top:40px;">
+                                                      <label for="slider-tth-h" class="col-md-2 col-form-label">Humidity</label>
+                                                      <div class="col-md-6">
+                                                        <div style="margin:13px;" id="slider-tth-h"></div>
+                                                      </div>
+                                                    </div>
+                                                </div>
+                                                <div class="collapse" id="tt-content">
+                                                    <div class="form-group row" style=" margin-top:20px;">
+                                                      <label for="slider-tt" class="col-md-2 col-form-label">Temperature</label>
+                                                      <div class="col-md-6">
+                                                        <div style="margin:13px;" id="slider-tt"></div>
+                                                      </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="collapse" id="th-content">
+                                                    <div class="form-group row" style=" margin-top:20px;">
+                                                      <label for="slider-th" class="col-md-2 col-form-label">Humidity</label>
+                                                      <div class="col-md-6">
+                                                        <div style="margin:13px;" id="slider-th"></div>
+                                                      </div>
+                                                    </div>
+
+                                                </div>
+
+                                              <div class="form-group row" style="margin:auto; margin-top:20px; margin-bottom:20px;">
+                                                <button onclick="writeSettings();" class="btn btn-success">Save Settings</button>
                                               </div>
                                           </div>
                                         </div>

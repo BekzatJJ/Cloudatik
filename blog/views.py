@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from .models import Post
 from django.core import serializers
 from django.forms.models import model_to_dict
+from django.core import serializers
+from blog.models import ConfigUser
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as user_login
@@ -54,7 +56,8 @@ def newSensor(request):
 
 @login_required
 def main(request):
-    return render(request, 'blog/dashboard.html')
+    logo = list(ConfigUser.objects.filter(username__username = request.user.username).values_list("logo", flat=True))
+    return render(request, 'blog/dashboard.html', {"logo": json.dumps(logo)})
 
 @login_required
 def config(request, device_id):
