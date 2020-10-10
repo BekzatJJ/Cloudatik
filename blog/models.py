@@ -62,4 +62,8 @@ class ConfigUser(models.Model):
     class Meta:
         app_label = 'blog'
         managed = False
+<<<<<<< HEAD
         db_table = 'config_user'
+=======
+        db_table = 'config_user'
+>>>>>>> cdb6dfb226aff11894c657c11c72a605f65258c6

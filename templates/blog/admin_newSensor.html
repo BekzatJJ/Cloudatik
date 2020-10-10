@@ -303,19 +303,19 @@
                                 </div>
 
                                 <div class="col-sm-3">
-                                    <input type="checkbox" name="slider">
+                                    <input type="checkbox" checked name="slider">
                                     <label for="slider" class="">Slider Enable</label>
 
                                 </div>
 
                                 <div class="col-sm-3">
-                                  <input type="checkbox" name="visual">
+                                  <input type="checkbox" checked name="visual">
                                   <label for="visual" class="">Visual Enable</label>
 
                                 </div>
 
                                 <div class="col-sm-3">
-                                  <input type="checkbox" name="chart">
+                                  <input type="checkbox" checked name="chart">
                                   <label for="chart" class="">Chart Enable</label>
 
                                 </div>
@@ -330,8 +330,8 @@
 
                                 <div class="col-sm-4">
                                   <label for="visualization" class="col-form-label" style="margin-bottom:0;">Visualization</label>
-                                  <select id="visualization" class="sensorVisualization" name="visualization">
-
+                                  <select id="visualization" style="width:90%;" class="sensorVisualization" name="visualization">
+                                    <option value="-">-</option>
                                   </select>
                                 </div>
 
@@ -581,10 +581,15 @@ function requestNodeList(){
                     for(var x=0; x< parentCategory.length; x++){
                             for(var i=0; i<data.category.length; i++){
                             var opt =  document.createElement('option');
-                            opt.value= data.category[i];
+                            opt.value = data.category[i];
+                            if(data.category[i] == "raw_monitor"){
+                                opt.setAttribute('selected', true);
+                            }
                             opt.innerHTML = data.category[i];
                             parentCategory[x].appendChild(opt);
                         }
+                        parentCategory[x].value = 'raw_monitor';
+
                     }
 
 
@@ -597,6 +602,7 @@ function requestNodeList(){
                             opt.innerHTML = data.visualization[i];
                             parentVisual[x].appendChild(opt);
                         }
+                        parentVisual[x].value = '-';
                     }
 
 
@@ -705,7 +711,17 @@ $.ajax({
 function addNewSensor(){
     var cloned = document.getElementById('firstSensor');
     var addPlace = document.getElementById('addedSensor');
-    addPlace.innerHTML += cloned.innerHTML;
+    var html = cloned.innerHTML;
+    var tempElement = document.createElement('div');
+    tempElement.innerHTML = html;
+    addPlace.appendChild(tempElement);
+
+    var total = document.getElementsByClassName('sensorsCount');
+    for(var i=1; i<total.length; i++){
+        total[i].firstElementChild.innerHTML = 'Sensor '+ eval(i+1);
+    }
+
+
 }
 
 function removeSensor(){

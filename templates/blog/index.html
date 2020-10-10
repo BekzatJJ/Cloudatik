@@ -106,7 +106,7 @@
 
                     </ul>
                     <!-- ============================================================== -->
-
+                    <a class="navbar-nav mr-auto" href="/"><img id="logo" src="" width="140" height="90"></a>
                     <!-- Right side toggle and nav items -->
                     <!-- ============================================================== -->
                     <ul class="navbar-nav float-right mr-3 pr-1">
@@ -394,6 +394,7 @@
         var username = '{{ user.get_username }}';
         var logo = '{{ logo | safe}}';
         logo = logo.split(/"/)[1];
+
         window.profile = {};
 
         function dashLayout(){
@@ -530,7 +531,7 @@
 
         $(document).ready(function(){
 
-
+            document.getElementById('logo').src = "static/blog/"+ logo;
 
             var salutation = document.getElementsByClassName('salutation');
             for(var i=0; i< salutation.length; i++){
