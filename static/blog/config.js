@@ -8,7 +8,7 @@ function requestConfigAlarm(){
 
      $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getAlarmProp/'+ device_id + '/' + username,
+                url: 'https://api.cl-ds.com/getAlarmPropV3/'+ device_id + '/' + username,
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
@@ -51,12 +51,14 @@ function renderConfigAlarm(data){
         if(data.alarm_prop[i].slider_category == "slider"){
             var controller = `<div id="${data.alarm_prop[i].parameter}_slider" class="slider" style="margin-bottom:50px;"></div>
 
-                                <span id="${data.alarm_prop[i].parameter}_lowLabel" class="slider-labels" style="float:left;"><div style="width:50%;">Min <input type="text" class="form-control" name="${data.alarm_prop[i].parameter}_min"></div></span>
-                                <span id="${data.alarm_prop[i].parameter}_highLabel" class="slider-labels" style="float:right;"><div class="" style="width:50%; float:right;"><span style="float:right;">Max</span> <input type="text" class="form-control" name="${data.alarm_prop[i].parameter}_max"></div></span>`;
+                                <span id="${data.alarm_prop[i].parameter}_lowLabel" class="slider-labels" style="float:left;"><div style="width:50%;">Min <input type="text" class="form-control minMaxInputs" name="${data.alarm_prop[i].parameter}_min"></div></span>
+                                <span id="${data.alarm_prop[i].parameter}_highLabel" class="slider-labels" style="float:right;"><div class="" style="width:50%; float:right;"><span style="float:right;">Max</span> <input type="text" class="minMaxInputs form-control" name="${data.alarm_prop[i].parameter}_max"></div></span>`;
         }else if(data.alarm_prop[i].slider_category == "switch"){
             var controller = `<div id="${data.alarm_prop[i].parameter}_switch" class="switch" style="margin-bottom:25px;"></div>`;
         }else if(data.alarm_prop[i].slider_category == "threshold"){
-            var controller = `<div id="${data.alarm_prop[i].parameter}_threshold" class="threshold" style="margin-bottom:50px;"></div>`;
+            var controller = `<div id="${data.alarm_prop[i].parameter}-threshold" class="threshold" style="margin-bottom:50px;"></div>
+                                <span id="${data.alarm_prop[i].parameter}-lowLabel" class="slider-labels" style="float:left;"><div style="width:50%;">Min <input type="text" class="minMaxInputs form-control" name="${data.alarm_prop[i].parameter}-min"></div></span>
+                                <span id="${data.alarm_prop[i].parameter}-highLabel" class="slider-labels" style="float:right;"><div class="" style="width:50%; float:right;"><span style="float:right;">Max</span> <input type="text" class="minMaxInputs form-control" name="${data.alarm_prop[i].parameter}-max"></div></span>`;
         }
 
         alarmHtml = `<div id="${data.alarm_prop[i].parameter}" class="card" style="display: flex; margin-bottom: 50px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
@@ -227,7 +229,7 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
             //});
         }else if(data.alarm_prop[i].slider_category == "threshold"){
 
-             var threshold = document.getElementById(data.alarm_prop[i].parameter + '_threshold');
+             var threshold = document.getElementById(data.alarm_prop[i].parameter + '-threshold');
 
                 var start = parseInt(data.alarm_prop[i].limit_high);
                 if(data.alarm_prop[i].slider_max == null){
@@ -246,7 +248,7 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
                         orientation: 'horizontal',
                         step: 0.5,
                         behaviour: 'tap',
-                        tooltips:false,
+                        tooltips:true,
                         range: {
                             'min':  parseInt(min),
                             'max':  parseInt(max)
@@ -257,6 +259,37 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
                             density: 5
                         }
                     });
+            $('[name='+ data.alarm_prop[i].parameter + '-max]').val(max);
+            $('[name='+ data.alarm_prop[i].parameter + '-min]').val(min);
+
+            $('[name='+ data.alarm_prop[i].parameter + '-max]').keyup(function(){
+                var id = $(this).parents().eq(1).attr('id');
+                var par = id.split("-");
+                par = par[0];
+                console.log(par);
+                console.log($('[name='+ par + '-max]').val());
+                var slider = document.getElementById(par+'-threshold');
+                slider.noUiSlider.updateOptions({
+                    range:{
+                        'max':  parseInt($('[name='+ par + '-max]').val()),
+                        'min':  parseInt($('[name='+ par + '-min]').val())
+                    }
+                });
+            });
+            $('[name='+ data.alarm_prop[i].parameter + '-min]').keyup(function(){
+                var id = $(this).parents().eq(1).attr('id');
+                var par = id.split("-");
+                par = par[0];
+                var slider = document.getElementById(par+'-threshold');
+                slider.noUiSlider.updateOptions({
+                    range:{
+                        'max':  parseInt($('[name='+ par + '-max]').val()),
+                        'min':  parseInt($('[name='+ par + '-min]').val())
+                    }
+                });
+            });
+
+
         }else if(data.alarm_prop[i].slider_category == "switch"){
 
             var switchSlider = document.getElementById(data.alarm_prop[i].parameter + '_switch');
@@ -287,6 +320,16 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
     }
 
     //Listeners
+        //minmax
+
+        var inputs = document.getElementsByClassName('minMaxInputs');
+    for(var i=0; i<inputs.length; i++){
+        $('[name="'+inputs[i].name+'"]').on('change',function(){
+             $(this).parents().eq(4).addClass('changed');
+             document.getElementById('save').disabled=false;
+            document.getElementById('clear').disabled=false;
+        });
+    }
 
         //Slider
     var sliders = document.getElementsByClassName('slider');
@@ -301,16 +344,16 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
     }
 
         //Threshold
-    /*var thresholds = document.getElementsByClassName('threshold');
+    var thresholds = document.getElementsByClassName('threshold');
     for(var i=0; i< thresholds.length; i++){
-        console.log(thresholds[i].id);
-        $('#'+thresholds[i].id).on('change keydown paste input',function(){
+        document.getElementById(thresholds[i].id).noUiSlider.on('change', function(){
 
-             $(this).parents().eq(3).addClass('changed');
-             document.getElementById('save').disabled=false;
+            $(this.target).parents().eq(2).addClass('changed');
+            document.getElementById('save').disabled=false;
             document.getElementById('clear').disabled=false;
-        });
-    }*/
+
+            });
+    }
 
     //Switch
     var switches = document.getElementsByClassName('switch');

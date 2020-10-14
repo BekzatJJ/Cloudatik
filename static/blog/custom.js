@@ -36,6 +36,7 @@ window.onload = function () {
                     }else{
                         //console.log('here we go');
                         createNodeCards(data);
+                        document.getElementById('mapButton').disabled=false;
 
                     }
                 }
@@ -45,11 +46,13 @@ window.onload = function () {
 
          $.ajax({
                 type: "GET",
-                url:'https://api.cl-ds.com/getAlarmSummary/'+ username + '/?format=json',
+                url:'https://api.cl-ds.com/getAlarmSummaryV2/'+ username + '/?format=json',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
+                    var data = reJSONAlarmSummary(data);
                     console.log('updated alarm badge');
+
                     var parent = document.getElementById('badgeAlarm');
                     parent.innerHTML = data.data.length;
                     alarmSummary(data);
@@ -58,7 +61,63 @@ window.onload = function () {
 
 
 }
+function reJSONAlarmSummary(data){
+    var newData = [{}];
 
+    for(var i=0; i<data.alarm.length; i++){
+        var datetime = data.alarm[i].datetime;
+        for(var a=0; a<data.alarm_prop.length; a++){
+            if(data.alarm[i].parameter == data.alarm_prop[a].parameter){
+                var label = data.alarm_prop[a].label;
+            }
+        }
+        var serial = data.alarm[i].serial;
+        var value = data.alarm[i].value;
+
+        for(var a=0; a<data.tag_name.length; a++){
+            if(data.alarm[i].serial == data.tag_name[a].serial){
+                var tag_name = data.tag_name[a].tag_name;
+            }
+        }
+
+        newData[i] = {
+            "datetime": datetime,
+            "label": label,
+            "serial": serial,
+            "tag_name": tag_name,
+            "value": value
+        }
+    }
+    newData = {"data": newData};
+    console.log(newData);
+    return newData
+}
+
+function reJsonDataAlarm(data){
+    var newData = [{}];
+
+    for(var i=0; i<data.alarm.length; i++){
+        var datetime = data.alarm[i].datetime;
+        var id = data.alarm[i].id;
+        var lim_low = data.alarm[i].limit_lower;
+        var lim_up = data.alarm[i].limit_upper;
+        var parameter = data.alarm[i].parameter;
+        var serial = data.alarm[i].serial;
+        var value = data.alarm[i].value;
+
+        newData[i] = {
+            "datetime": datetime,
+            "id": id,
+            "limitLower": lim_low,
+            "limitUpper": lim_up,
+            "parameter": parameter,
+            "serial": serial,
+            "value": value
+        }
+    }
+    console.log(newData);
+    return newData
+}
 //Update dashboard all nodes including their status
 setInterval(function(){
 
@@ -490,11 +549,11 @@ function requestAjax(id){
             var ajaxCounts = Object.keys(ajaxRequests).length;
             ajaxRequests[ajaxCounts] = $.ajax({
                     type: "GET",
-                    url: 'https://api.cl-ds.com/getAlarm/' + id + '/?format=json',
+                    url: 'https://api.cl-ds.com/getAlarmV2/' + id + '/?format=json',
                     headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                     //data: "check",
                     success: function(data_alarm){
-
+                        var data_alarm = reJsonDataAlarm(data_alarm);
                         if(data_alarm.length == 0){
                              var text = document.createElement('h3');
                              text.innerHTML = 'No new alarms available';
@@ -524,9 +583,9 @@ function requestAjax(id){
                             console.log('inserted Alarm');
 
                             //Split datetime
-                            var datetime = data_alarm[a].datetime.split(/,/);
-                            var timeString = datetime[0];
-                            var dateString = datetime[1];
+                            var datetime = data_alarm[a].datetime;
+                            var dateString = moment(datetime).format('YYYY/MM/DD');
+                            var timeString = moment(datetime).format('hh:mm a');
 
                             parameter.innerHTML=data_alarm[a].parameter;
                             date.innerHTML=dateString;

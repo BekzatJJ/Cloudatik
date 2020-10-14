@@ -106,7 +106,7 @@
 
                     </ul>
                     <!-- ============================================================== -->
-                    <a class="navbar-nav mr-auto" href="/"><img id="logo" src="" width="140" height="90"></a>
+                    <a id="logo-a" class="navbar-nav mr-auto" href="/"></a>
                     <!-- Right side toggle and nav items -->
                     <!-- ============================================================== -->
                     <ul class="navbar-nav float-right mr-3 pr-1">
@@ -531,7 +531,13 @@
 
         $(document).ready(function(){
 
-            document.getElementById('logo').src = "static/blog/"+ logo;
+            if(logo){
+                document.getElementById('logo-a').innerHTML = `<img id="logo" src="static/blog/logo/`+logo+`" width="140" height="90">`
+
+            }else{
+                 document.getElementById('logo-a').innerHTML = ``;
+            }
+
 
             var salutation = document.getElementsByClassName('salutation');
             for(var i=0; i< salutation.length; i++){
@@ -542,7 +548,44 @@
                 dateBadge[i].innerHTML = moment().format('MMM DD');
             }
 
+            //map
+            $(document).on('click', '.ack-send', function(e){
+                e.preventDefault();
+                $('[data-toggle="popoverClick"]').popover('hide');
+                var id = e.target.id.split(/_/)[0];
+                var serial = e.target.id.split(/_/)[1];
+                var device_id = document.getElementsByClassName(serial)[0].id;
+                var data = {"device_id": device_id, "alarm_id": id, "username": username};
+                alarmRemoveTempData = {"device_id": device_id, "serial": serial};
 
+                console.log(data);
+                       $.ajax({
+
+                            type: "POST",
+                            url: "https://api.cl-ds.com/deleteAlarm/",
+                            headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                            // The key needs to match your method's input parameter (case-sensitive).
+                            data: JSON.stringify(data),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function(data){
+                                alert(data.message);
+                                if(data.success){
+                                    mapMarkers["marker_"+ alarmRemoveTempData.serial]._popup.setContent('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
+                                    callMapData(alarmRemoveTempData.device_id);
+                                }
+                            },
+                            failure: function(errMsg) {
+                                alert(errMsg);
+                                console.log('hrq');
+                            }
+                        });
+            });
+
+            $(document).on('click', '.ack-no', function(e){
+                e.preventDefault();
+                $('[data-toggle="popoverClick"]').popover('hide');
+            });
 
 
           });

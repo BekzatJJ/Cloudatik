@@ -142,57 +142,73 @@ function mapSet(data){
 //Data
 function callMapData(id){
     //Data
-            $.ajax({
-                type: "GET",
-                url: 'https://api.cl-ds.com/getAlarm/' + id + '/?format=json',
-                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
-                //data: "check",
-                success: function(alarm){
-                    dataAlarm = alarm;
-                                             $.ajax({
-                                                    type: "GET",
-                                                    url: 'https://api.cl-ds.com/getDashboardDataV3/' + id + '/',
-                                                    headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
-                                                    //data: "check",
-                                                    success: function(data){
-                                                        var html = `<span>`+data.chart_prop[0].serial+`</span> <br>
-                                                        <span>Last update: `+moment(data.data.datetime).calendar() +`</span><br><br>`;
+$.ajax({
+        type: "GET",
+        url: 'https://api.cl-ds.com/getMapDataAlarm/' + id + '/',
+        headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+        //data: "check",
+        success: function(data){
+                var html = `<span>`+data.tag_name+ `(` + data.chart_prop[0].serial+ `)</span> <br>
+                <span>Last update: `+moment(data.data.datetime).calendar() +`</span><br><br>`;
 
-                                                        for(var i=0; i<data.chart_prop.length; i++){
-                                                            if(data.chart_prop[i].chart_title == null){
-                                                                var label = data.chart_prop[i].label;
-                                                            }else{
-                                                                var label = data.chart_prop[i].chart_title;
-                                                            }
-                                                            var val = parseFloat(data.data[data.chart_prop[i].parameter]);
+                for(var i=0; i<data.chart_prop.length; i++){
+                    //alarm
+                    for(var a=0; a<data.alarm.length; a++){
+                        if(data.chart_prop[i].parameter == data.alarm[a].parameter){
+                            var alarmContent = `<div>Date Time: `+ moment(data.alarm[a].datetime).format('YYYY/MM/DD, h:mm:ss a') +
+                                                `<br>Lower Limit: `+ data.alarm[a].limit_lower +
+                                                `<br>Value: `+ data.alarm[a].value +
+                                                `<br>Upper Limit: `+ data.alarm[a].limit_upper + `</div>`;
+                            var alarmClass = `map-alarm-class`;
+                            var ackContent = `<div><a id='` +data.alarm[a].id+`_`+data.chart_prop[0].serial+`' class='text-white btn btn-primary ack-send'>Yes</a>
+                                                <a class='text-white btn btn-warning ack-no'>No</a></div>`;
+                        }else{
+                            var alarmContent = `No alarm Details`;
+                            var alarmClass = ``;
+                            var ackContent = ``;
+                        }
+                    }
+                    //label
+                    if(data.chart_prop[i].chart_title == null){
+                        var label = data.chart_prop[i].label;
+                    }else{
+                        var label = data.chart_prop[i].chart_title;
+                    }
+                    var val = parseFloat(data.data[data.chart_prop[i].parameter]);
+                    if(data.chart_prop[i].unit == null){
+                         var unit = "";
+                     }else{
+                         var unit = data.chart_prop[i].unit;
+                     }
 
-                                                            //Alarm lookfor
+                   //Alarm lookfor
 
-                                                            html += `<tr><td style="padding: 0px; padding-right: 2px; vertical-align: middle;">`+label+`</td>
-                                                                    <td style="padding: 0px; padding-right: 2px; vertical-align: middle;">  `+ val.toFixed(2) +`</td>
-                                                                    <td style="padding: 0px; padding-right: 2px; vertical-align: middle;"><button class="btn" data-toggle="popoverClick" title="Alarm Details" data-content="No alarm details">Details</button></td>
-                                                                    <td style="padding: 0px; padding-right: 2px; vertical-align: middle;><button class="btn">ack</button></td></tr>`
-                                                        }
-                                                        var table = `
-                                                            <table class="table">
-                                                               <tbody>`+
-                                                                    html +
-                                                               `</tbody>
-                                                            </table>
-                                                        `;
-                                                        mapMarkers["marker_" + data.chart_prop[0].serial]._popup.setContent(table);
-                                                        $('[data-toggle="popoverClick"]').popover();
-                                                    }
+                    html += `<tr class="`+ alarmClass +`"><td style="padding: 0px; padding-right: 2px; vertical-align: middle;">`+label+`</td>
+                            <td style="padding: 0px; padding-right: 2px; vertical-align: middle;">  `+ val.toFixed(2) + unit +`</td>
+                            <td style="padding: 0px; padding-right: 2px; vertical-align: middle;"><button class="btn" data-html="true" data-toggle="popoverClick" title="Alarm Details" data-content="` + alarmContent + `"><i class="fa fa-info-circle" aria-hidden="true"></i></button></td>
+                            <td style="padding: 0px; padding-right: 2px; vertical-align: middle;"><button class="btn ack-popover" data-html="true" data-toggle="popoverClick" title="Acknowledge alarm?" data-content="` + ackContent + `"><i class="fa fa-bell-slash" aria-hidden="true"></i></button></td></tr>`
+                    }
+                 var table = `
+                          <table class="table">
+                            <tbody>`+
+                             html +
+                            `</tbody>
+                          </table>
+                          `;
+                    mapMarkers["marker_" + data.chart_prop[0].serial]._popup.setContent(table);
+                    $('[data-toggle="popoverClick"]').popover();
+        }
 
-                                                });
-                }
-            });
+});
+
+
 
 
 
     //Alarm
 
 }
+
 
 
 //Update one min
