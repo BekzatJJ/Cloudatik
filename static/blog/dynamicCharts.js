@@ -17,18 +17,26 @@ function removeData(chart) {
 }
 function moveChart(chart, newData, newtime) {
     var data = chart.data.datasets[0].data;
-    var labels = chart.data.labels
-    data.push(newData);    // add the new value to the right
-    labels.push(moment(newtime).format('MM/DD/YYYY h:mm:ss a'));
-    //labels.shift();
-    //data.shift();        // remove the first left value
+    var labels = chart.data.labels;
 
-    if(newData > chart.config.options.scales.yAxes[0].ticks.max){
-       chart.config.options.scales.yAxes[0].ticks.max += chart.config.options.scales.yAxes[0].ticks.max*0.10;
-    }else if(newData < chart.config.options.scales.yAxes[0].ticks.min){
-        chart.config.options.scales.yAxes[0].ticks.min -= chart.config.options.scales.yAxes[0].ticks.min*0.10;
+    if(labels[labels.length-1] !== moment(newtime).format('MM/DD/YYYY h:mm:ss a')){
+        data.push(newData);    // add the new value to the right
+        labels.push(moment(newtime).format('MM/DD/YYYY h:mm:ss a'));
+        //labels.shift();
+        //data.shift();        // remove the first left value
+
+        if(newData > chart.config.options.scales.yAxes[0].ticks.max){
+           chart.config.options.scales.yAxes[0].ticks.max += chart.config.options.scales.yAxes[0].ticks.max*0.10;
+        }else if(newData < chart.config.options.scales.yAxes[0].ticks.min){
+            chart.config.options.scales.yAxes[0].ticks.min -= chart.config.options.scales.yAxes[0].ticks.min*0.10;
+        }
+        chart.update();
+
+        //console.log('inserted');
+    }else{
+        //console.log('not inserted');
     }
-    chart.update();
+
 }
 
 setInterval(function(){
@@ -61,7 +69,8 @@ for(var b=0; b< nodes.length; b++){
                           }else{
                             setLastValue(lcd[lcdId], parseFloat(data[i].data[data[i].parameter]));
                           }
-
+                    //console.log('time:' +moment(data[0].data.datetime).format('h:mm a'));
+                    //console.log('data: '+ data[i].data[data[i].parameter]);
                     }
 
 

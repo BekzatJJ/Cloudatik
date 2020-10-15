@@ -620,7 +620,7 @@ function requestAjaxOffline(id){
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
-                    data = reConstructJSON(data);
+                    data = reConstructSingleJSON(data);
                     //console.log('success for  '+ data[0].serial);
                     var nodeProcessed = document.getElementsByClassName(data[0].serial);
                     ajaxNodeProcess[nodeProcessed[0].id] = true;
@@ -703,7 +703,7 @@ function requestAjaxOffline(id){
                             headerStringVisible: true,
                             headerString: label
                             });
-
+                          console.log(data);
                           if(typeof data[i].data[data[i].parameter] === 'boolean' ){
                             setLastValue(lcd[lcdId], data[i].data[data[i].parameter]);
                           }else{
@@ -841,19 +841,22 @@ function requestAjaxOffline(id){
 
                             Chart.plugins.register({
                                 afterDraw: function(chart) {
-                                console.log('After draw: ', chart);
                                 if (chart.data.datasets[0].data.length === 0) {
                                     // No data is present
                                   var ctx = chart.chart.ctx;
                                   var width = chart.chart.width;
-                                  var height = chart.chart.height
+                                  var height = chart.chart.height;
+                                  console.log(chart.chart.canvas.id);
+                                  var serial = chart.chart.canvas.id.split(/_/)[1];
+
                                   chart.clear();
 
                                   ctx.save();
                                   ctx.textAlign = 'center';
                                   ctx.textBaseline = 'middle';
                                   ctx.font = "16px normal 'Helvetica Nueue'";
-                                  ctx.fillText('Node is offline', width / 2, height / 2);
+                                  ctx.fillText('Node is offline', width / 2, height / 2.3);
+                                  ctx.fillText(document.getElementById('lastUpdate_'+serial).innerHTML, width/2, height/2);
                                   ctx.restore();
                                 }
                               }

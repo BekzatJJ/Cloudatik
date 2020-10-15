@@ -149,7 +149,7 @@ $.ajax({
         //data: "check",
         success: function(data){
                 var html = `<span>`+data.tag_name+ `(` + data.chart_prop[0].serial+ `)</span> <br>
-                <span>Last update: `+moment(data.data.datetime).calendar() +`</span><br><br>`;
+                <span>Last update: `+moment(data.data.datetime).calendar() +`</span> <i class="fas float-right fa-redo"></i><br><br>`;
 
                 for(var i=0; i<data.chart_prop.length; i++){
                     //alarm
