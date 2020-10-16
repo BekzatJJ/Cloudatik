@@ -149,12 +149,14 @@ $.ajax({
         //data: "check",
         success: function(data){
                 var html = `<span>`+data.tag_name+ `(` + data.chart_prop[0].serial+ `)</span> <br>
-                <span>Last update: `+moment(data.data.datetime).calendar() +`</span> <i class="fas float-right fa-redo"></i><br><br>`;
+                <span>Last update: `+moment(data.data.datetime).calendar() +`</span> <a><i class="fas float-right fa-redo" onclick="refreshMapData('${data.chart_prop[0].serial}');"></i></a><br><br>`;
 
                 for(var i=0; i<data.chart_prop.length; i++){
                     //alarm
                     for(var a=0; a<data.alarm.length; a++){
-                        if(data.chart_prop[i].parameter == data.alarm[a].parameter){
+
+                        if(data.chart_prop[i].parameter === data.alarm[a].parameter){
+
                             var alarmContent = `<div>Date Time: `+ moment(data.alarm[a].datetime).format('YYYY/MM/DD, h:mm:ss a') +
                                                 `<br>Lower Limit: `+ data.alarm[a].limit_lower +
                                                 `<br>Value: `+ data.alarm[a].value +
@@ -162,7 +164,9 @@ $.ajax({
                             var alarmClass = `map-alarm-class`;
                             var ackContent = `<div><a id='` +data.alarm[a].id+`_`+data.chart_prop[0].serial+`' class='text-white btn btn-primary ack-send'>Yes</a>
                                                 <a class='text-white btn btn-warning ack-no'>No</a></div>`;
+                        break;
                         }else{
+
                             var alarmContent = `No alarm Details`;
                             var alarmClass = ``;
                             var ackContent = ``;
@@ -182,7 +186,7 @@ $.ajax({
                      }
 
                    //Alarm lookfor
-
+                   console.log(alarmClass);
                     html += `<tr class="`+ alarmClass +`"><td style="padding: 0px; padding-right: 2px; vertical-align: middle;">`+label+`</td>
                             <td style="padding: 0px; padding-right: 2px; vertical-align: middle;">  `+ val.toFixed(2) + unit +`</td>
                             <td style="padding: 0px; padding-right: 2px; vertical-align: middle;"><button class="btn" data-html="true" data-toggle="popoverClick" title="Alarm Details" data-content="` + alarmContent + `"><i class="fa fa-info-circle" aria-hidden="true"></i></button></td>
@@ -209,14 +213,25 @@ $.ajax({
 
 }
 
+function refreshMapData(serial){
+     mapMarkers["marker_"+ serial]._popup.setContent('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
+     var device_id = document.getElementsByClassName(serial)[0].id;
+     callMapData(device_id);
+}
 
 
 //Update one min
-/*setInterval(function(){
+setInterval(function(){
 
     if(document.getElementById('map-content').style.display === 'block' && $('#mapWrapper').length){
-        //Request Ajax
-        callMap();
+        if(document.getElementsByClassName('leaflet-popup-pane')[0].innerHTML == ""){
+            //Request Ajax update
+            callMap();
+        }else{
+            console.log('Map not in focus');
+
+        }
+
     }else{
         console.log('not active Map');
     }
@@ -224,4 +239,4 @@ $.ajax({
 
 
 
-}, 60000);*/
+}, 60000);

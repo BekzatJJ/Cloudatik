@@ -9466,7 +9466,8 @@ color: white;
 
 /*Alarm map*/
 .map-alarm-class{
-  background-color: beige;
+  background-color: #ff00006b;
+  color: #000000a6;
 }
 
 
