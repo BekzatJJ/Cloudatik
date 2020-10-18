@@ -406,6 +406,7 @@
         }
         function sectionNodeLinks(id, section){
             console.log(id, section);
+            document.getElementById('section_Dashboard').setAttribute('style', 'display:none;');
             var nodeSection = document.getElementById('section_'+ id);
             var nodeSectionDashboard = document.getElementById('section_'+ id + "_dashboard");
             var sectionLinks = document.getElementsByClassName('sectionNodeLinks');
@@ -848,7 +849,7 @@ function addserialNode(){
                     var spinnerWait = document.getElementById('spinnerQR');
                     spinnerWait.classList.remove('lds-roller');
                     $('#submitArea').show();
-                    if(data.success){
+                    if(dataRcvd.success){
                         $('#nodeAddSuccess').css('display', 'block');
                         $('#nodeAddSuccess').html(dataRcvd.message);
                         $('#addSerialNode').attr('disabled', false);

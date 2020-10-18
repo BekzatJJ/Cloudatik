@@ -35,7 +35,7 @@ function callMap(){
 
 function mapSet(data){
     document.getElementById('mapWrapper').innerHTML = `<div id="map" style="height: calc(100vh - 100px);"></div>`;
-    var map = L.map('map').setView([5.3249, 100.2807], 50);
+    var map = L.map('map').setView([5.3249, 100.2807], 1);
              L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 }).addTo(map);
@@ -47,8 +47,9 @@ function mapSet(data){
 
     var markers = L.markerClusterGroup({
         showCoverageOnHover: false,
-        zoomToBoundsOnClick: true,
         spiderfyOnMaxZoom: true,
+        zoomToBoundsOnClick: true,
+        maxClusterRadius:80,
         spiderfyDistanceMultiplier: 2,
         iconCreateFunction: function (cluster) {
             var markers = cluster.getAllChildMarkers();
@@ -76,6 +77,15 @@ function mapSet(data){
 
         }
     });
+
+    //markers.on('clusterclick', function(a){
+      //      var marker = a.layer.getAllChildMarkers();
+        //    console.log(marker[0]);
+          //  console.log(marker[0]._spiderLeg[0]);
+            //if(marker[0]._preSpiderfyLatLng){
+              //  console.log('zoom');
+           // }
+        //});
 
     for(var i=0; i< data.node.length; i++){
         var alarm = "";
@@ -153,9 +163,14 @@ $.ajax({
 
                 for(var i=0; i<data.chart_prop.length; i++){
                     //alarm
+
+                    var alarmContent = `No alarm Details`; //if no alarm found
+                    var alarmClass = ``;
+                    var ackContent = ``;
+
                     for(var a=0; a<data.alarm.length; a++){
 
-                        if(data.chart_prop[i].parameter === data.alarm[a].parameter){
+                        if(data.chart_prop[i].parameter == data.alarm[a].parameter){
 
                             var alarmContent = `<div>Date Time: `+ moment(data.alarm[a].datetime).format('YYYY/MM/DD, h:mm:ss a') +
                                                 `<br>Lower Limit: `+ data.alarm[a].limit_lower +

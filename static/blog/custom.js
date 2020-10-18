@@ -1047,74 +1047,80 @@ function loadAlarmHistoryLink(id){
 }
 
 function loadChartsLink(id){
-    var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
-        spinnerNode.classList.remove('lds-roller');
-    var data = nodeParameters[id];
-    var parentForm = document.getElementById('chartParameters_'+id);
+                        //init input fields
+                    $(function () {
+                                //$('#startDateChart_'+id).datetimepicker();
+                                //$('#endDateChart_'+id).datetimepicker();
+                                 $('#startChartDate_'+id).datetimepicker({
+                                    defaultDate: moment().subtract(1, "days").format('MM/DD/YYYY h:mm A'),
+                                    sideBySide: true,
+                                    ignoreReadonly: true
+                                 });
+                                 $('#endChartDate_'+id).datetimepicker({
+                                    defaultDate: moment().format('MM/DD/YYYY h:mm A'),
+                                    sideBySide: true,
+                                    ignoreReadonly: true
+                                 });
+                            });
 
-    //Delete first all parameters
-     while (parentForm.firstChild) {
-            parentForm.removeChild(parentForm.lastChild);
-          }
-    //Create new ones
-    for(var i=0; i< data.length;i++){
-        var child1 = document.createElement('div');
-        var child2 = document.createElement('label');
-        var child3 = document.createElement('input');
+    $.ajax({
+                type: "GET",
+                url: 'https://api.cl-ds.com/getChartParameter/' + id + '/',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                //data: "check",
+                success: function(data){
+                        var spinnerNode = document.getElementById('spinnerParCharts_'+id);
+                        spinnerNode.classList.remove('lds-roller');
+                    var parentForm = document.getElementById('chartParameters_'+id);
 
-        child1.className ='form-check-inline';
-        child2.className ='form-check-label';
-        if(i==0){
-                if(data[i].chart_title == null){
-                if(data[i].chart_prop.length == 0){
-                    child2.innerHTML = "<input type='radio' class='form-check-input' checked name='chartParameter' value='" + data[i].parameter +"'>" + data[i].parameter;
-                }else{
-                    child2.innerHTML = "<input type='radio' class='form-check-input' checked name='chartParameter' value='" + data[i].parameter +"'>" + data[i].chart_prop[0].label;
+                    //Delete first all parameters
+                     while (parentForm.firstChild) {
+                            parentForm.removeChild(parentForm.lastChild);
+                          }
+                    //Create new ones
+                    for(var i=0; i< data.chart_prop.length;i++){
+                        var child1 = document.createElement('div');
+                        var child2 = document.createElement('label');
+                        var child3 = document.createElement('input');
+
+                        child1.className ='form-check-inline';
+                        child2.className ='form-check-label';
+                        if(i==0){
+                                if(data.chart_prop[i].chart_title == null){
+
+                                    child2.innerHTML = "<input type='radio' class='form-check-input' checked name='chartParameter' value='" + data.chart_prop[i].parameter +"'>" + data.chart_prop[i].label;
+
+
+                            }else{
+                                child2.innerHTML = "<input type='radio' class='form-check-input' checked name='chartParameter' value='" + data.chart_prop[i].parameter +"'>" + data.chart_prop[i].chart_title;
+                            }
+                        }else{
+                                if(data.chart_prop[i].chart_title == null){
+
+                                    child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data.chart_prop[i].parameter +"'>" + data.chart_prop[i].label;
+
+
+                            }else{
+                                child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data.chart_prop[i].parameter +"'>" + data.chart_prop[i].chart_title;
+                            }
+                        }
+
+
+                        //child3.type='radio';
+                        //child3.class='form-check-input';
+                        //child3.name=data[i].parameter;
+                        //child3.innerHTML=data[i].parameter;
+
+                        //child2.appendChild(child3);
+                        child1.appendChild(child2);
+
+                        parentForm.appendChild(child1);
+                    }
+
+
                 }
-
-            }else{
-                child2.innerHTML = "<input type='radio' class='form-check-input' checked name='chartParameter' value='" + data[i].parameter +"'>" + data[i].chart_title;
-            }
-        }else{
-                if(data[i].chart_title == null){
-                if(data[i].chart_prop.length == 0){
-                    child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data[i].parameter +"'>" + data[i].parameter;
-                }else{
-                    child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data[i].parameter +"'>" + data[i].chart_prop[0].label;
-                }
-
-            }else{
-                child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data[i].parameter +"'>" + data[i].chart_title;
-            }
-        }
-
-
-        //child3.type='radio';
-        //child3.class='form-check-input';
-        //child3.name=data[i].parameter;
-        //child3.innerHTML=data[i].parameter;
-
-        //child2.appendChild(child3);
-        child1.appendChild(child2);
-
-        parentForm.appendChild(child1);
-    }
-
-    //init input fields
-    $(function () {
-                //$('#startDateChart_'+id).datetimepicker();
-                //$('#endDateChart_'+id).datetimepicker();
-                 $('#startChartDate_'+id).datetimepicker({
-                    defaultDate: moment().subtract(1, "days").format('MM/DD/YYYY h:mm A'),
-                    sideBySide: true,
-                    ignoreReadonly: true
-                 });
-                 $('#endChartDate_'+id).datetimepicker({
-                    defaultDate: moment().format('MM/DD/YYYY h:mm A'),
-                    sideBySide: true,
-                    ignoreReadonly: true
-                 });
             });
+
 
 
 }

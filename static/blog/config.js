@@ -393,10 +393,13 @@ function saveAlarm(){
         var alarmMax = $('[name='+ changed[i].id + '_max]').val();
         var alarmMin = $('[name='+ changed[i].id + '_min]').val();
 
-        if(category == 'threshold'){
+        if(category.includes('threshold')){
 
+            var sliderElement = document.getElementById(parameter+ '-threshold');
             var lowLimit= '0';
-            var highLimit = document.getElementById(parameter+ '_threshold').value;
+            var highLimit =  sliderElement.noUiSlider.get();
+            var alarmMax = $('[name='+ changed[i].id + '-max]').val(); //BEcause of _ and -
+            var alarmMin = $('[name='+ changed[i].id + '-min]').val();
 
         }else if(category == 'slider'){
 

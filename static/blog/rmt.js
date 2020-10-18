@@ -23,6 +23,14 @@ function connectMqtt(id){
 }
         // called when the client connects
     function onConnect() {
+      document.getElementById('connectionAlert_5WXeh7').innerHTML = `<div id="spinner_5WXeh7_remote" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                                        <div id="alert_5WXeh7_remote" style="dispay:none;" class="alert alert-success alert-dismissible fade hide" role="alert">
+                                          <span>Connected successfully!</span>
+                                          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>`;
+
       document.getElementById('spinner_5WXeh7_remote').classList.remove('lds-roller');
       document.getElementById('alert_5WXeh7_remote').classList.remove('hide');
       document.getElementById('alert_5WXeh7_remote').classList.add('show');
@@ -46,19 +54,21 @@ function connectMqtt(id){
       client.send(message);
       saveActivity("Send", "mprd", "");
     }
-
+    function reConnect(){
+      client.connect({onSuccess:onConnect, useSSL: true});
+    }
     function onConnectionLost(responseObject){
+      $('#5WXeh7_control').css("display", "none");
       document.getElementById('connectionAlert_5WXeh7').innerHTML = `<div id="spinner_5WXeh7_remote" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                                         <div id="alert_5WXeh7_remote" style="dispay:none;" class="alert alert-danger alert-dismissible fade hide" role="alert">
-                                          <span>Connection lost, trying to reconnect</span>
+                                          <span>Connection lost, try to reconnect!t</span>
+                                          <button class="btn" onclick="reConnect();"> Reconnect </button>
                                           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                           </button>
                                         </div>`;
-      client.connect({onSuccess:onConnect, useSSL: true});
-        if (responseObject.errorCode !== 0) {
-    console.log("onConnectionLost:"+responseObject.errorMessage);
-  }
+      //
+
     }
     function onMessageArrived(message) {
 

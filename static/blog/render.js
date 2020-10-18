@@ -312,9 +312,9 @@ function createNodeCards(data){
                                                 <div class="col-md-6">
                                                   <div class="btn-group">
                                                         <button id="mode_1" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn">Remote</button>
-                                                        <button id="mode_2" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn" data-toggle="collapse" data-target="#tth-content" aria-expanded="false" aria-controls="tth-content" >T-TH</button>
-                                                        <button id="mode_3" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn" data-toggle="collapse" data-target="#tt-content" aria-expanded="false" aria-controls="tt-content" >T-T</button>
-                                                        <button id="mode_4" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn"  data-toggle="collapse" data-target="#th-content" aria-expanded="false" aria-controls="th-content">T-H</button>
+                                                        <button id="mode_2" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn" data-toggle="collapse" data-target="#tth-content" aria-expanded="false" aria-controls="tth-content" >Temperature and Humidity Threshold</button>
+                                                        <button id="mode_3" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn" data-toggle="collapse" data-target="#tt-content" aria-expanded="false" aria-controls="tt-content" >Temperature Threshold</button>
+                                                        <button id="mode_4" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn"  data-toggle="collapse" data-target="#th-content" aria-expanded="false" aria-controls="th-content">Humidity Threshold</button>
                                                   </div>
 
                                                 </div>
@@ -463,6 +463,7 @@ function createNodeCards(data){
                 <div id="chartController_${data.node[i].device_id}" class="chartController">
                   <form id="chartForm_${data.node[i].device_id}">
                     <h5>Chart title:</h5>
+                    <div id="spinnerParCharts_${data.node[i].device_id}" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                     <div id="chartParameters_${data.node[i].device_id}" style="margin-bottom: 20px; margin-left: 30px;">
 
                     </div>
@@ -615,8 +616,8 @@ function createNodeCards(data){
             $('.chartDashLink').on('click' ,function(){
 
                 var elem = $(this).parents().eq(1).prev();
-
-                section_node(elem[0]);
+                loadChartsLink(elem[0].parentNode.id);
+                sectionNodeLinks(elem[0].parentNode.id, "charts");
             });
 
             //Alarm
@@ -624,7 +625,8 @@ function createNodeCards(data){
 
                 var elem = $(this).parents().eq(1).prev();
 
-                section_node(elem[0]);
+                 sectionNodeLinks(elem[0].parentNode.id, "alarmHistory");
+                 loadAlarmHistoryLink(elem[0].parentNode.id);
             });
 
     //Dash link listener for mobile
@@ -640,7 +642,8 @@ function createNodeCards(data){
 
                 var elem = $(this).parents().eq(2).prev();
 
-                section_node(elem[0]);
+                loadChartsLink(elem[0].parentNode.id);
+                sectionNodeLinks(elem[0].parentNode.id, "charts");
             });
 
             //Alarm
@@ -648,7 +651,8 @@ function createNodeCards(data){
 
                 var elem = $(this).parents().eq(2).prev();
 
-                section_node(elem[0]);
+                sectionNodeLinks(elem[0].parentNode.id, "alarmHistory");
+                loadAlarmHistoryLink(elem[0].parentNode.id);
             });
 
    //Download Chart listener
