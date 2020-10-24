@@ -18,8 +18,8 @@ function createNodeCards(data){
     //Nodes List
     for(var i=0; i<data.node.length; i++){
         if(data.node[i].remote == true){
-            var htmlRemoteCtrl = `<a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Remote Control"><i data-feather="sliders" class="feather-icon"></i></a>`;
-            var htmlRemoteCtrlMobile = `<a href="#" class="float-right dropdown-item">Remote Control</a>`;
+            var htmlRemoteCtrl = `<a href="#" class="float-right mr-3 remoteDashLink" data-toggle="popover" data-placement="bottom" data-content="Remote Control"><i data-feather="sliders" class="feather-icon"></i></a>`;
+            var htmlRemoteCtrlMobile = `<a href="#" class="float-right dropdown-item remoteDashLinkMobile">Remote Control</a>`;
 
         }else{
             var htmlRemoteCtrl = ``;
@@ -290,15 +290,15 @@ function createNodeCards(data){
 
                                       <div id="${data.node[i].device_id}_control" class="container-fluid">
                                         <div class="card" style="display:block; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                                          <div id="remoteHeader" class="card-header" style="text-align:center;"></div>
-                                          <div id="remoteSwitch" class="d-flex" style="justify-content: space-around;">
-                                            <canvas id="canvasLed" width="100" height="100"></canvas>
-                                            <div style="display: flex; align-items: center; justify-content: center;"><button id="switch-refresh" onclick="switchToggle();" class="btn btn-success"></button></div>
+                                          <div id="remoteHeader_${data.node[i].device_id}" class="card-header" style="text-align:center;"></div>
+                                          <div id="remoteSwitch_${data.node[i].device_id}" class="d-flex" style="justify-content: space-around;">
+                                            <canvas id="canvasLed_${data.node[i].device_id}" width="100" height="100"></canvas>
+                                            <div style="display: flex; align-items: center; justify-content: center;"><button id="switch-refresh-${data.node[i].device_id}" onclick="switchToggle();" class="btn btn-success"></button></div>
 
                                           </div>
                                           <hr>
 
-                                          <div id="remoteSettings" style="display:grid;">
+                                          <div id="remoteSettings_${data.node[i].device_id}" style="display:grid;">
                                             <span style="text-align:center;">Settings</span>
                                               <div class="form-group row" style=" margin-top:20px;">
                                                 <label for="remoteInterval" class="col-md-2 col-form-label">Interval(sec)</label>
@@ -310,46 +310,46 @@ function createNodeCards(data){
                                               <div class="form-group row" style=" margin-top:20px;">
                                                 <label for="modeBtn" class="col-md-2 col-form-label">Mode</label>
                                                 <div class="col-md-6">
-                                                  <div class="btn-group">
-                                                        <button id="mode_1" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn">Remote</button>
-                                                        <button id="mode_2" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn" data-toggle="collapse" data-target="#tth-content" aria-expanded="false" aria-controls="tth-content" >Temperature and Humidity Threshold</button>
-                                                        <button id="mode_3" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn" data-toggle="collapse" data-target="#tt-content" aria-expanded="false" aria-controls="tt-content" >Temperature Threshold</button>
-                                                        <button id="mode_4" type="button" onclick="clickModeBtn(this);" class="btn btn-secondary remoteModeBtn"  data-toggle="collapse" data-target="#th-content" aria-expanded="false" aria-controls="th-content">Humidity Threshold</button>
-                                                  </div>
+                                                  <select id="modeSelect_${data.node[i].device_id}" onChange="modeSelect()">
+                                                    <option value="1">Remote</option>
+                                                    <option value="2">Temperature and Humidity Threshold</option>
+                                                    <option value="3">Temperature Threshold</option>
+                                                    <option value="4">Humidity Threshold</option>
+                                                  </select>
 
                                                 </div>
                                               </div>
 
-                                                <div class="collapse" id="tth-content">
+                                                <div class="collapse" id="tth-content_${data.node[i].device_id}">
                                                     <div class="form-group row" style=" margin-top:20px;">
                                                       <label for="slider-tth-t" class="col-md-2 col-form-label">Temperature</label>
                                                       <div class="col-md-6">
 
-                                                        <div class="d-inline-block" style="margin:13px; width:80%;" id="slider-tth-t"></div>
+                                                        <div class="d-inline-block" style="margin:13px; width:80%;" id="slider-tth-t_${data.node[i].device_id}"></div>
 
                                                       </div>
                                                     </div>
                                                     <div class="form-group row" style=" margin-top:40px;">
                                                       <label for="slider-tth-h" class="col-md-2 col-form-label">Humidity</label>
                                                       <div class="col-md-6">
-                                                        <div style="margin:13px;" id="slider-tth-h"></div>
+                                                        <div style="margin:13px;" id="slider-tth-h_${data.node[i].device_id}"></div>
                                                       </div>
                                                     </div>
                                                 </div>
-                                                <div class="collapse" id="tt-content">
+                                                <div class="collapse" id="tt-content_${data.node[i].device_id}">
                                                     <div class="form-group row" style=" margin-top:20px;">
                                                       <label for="slider-tt" class="col-md-2 col-form-label">Temperature</label>
                                                       <div class="col-md-6">
-                                                        <div style="margin:13px;" id="slider-tt"></div>
+                                                        <div style="margin:13px;" id="slider-tt_${data.node[i].device_id}"></div>
                                                       </div>
                                                     </div>
 
                                                 </div>
-                                                <div class="collapse" id="th-content">
+                                                <div class="collapse" id="th-content_${data.node[i].device_id}">
                                                     <div class="form-group row" style=" margin-top:20px;">
                                                       <label for="slider-th" class="col-md-2 col-form-label">Humidity</label>
                                                       <div class="col-md-6">
-                                                        <div style="margin:13px;" id="slider-th"></div>
+                                                        <div style="margin:13px;" id="slider-th_${data.node[i].device_id}"></div>
                                                       </div>
                                                     </div>
 
@@ -478,12 +478,12 @@ function createNodeCards(data){
                             <div class="row">
                                 <div class='col-sm-6'>
                                     <div class="form-group">
-                                        <div class='input-group date' id='startChartDate_${data.node[i].device_id}'>
+                                        <div class='input-group date' id='startChartDate_${data.node[i].device_id}' data-target-input="nearest">
 
-                                            <input readonly type='text' name="startDateInput_${data.node[i].device_id}" class="form-control" />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
+                                            <input  type='text' name="startDateInput_${data.node[i].device_id}" class="form-control datetimepicker-input" data-target="#startChartDate_${data.node[i].device_id}" />
+                                            <div class="input-group-append" data-target="#startChartDate_${data.node[i].device_id}" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -500,12 +500,12 @@ function createNodeCards(data){
                             <div class="row">
                                 <div class='col-sm-6'>
                                     <div class="form-group">
-                                        <div class='input-group date' id='endChartDate_${data.node[i].device_id}'>
+                                        <div class='input-group date' id='endChartDate_${data.node[i].device_id}'  data-target-input="nearest">
 
-                                            <input readonly type='text' name="endDateInput_${data.node[i].device_id}" class="form-control" />
-                                            <span class="input-group-addon">
-                                                <span class="glyphicon glyphicon-calendar"></span>
-                                            </span>
+                                            <input readonly type='text' name="endDateInput_${data.node[i].device_id}" class="form-control" datetimepicker-input" data-target="#endChartDate_${data.node[i].device_id}"/>
+                                            <div class="input-group-append" data-target="#endChartDate_${data.node[i].device_id}" data-toggle="datetimepicker">
+                                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -629,6 +629,14 @@ function createNodeCards(data){
                  loadAlarmHistoryLink(elem[0].parentNode.id);
             });
 
+            //Remote
+            $('.remoteDashLink ').on('click' ,function(){
+
+                var elem = $(this).parents().eq(1).prev();
+
+                 sectionNodeLinks(elem[0].parentNode.id, "remote");
+            });
+
     //Dash link listener for mobile
             //Config
             $('.nodeConfigDashLinkMobile').on('click' ,function(){
@@ -653,6 +661,14 @@ function createNodeCards(data){
 
                 sectionNodeLinks(elem[0].parentNode.id, "alarmHistory");
                 loadAlarmHistoryLink(elem[0].parentNode.id);
+            });
+
+            //Remote
+            $('.remoteDashLinkMobile ').on('click' ,function(){
+
+                var elem = $(this).parents().eq(2).prev();
+
+                 sectionNodeLinks(elem[0].parentNode.id, "remote");
             });
 
    //Download Chart listener

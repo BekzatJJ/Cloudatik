@@ -104,7 +104,13 @@ function reJsonDataAlarm(data){
         var parameter = data.alarm[i].parameter;
         var serial = data.alarm[i].serial;
         var value = data.alarm[i].value;
-
+        for(var a=0; a<data.alarm_prop.length; a++){
+            if(parameter == data.alarm_prop[a].parameter){
+                var chart_title = data.alarm_prop[a].chart_title;
+                var label = data.alarm_prop[a].label;
+                break;
+            }
+        }
         newData[i] = {
             "datetime": datetime,
             "id": id,
@@ -112,7 +118,9 @@ function reJsonDataAlarm(data){
             "limitUpper": lim_up,
             "parameter": parameter,
             "serial": serial,
-            "value": value
+            "value": value,
+            "chart_title": chart_title,
+            "label": label
         }
     }
     console.log(newData);
@@ -271,6 +279,9 @@ function requestAjax(id){
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
+                    for(var i=0; i< data.chart_prop.length; i++){
+                        console.log(data.chart_prop[i].priority);
+                    }
                     data = reConstructJSON(data);
                     //console.log('success for  '+ data[0].serial);
                     var nodeProcessed = document.getElementsByClassName(data[0].serial);
@@ -449,7 +460,12 @@ function requestAjax(id){
                                 }
 
                                 //INIT Charts
-                                    options[i] ={
+                                    options[i] ={    "horizontalLine": [{
+                                                              "y": 250,
+                                                              "style": "rgba(255, 0, 0, .4)"
+                                                            }, {
+                                                              "y": 240
+                                                            }],
                                                 legend: {
                                                     display: false,
                                                     position: 'top',
@@ -501,7 +517,53 @@ function requestAjax(id){
                             }
 
 
+                            //plugin
+var horizonalLinePlugin = {
+  afterDraw: function(chartInstance) {
+    var yValue;
+    var yScale = chartInstance.scales["y-axis-0"];
+    var canvas = chartInstance.chart;
+    var ctx = canvas.ctx;
+    var index;
+    var line;
+    var style;
 
+    if (chartInstance.options.horizontalLine) {
+      for (index = 0; index < chartInstance.options.horizontalLine.length; index++) {
+        line = chartInstance.options.horizontalLine[index];
+
+        if (!line.style) {
+          style = "rgba(169,169,169, .6)";
+        } else {
+          style = line.style;
+        }
+
+        if (line.y) {
+          yValue = yScale.getPixelForValue(line.y);
+        } else {
+          yValue = 0;
+        }
+
+        ctx.lineWidth = 3;
+
+        if (yValue) {
+          ctx.beginPath();
+          ctx.moveTo(canvas.chartArea.left, yValue);
+          ctx.lineTo(canvas.width, yValue);
+          ctx.strokeStyle = style;
+          ctx.stroke();
+        }
+
+        if (line.text) {
+          ctx.fillStyle = style;
+          ctx.fillText(line.text, 0, yValue + ctx.lineWidth);
+        }
+      }
+      return;
+    }
+  }
+};
+Chart.pluginService.register(horizonalLinePlugin);
 
                            chartDataSet[i]= {
                                     labels: labels,
@@ -554,6 +616,7 @@ function requestAjax(id){
                     //data: "check",
                     success: function(data_alarm){
                         var data_alarm = reJsonDataAlarm(data_alarm);
+                        console.log(data_alarm);
                         if(data_alarm.length == 0){
                              var text = document.createElement('h3');
                              text.innerHTML = 'No new alarms available';
@@ -587,7 +650,7 @@ function requestAjax(id){
                             var dateString = moment(datetime).format('YYYY/MM/DD');
                             var timeString = moment(datetime).format('hh:mm a');
 
-                            parameter.innerHTML=data_alarm[a].parameter;
+                            parameter.innerHTML=data_alarm[a].label;
                             date.innerHTML=dateString;
                             time.innerHTML= timeString;
                             value.innerHTML=data_alarm[a].value;
@@ -620,6 +683,7 @@ function requestAjaxOffline(id){
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
+
                     data = reConstructSingleJSON(data);
                     //console.log('success for  '+ data[0].serial);
                     var nodeProcessed = document.getElementsByClassName(data[0].serial);
@@ -1048,20 +1112,22 @@ function loadAlarmHistoryLink(id){
 
 function loadChartsLink(id){
                         //init input fields
-                    $(function () {
-                                //$('#startDateChart_'+id).datetimepicker();
-                                //$('#endDateChart_'+id).datetimepicker();
+$(function () {
                                  $('#startChartDate_'+id).datetimepicker({
-                                    defaultDate: moment().subtract(1, "days").format('MM/DD/YYYY h:mm A'),
+                                    defaultDate: moment().subtract(1, "days").format('YYYY-MM-DD h:mm a'),
                                     sideBySide: true,
                                     ignoreReadonly: true
                                  });
                                  $('#endChartDate_'+id).datetimepicker({
-                                    defaultDate: moment().format('MM/DD/YYYY h:mm A'),
+                                    defaultDate: moment().format('YYYY-MM-DD h:mm a'),
                                     sideBySide: true,
                                     ignoreReadonly: true
                                  });
-                            });
+            });
+
+
+
+
 
     $.ajax({
                 type: "GET",

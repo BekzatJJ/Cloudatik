@@ -232,17 +232,31 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
              var threshold = document.getElementById(data.alarm_prop[i].parameter + '-threshold');
 
                 var start = parseInt(data.alarm_prop[i].limit_high);
+
+            if(data.alarm_prop[i].alarm_max == null){
                 if(data.alarm_prop[i].slider_max == null){
                     var max = data.alarm_prop[i].limit_high;
                 }else{
                     var max = data.alarm_prop[i].slider_max;
                 }
+            }else{
+                var max = data.alarm_prop[i].alarm_max;
+            }
 
+            if(data.alarm_prop[i].alarm_min == null){
                 if(data.alarm_prop[i].slider_min == null){
                     var min = data.alarm_prop[i].limit_low;
                 }else{
                     var min = data.alarm_prop[i].slider_min;
                 }
+            }else{
+                var min = data.alarm_prop[i].alarm_min;
+            }
+
+
+
+
+
                    noUiSlider.create(threshold, {
                         start: start,
                         orientation: 'horizontal',
@@ -433,6 +447,8 @@ function saveAlarm(){
                 "alarm_min": alarmMin};
 
 
+
+
     }
 
 //Fill into modal
@@ -448,7 +464,7 @@ for (var i = 0; i < dataChanged.length; i++) {
         var enabled = 'False';
     }
         tr.push('<tr>');
-        tr.push("<td>" + dataChanged[i].parameter + "</td>");
+        tr.push("<td>" + $('#'+dataChanged[i].parameter +' div a').html() + "</td>");
         tr.push("<td>" + enabled + "</td>");
         tr.push("<td>" + dataChanged[i].limit_low + "</td>");
         tr.push("<td>" + dataChanged[i].limit_high + "</td>");
