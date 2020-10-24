@@ -9482,10 +9482,10 @@ color: white;
 }
 
 /*datetimepicker*/
-/*li > .datepicker > div {
+li > .datepicker > div {
   display: block !important;
 }
 .bootstrap-datetimepicker-widget > div > div >div {
   display: block ;
-}*/
+}
 
