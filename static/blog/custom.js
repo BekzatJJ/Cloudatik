@@ -230,7 +230,8 @@ function reConstructJSON(data){
             "id": id,
             "parameter": parameter,
             "section": section,
-            "serial": serial
+            "serial": serial,
+
         }
     }
 
@@ -283,7 +284,7 @@ function requestAjax(id){
                         console.log(data.chart_prop[i].priority);
                     }
                     data = reConstructJSON(data);
-                    //console.log('success for  '+ data[0].serial);
+                    console.log(data);
                     var nodeProcessed = document.getElementsByClassName(data[0].serial);
                     ajaxNodeProcess[nodeProcessed[0].id] = true;
                     console.log('processes' + data[0].serial + ':' + ajaxNodeProcess[nodeProcessed[0].id]);
@@ -308,7 +309,13 @@ function requestAjax(id){
                             let title = document.createElement('h3');
                             let canvasChart = document.createElement('canvas');
                             child.id = data[i].id;
-                            child.className = 'd-inline float-left parameters-module';
+                            if(data[i].chart_prop[0].priority == null){
+                                child.dataset.priority = "0";
+                            }else{
+                                child.dataset.priority = data[i].chart_prop[0].priority;
+                            }
+
+                            child.className = 'd-inline float-left parameters-module '+data[0].serial+'-parameter';
                             canvasLcd.id = 'lcd_' + data[i].id;
                             canvasLcd.className = 'lcd-parameters';
                             title.id = 'chartTitle_' + data[i].id;
@@ -329,6 +336,15 @@ function requestAjax(id){
 
                             parent.appendChild(child);
 
+                        }
+
+                        //Re-order sorting
+                        for(var i=0; i< data.length;i++){
+                            var divList = $("."+data[0].serial+"-parameter");
+                            divList.sort(function(a, b){
+                                return $(b).data("priority")-$(a).data("priority")
+                            });
+                            $("#"+data[0].serial+"-parameters").html(divList);
                         }
 
                         //initialize lcd charts
@@ -391,12 +407,24 @@ function requestAjax(id){
                                return e[data[i].parameter];
                             });;
 
+
+
                             if(typeof data[i].data[0][data[i].parameter]=== 'boolean'){
                                 var max = 1;
                                 var min = 0;
+                                //Plot limits
+                                if(data[i].chart_prop[0].plot_limit){
+                                     var plot =  [{"y": data[i].chart_prop[0].limit_high},
+                                                                   {"y": data[i].chart_prop[0].limit_low}];
+                                }else if(data[i].chart_prop[0].plot_control){
+                                    var plot =  [{"y": data[i].chart_prop[0].control_max},
+                                                                   {"y": data[i].chart_prop[0].control_min}];
+                                }else{
+                                    var plot =  [];
+                                }
 
                                 //INIT Charts
-                                    options[i] ={
+                                    options[i] ={ "horizontalLine":plot,
                                                 legend: {
                                                     display: false,
                                                     position: 'top',
@@ -446,6 +474,7 @@ function requestAjax(id){
                                                     }
                                     };
                             }else{
+
                                 var max = Math.max.apply(this, dataChart);
                                 var min = Math.min.apply(this, dataChart);
 
@@ -459,13 +488,36 @@ function requestAjax(id){
                                     min = min-(min*0.10);
                                 }
 
+                                //Plot limits and chart max with min
+                                if(data[i].chart_prop[0].plot_limit){
+                                    if(data[i].chart_prop[0].control_category == "threshold"){
+                                        var plot =  [{"y": data[i].chart_prop[0].limit_high}];
+                                        max = parseFloat(data[i].chart_prop[0].limit_high) + (parseFloat(data[i].chart_prop[0].limit_high) * 0.10);
+                                    }else{
+                                        var plot =  [{"y": data[i].chart_prop[0].limit_high},
+                                                                   {"y": data[i].chart_prop[0].limit_low}];
+                                         max = parseFloat(data[i].chart_prop[0].limit_high) + (parseFloat(data[i].chart_prop[0].limit_high) * 0.10);
+                                         min = parseFloat(data[i].chart_prop[0].limit_low) - (parseFloat(data[i].chart_prop[0].limit_low) * 0.10);
+                                    }
+
+                                }else if(data[i].chart_prop[0].plot_control){
+                                    if(data[i].chart_prop[0].control_category == "threshold"){
+                                        var plot =  [{"y": data[i].chart_prop[0].control_max}];
+                                        max = parseFloat(data[i].chart_prop[0].control_max) + (parseFloat(data[i].chart_prop[0].control_max) * 0.10);
+                                    }else{
+                                        var plot =  [{"y": data[i].chart_prop[0].control_max},
+                                                                   {"y": data[i].chart_prop[0].control_min}];
+                                        max = parseFloat(data[i].chart_prop[0].control_max) + (parseFloat(data[i].chart_prop[0].control_max) * 0.10);
+                                         min = parseFloat(data[i].chart_prop[0].control_min) - (parseFloat(data[i].chart_prop[0].control_min) * 0.10);
+                                    }
+
+                                }else{
+                                    var plot =  [];
+                                }
+
+
                                 //INIT Charts
-                                    options[i] ={    "horizontalLine": [{
-                                                              "y": 250,
-                                                              "style": "rgba(255, 0, 0, .4)"
-                                                            }, {
-                                                              "y": 240
-                                                            }],
+                                    options[i] ={   "horizontalLine": plot,
                                                 legend: {
                                                     display: false,
                                                     position: 'top',
@@ -544,9 +596,10 @@ var horizonalLinePlugin = {
           yValue = 0;
         }
 
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 1;
 
         if (yValue) {
+          ctx.setLineDash([5, 3]);
           ctx.beginPath();
           ctx.moveTo(canvas.chartArea.left, yValue);
           ctx.lineTo(canvas.width, yValue);
