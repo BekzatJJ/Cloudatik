@@ -41,6 +41,13 @@ function renderConfigAlarm(data){
             var alarmEnabled = `<input type="checkbox" class="custom-control-input enabler" id="${data.alarm_prop[i].parameter}_enable">
                                <label class="custom-control-label" for="${data.alarm_prop[i].parameter}_enable">Enabled</label>`;
         }
+        if(data.alarm_prop[i].plot_limit){
+            var plotEnabled = `<input type="checkbox" class="custom-control-input enabler" id="${data.alarm_prop[i].parameter}_plot" checked>
+                               <label class="custom-control-label" for="${data.alarm_prop[i].parameter}_plot">Plot Limit</label>`;
+        }else{
+            var plotEnabled = `<input type="checkbox" class="custom-control-input enabler" id="${data.alarm_prop[i].parameter}_plot">
+                               <label class="custom-control-label" for="${data.alarm_prop[i].parameter}_plot">Plot Limit</label>`;
+        }
 
         if(data.alarm_prop[i].chart_title == null){
             var chartTitle = `<a href="#" id="${data.alarm_prop[i].parameter}_title" data-title="Enter Title">${data.alarm_prop[i].label}</a>`;
@@ -67,10 +74,9 @@ function renderConfigAlarm(data){
                                                                                 `</div>
                                                                                 <div class="card-body parameter" style="margin-top:5px;">
                                                                                     <!-- switch -->
-                                                                                    <div class="custom-control custom-switch" style="float:right; margin-left:10px;">
-                                                                                      <input type="checkbox" class="custom-control-input enabler" id="${data.alarm_prop[i].parameter}_plot">
-                                                                                      <label class="custom-control-label" for="${data.alarm_prop[i].parameter}_plot">Plot Limit</label>
-                                                                                    </div>
+                                                                                    <div class="custom-control custom-switch" style="float:right; margin-left:10px;">`+
+                                                                                        plotEnabled+
+                                                                                    `</div>
                                                                                     <div class="custom-control custom-switch" style="float:right;">`+
                                                                                       alarmEnabled +
                                                                                     `</div>
@@ -157,9 +163,9 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
             var slider = document.getElementById(data.alarm_prop[i].parameter + '_slider');
             if((parseFloat(data.alarm_prop[i].limit_high) - parseFloat(data.alarm_prop[i].limit_low)) <= 1 ){
                 var step= 0.1;
-            }else if((parseFloat(data.alarm_prop[i].limit_high) - parseFloat(data.alarm_prop[i].limit_low)) <= 10){
-                var step= 1;
             }else if((parseFloat(data.alarm_prop[i].limit_high) - parseFloat(data.alarm_prop[i].limit_low)) <= 100){
+                var step= 1;
+            }else if((parseFloat(data.alarm_prop[i].limit_high) - parseFloat(data.alarm_prop[i].limit_low)) <= 1000){
                 var step= 10;
             }
 

@@ -416,13 +416,13 @@ function requestAjax(id){
 
                                 //Plot limits
                                 if(data[i].chart_prop[0].plot_limit){
-                                     var plot =  [{"y": data[i].chart_prop[0].limit_high,
-                                                    "style": "rgba(0,0,255,0.6)"},
-                                                                   {"y": data[i].chart_prop[0].limit_low,
-                                                                    "style": "rgba(0,0,255,0.6)"}];
+                                     var plot =  [{"y": data[i].chart_prop[0].limit_high},
+                                                                   {"y": data[i].chart_prop[0].limit_low}];
                                 }else if(data[i].chart_prop[0].plot_control){
-                                    var plot =  [{"y": data[i].chart_prop[0].control_max},
-                                                                   {"y": data[i].chart_prop[0].control_min}];
+                                    var plot =  [{"y": data[i].chart_prop[0].control_max,
+                                                    "style": "rgba(0,0,255,0.6)"},
+                                                                   {"y": data[i].chart_prop[0].control_min,
+                                                                    "style": "rgba(0,0,255,0.6)"}];
                                 }else{
                                     var plot =  [];
                                 }
@@ -495,25 +495,25 @@ function requestAjax(id){
                                 //Plot limits and chart max with min
                                 if(data[i].chart_prop[0].plot_limit){
                                     if(data[i].chart_prop[0].control_category == "threshold"){
-                                        var plot =  [{"y": data[i].chart_prop[0].limit_high,
-                                                        "style": "rgba(0,0,255,0.6)"}];
+                                        var plot =  [{"y": data[i].chart_prop[0].limit_high}];
                                         max = parseFloat(data[i].chart_prop[0].limit_high) + (parseFloat(data[i].chart_prop[0].limit_high) * 0.10);
                                     }else{
-                                        var plot =  [{"y": data[i].chart_prop[0].limit_high,
-                                                        "style": "rgba(0,0,255,0.6)"},
-                                                                   {"y": data[i].chart_prop[0].limit_low,
-                                                                        "style": "rgba(0,0,255,0.6)"}];
+                                        var plot =  [{"y": data[i].chart_prop[0].limit_high},
+                                                                   {"y": data[i].chart_prop[0].limit_low}];
                                          max = parseFloat(data[i].chart_prop[0].limit_high) + (parseFloat(data[i].chart_prop[0].limit_high) * 0.10);
                                          min = parseFloat(data[i].chart_prop[0].limit_low) - (parseFloat(data[i].chart_prop[0].limit_low) * 0.10);
                                     }
 
                                 }else if(data[i].chart_prop[0].plot_control){
                                     if(data[i].chart_prop[0].control_category == "threshold"){
-                                        var plot =  [{"y": data[i].chart_prop[0].control_max}];
+                                        var plot =  [{"y": data[i].chart_prop[0].control_max,
+                                                        "style": "rgba(0,0,255,0.6)"}];
                                         max = parseFloat(data[i].chart_prop[0].control_max) + (parseFloat(data[i].chart_prop[0].control_max) * 0.10);
                                     }else{
-                                        var plot =  [{"y": data[i].chart_prop[0].control_max},
-                                                                   {"y": data[i].chart_prop[0].control_min}];
+                                        var plot =  [{"y": data[i].chart_prop[0].control_max,
+                                                        "style": "rgba(0,0,255,0.6)"},
+                                                                   {"y": data[i].chart_prop[0].control_min,
+                                                        "style": "rgba(0,0,255,0.6)"}];
                                         max = parseFloat(data[i].chart_prop[0].control_max) + (parseFloat(data[i].chart_prop[0].control_max) * 0.10);
                                          min = parseFloat(data[i].chart_prop[0].control_min) - (parseFloat(data[i].chart_prop[0].control_min) * 0.10);
                                     }
