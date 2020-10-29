@@ -1399,7 +1399,8 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                                              data: data,
                                              fill: false,
                                              lineTension: 0.5,
-                                             pointRadius: 0,
+                                             pointRadius: 2.2,
+                                             borderWidth: 2,
                                              borderColor: "#5f76e8",
                                              backgroundColor: 'rgba(0, 119, 204, 0.3)'
                                           }]
