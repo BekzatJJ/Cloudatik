@@ -209,8 +209,8 @@ function readSettingsReply(msg){
     tooltips: true,
     connect: true,
     range: {
-        'min': parseInt(ttl- (ttl*0.30)),
-        'max': parseInt(tth+ (tth*0.30))
+        'min': -10,
+        'max': 60
     }
 });
 
@@ -220,8 +220,8 @@ function readSettingsReply(msg){
     tooltips: true,
     connect: true,
     range: {
-        'min': parseInt(htl- (htl*0.30)),
-        'max': parseInt(hth+ (hth*0.30))
+        'min': 0,
+        'max': 100
     }
 });
 
@@ -230,8 +230,8 @@ function readSettingsReply(msg){
     tooltips: true,
     connect: true,
     range: {
-        'min': parseInt(ttl- (ttl*0.30)),
-        'max': parseInt(tth+ (tth*0.30))
+        'min': -10,
+        'max': 60
     }
 });
   noUiSlider.create(slider_th, {
@@ -239,8 +239,8 @@ function readSettingsReply(msg){
     tooltips: true,
     connect: true,
     range: {
-        'min': parseInt(htl- (htl*0.30)),
-        'max': parseInt(hth+ (hth*0.30))
+        'min': 0,
+        'max': 100
     }
 });
 
@@ -315,8 +315,8 @@ function writeSettingsReply(msg){
         tooltips: true,
         connect: true,
         range: {
-            'min': parseInt(ttl- (ttl*0.30)),
-            'max': parseInt(tth+ (tth*0.30))
+            'min': -10,
+            'max': 60
         }
     });
 
@@ -326,8 +326,8 @@ function writeSettingsReply(msg){
         tooltips: true,
         connect: true,
         range: {
-            'min': parseInt(htl- (htl*0.30)),
-            'max': parseInt(hth+ (hth*0.30))
+            'min': 0,
+            'max': 100
         }
     });
 
@@ -336,8 +336,8 @@ function writeSettingsReply(msg){
         tooltips: true,
         connect: true,
         range: {
-            'min': parseInt(ttl- (ttl*0.30)),
-            'max': parseInt(tth+ (tth*0.30))
+            'min': -10,
+            'max': 60
         }
     });
       noUiSlider.create(slider_th, {
@@ -345,8 +345,8 @@ function writeSettingsReply(msg){
         tooltips: true,
         connect: true,
         range: {
-            'min': parseInt(htl- (htl*0.30)),
-            'max': parseInt(hth+ (hth*0.30))
+            'min': 0,
+            'max': 100
         }
     });
   }

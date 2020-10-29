@@ -95,3 +95,6 @@ def map(request):
 
 def rmt(request):
     return render(request, 'blog/rmt.html')
+
+def agri(request):
+    return render(request, 'blog/agri-price.html')

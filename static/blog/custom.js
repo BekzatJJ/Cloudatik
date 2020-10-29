@@ -6,10 +6,11 @@ window.onload = function () {
         window.ajaxNodeProcess={};
         window.ajaxAlarmHistoryProcess={};
         window.nodeParameters={};
-
+        window.cashedCharts = {};
         //LCDs and charts
         window.lcd={};
         window.chartObject = {};
+        window.retrievedChartsObject = {};
 
         //Node status
         window.nodeStatus = {};
@@ -412,10 +413,13 @@ function requestAjax(id){
                             if(typeof data[i].data[0][data[i].parameter]=== 'boolean'){
                                 var max = 1;
                                 var min = 0;
+
                                 //Plot limits
                                 if(data[i].chart_prop[0].plot_limit){
-                                     var plot =  [{"y": data[i].chart_prop[0].limit_high},
-                                                                   {"y": data[i].chart_prop[0].limit_low}];
+                                     var plot =  [{"y": data[i].chart_prop[0].limit_high,
+                                                    "style": "rgba(0,0,255,0.6)"},
+                                                                   {"y": data[i].chart_prop[0].limit_low,
+                                                                    "style": "rgba(0,0,255,0.6)"}];
                                 }else if(data[i].chart_prop[0].plot_control){
                                     var plot =  [{"y": data[i].chart_prop[0].control_max},
                                                                    {"y": data[i].chart_prop[0].control_min}];
@@ -491,11 +495,14 @@ function requestAjax(id){
                                 //Plot limits and chart max with min
                                 if(data[i].chart_prop[0].plot_limit){
                                     if(data[i].chart_prop[0].control_category == "threshold"){
-                                        var plot =  [{"y": data[i].chart_prop[0].limit_high}];
+                                        var plot =  [{"y": data[i].chart_prop[0].limit_high,
+                                                        "style": "rgba(0,0,255,0.6)"}];
                                         max = parseFloat(data[i].chart_prop[0].limit_high) + (parseFloat(data[i].chart_prop[0].limit_high) * 0.10);
                                     }else{
-                                        var plot =  [{"y": data[i].chart_prop[0].limit_high},
-                                                                   {"y": data[i].chart_prop[0].limit_low}];
+                                        var plot =  [{"y": data[i].chart_prop[0].limit_high,
+                                                        "style": "rgba(0,0,255,0.6)"},
+                                                                   {"y": data[i].chart_prop[0].limit_low,
+                                                                        "style": "rgba(0,0,255,0.6)"}];
                                          max = parseFloat(data[i].chart_prop[0].limit_high) + (parseFloat(data[i].chart_prop[0].limit_high) * 0.10);
                                          min = parseFloat(data[i].chart_prop[0].limit_low) - (parseFloat(data[i].chart_prop[0].limit_low) * 0.10);
                                     }
@@ -585,7 +592,7 @@ var horizonalLinePlugin = {
         line = chartInstance.options.horizontalLine[index];
 
         if (!line.style) {
-          style = "rgba(169,169,169, .6)";
+          style = "rgba(255,0,0, .6)";
         } else {
           style = line.style;
         }
@@ -1164,6 +1171,24 @@ function loadAlarmHistoryLink(id){
 }
 
 function loadChartsLink(id){
+                for(var i=0; i< Object.keys(ajaxRequests).length; i++){
+                        ajaxRequests[i].abort();
+                        console.log('aborted from charts rtrv');
+                    }
+                        document.getElementById("firstParameterSelect_"+id).disabled = false;
+                        document.getElementById("chartParameters_"+id).style.display = "none";
+                        var spinnerNode = document.getElementById('spinnerParCharts_'+id);
+                        spinnerNode.classList.add('lds-roller');
+                        var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
+                        spinnerNode.classList.remove('lds-roller');
+                        document.getElementById("btnRetrieveChart_"+id).style.display = "block";
+                        document.getElementById("btnRetrieveRawData_"+id).style.display = "block";
+                        document.getElementById("btnAddNewChart_"+id).style.display = "none";
+                        document.getElementById("btnResetCharts_"+id).style.display = "none";
+                        document.getElementById('canvasWrapper_'+id).innerHTML = "";
+                         cashedCharts = {}; //clear cache
+                         chartsRequestedCount = 0;
+                         chartsRetrievedCount = 0;
                         //init input fields
 $(function () {
                                  $('#startChartDate_'+id).datetimepicker({
@@ -1188,10 +1213,25 @@ $(function () {
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
-                        var spinnerNode = document.getElementById('spinnerParCharts_'+id);
+                    chartParameters = data;
+                    var spinnerNode = document.getElementById('spinnerParCharts_'+id);
                         spinnerNode.classList.remove('lds-roller');
+                    $('#btnRetrieveChart_'+id).removeAttr('disabled');
+                    $('#btnRetrieveRawData_'+id).removeAttr('disabled');
                     var parentForm = document.getElementById('chartParameters_'+id);
+                    //create first parameter
+                    var parentFirstParam = document.getElementById('firstParameterSelect_'+id);
+                    parentFirstParam.innerHTML = "";
+                    var htmlFirstParam="";
+                    for (var i=0; i< data.chart_prop.length;i++){
+                        if(data.chart_prop[i].chart_title == null){
+                             htmlFirstParam += "<option value='"+data.chart_prop[i].parameter+"'>"+ data.chart_prop[i].label +"</option>"
+                        }else{
+                            htmlFirstParam += "<option value='"+data.chart_prop[i].parameter+"'>"+ data.chart_prop[i].chart_title +"</option>"
+                        }
 
+                    }
+                    parentFirstParam.innerHTML = htmlFirstParam;
                     //Delete first all parameters
                      while (parentForm.firstChild) {
                             parentForm.removeChild(parentForm.lastChild);
@@ -1204,25 +1244,16 @@ $(function () {
 
                         child1.className ='form-check-inline';
                         child2.className ='form-check-label';
-                        if(i==0){
-                                if(data.chart_prop[i].chart_title == null){
 
-                                    child2.innerHTML = "<input type='radio' class='form-check-input' checked name='chartParameter' value='" + data.chart_prop[i].parameter +"'>" + data.chart_prop[i].label;
+                            if(data.chart_prop[i].chart_title == null){
 
-
-                            }else{
-                                child2.innerHTML = "<input type='radio' class='form-check-input' checked name='chartParameter' value='" + data.chart_prop[i].parameter +"'>" + data.chart_prop[i].chart_title;
-                            }
-                        }else{
-                                if(data.chart_prop[i].chart_title == null){
-
-                                    child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data.chart_prop[i].parameter +"'>" + data.chart_prop[i].label;
+                                    child2.innerHTML = "<input type='checkbox' class='form-check-input' name='chartParameter' value='" + data.chart_prop[i].parameter +"'>" + data.chart_prop[i].label;
 
 
                             }else{
-                                child2.innerHTML = "<input type='radio' class='form-check-input' name='chartParameter' value='" + data.chart_prop[i].parameter +"'>" + data.chart_prop[i].chart_title;
+                                child2.innerHTML = "<input type='checkbox' class='form-check-input' name='chartParameter' value='" + data.chart_prop[i].parameter +"'>" + data.chart_prop[i].chart_title;
                             }
-                        }
+
 
 
                         //child3.type='radio';
@@ -1248,15 +1279,16 @@ function retrieveChart(id){
     document.getElementById('errorMessage_'+id).innerHTML = '';
 
 
-    var idForm = '#chartForm_'+id + ' [name=chartParameter]';
-    var radio = $(idForm);
+   // var idForm = '#chartForm_'+id + ' [name=chartParameter]';
+    //var radio = $(idForm);
 
-    for(var i=0; i< radio.length; i++){
+    /*for(var i=0; i< radio.length; i++){
         if(radio[i].checked){
             var chartParameter = radio[i].value;
 
         }
-    }
+    }*/
+    var chartParameter = $('#firstParameterSelect_'+id).val();
     var startDate = $('[name= startDateInput_' + id + ']').val();
     var endDate = $('[name= endDateInput_' + id + ']').val();
 
@@ -1272,7 +1304,8 @@ function retrieveChart(id){
                         spinnerNode.classList.add('lds-roller');
                     var startEpoch = moment(startDate, 'M/D/YYYY h:mm a').unix();
                     var endEpoch = moment(endDate, 'M/D/YYYY h:mm a').unix();
-
+                    reservedStartEpoch = startEpoch;
+                    reservedEndEpoch = endEpoch;
                     console.log('radio: '+chartParameter);
                     console.log('start: '+startDate+ ',   Epoch: '+startEpoch);
                     console.log('end: '+endDate+ ',  Epoch: '+ endEpoch);
@@ -1287,11 +1320,7 @@ function retrieveChart(id){
 }
 
 function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
-
-    //Clear old canvas
-    var canvas = document.getElementById('canvasWrapper_'+id);
-    canvas.innerHTML = '&nbsp;';
-    $('#canvasWrapper_'+id).append('<canvas id="retrievedChart_' + id +'" ><canvas>');
+                         chartsRequestedCount += 1;
 
     var ajaxCounts = Object.keys(ajaxRequests).length;
         ajaxRequests[ajaxCounts] = $.ajax({
@@ -1301,66 +1330,398 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                     async: true,
                     //data: "check",
                     success: function(dataGot){
-                        var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
-                        spinnerNode.classList.remove('lds-roller');
+
+                        cashedCharts[parameter] = dataGot;
+                        chartsRetrievedCount += 1;
+                        if(chartsRequestedCount == chartsRetrievedCount){
+                            var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
+                            spinnerNode.classList.remove('lds-roller');
+                        }
+                        document.getElementById("firstParameterSelect_"+id).disabled = true;
+                        document.getElementById("chartParameters_"+id).style.display = "block";
                         $('#saveRetrievedChart_'+id).removeAttr('disabled');
-                        console.log(dataGot);
+                        document.getElementById("btnRetrieveChart_"+id).style.display = "none";
+                        document.getElementById("btnRetrieveRawData_"+id).style.display = "none";
+                        document.getElementById("btnAddNewChart_"+id).style.display = "block";
+                        document.getElementById("btnResetCharts_"+id).style.display = "block";
 
-                        //Chart append
-                        var labels = dataGot.map(function(e) {
-                               return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
-                            });
-                            var data = dataGot.map(function(e) {
-                               return e.data;
-                            });;
+//<button id="saveRetrievedChart_${data.node[i].device_id}" class="btn downloadChart" style="float:right;" disabled>Download</button>
+                        var parentCharts =  document.getElementById('canvasWrapper_'+id);
+                                var parentCanvas = document.createElement('div');
+                                var canvas = document.createElement('canvas');
+                                var btn = document.createElement('button');
+                                parentCanvas.style.position = 'relative';
+                                parentCanvas.style.margin = 'auto';
+                                parentCanvas.style.height= '40vh';
+                                parentCanvas.style.width = '90vw';
+                                parentCanvas.style.marginBottom = '40px';
 
-                        var ctx = 'retrievedChart_'+id;
-                        var config = {
-                           type: 'line',
-                           data: {
-                              labels: labels,
-                              datasets: [{
-                                 label: dataGot[1].serial,
-                                 data: data,
-                                 fill: false,
-                                 lineTension: 0.5,
-                                 pointRadius: 0,
-                                 borderColor: "#5f76e8",
-                                 backgroundColor: 'rgba(0, 119, 204, 0.3)'
-                              }]
-                           },
-                           options:{
-                                scales:{
-                                    xAxes: [{
-                                        type:'time',
-                                        distribution: 'linear',
-                                        offset: false,
-                                        ticks: {
-                                            major:{
-                                                enabled: true,
-                                                fontStyle: 'bold'
-                                            },
-                                            source: 'auto',
-                                            autoSkip: true,
-                                            autoSkipPadding: 50,
-                                            maxRotation: 0,
-                                            sampleSize: 100
+                                canvas.id = 'retrievedChart_'+id+'-'+parameter;
+                                canvas.className = 'canvas_'+id;
+
+                                btn.id = 'saveRetrievedChart-'+id + '-' + parameter;
+                                btn.className="btn downloadChart";
+                                btn.style.float = "right";
+                                btn.innerHTML = "Download";
+                                btn.addEventListener('click', downloadChart, false);
+                                parentCanvas.append(btn);
+                                parentCanvas.append(canvas);
+                                parentCharts.append(parentCanvas);
+
+                                //Chart create
+                                //Chart append
+                                    var labels = cashedCharts[parameter].map(function(e) {
+                                           return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
+                                        });
+                                    var data = cashedCharts[parameter].map(function(e) {
+                                           return e.data;
+                                        });;
+
+                                    var ctx = document.getElementById('retrievedChart_'+id+'-'+parameter);
+
+                                    for(var x=0; x<chartParameters.chart_prop.length; x++){
+                                        if(chartParameters.chart_prop[x].parameter == parameter){
+                                            if(chartParameters.chart_prop[x].chart_title == null){
+                                                var chartTitle = chartParameters.chart_prop[x].label;
+                                            }else{
+                                                var chartTitle = chartParameters.chart_prop[x].chart_title;
+                                            }
+
                                         }
-                                    }],
-                                    yAxes: [{
-                                        gridLines: {
-                                            drawBorder: false
+                                    }
+
+                                    var config = {
+                                       type: 'line',
+                                       data: {
+                                          labels: labels,
+                                          datasets: [{
+
+                                             data: data,
+                                             fill: false,
+                                             lineTension: 0.5,
+                                             pointRadius: 0,
+                                             borderColor: "#5f76e8",
+                                             backgroundColor: 'rgba(0, 119, 204, 0.3)'
+                                          }]
+                                       },
+                                       options:{
+                                                legend: {
+                                                    display: false,
+                                                },
+                                                title: {
+                                                    display: true,
+                                                    text: chartTitle
+                                                },
+                                        tooltips: {
+                                            callbacks: {
+                                                label: function(tooltipItem, data) {
+                                                    for(var key in data.datasets[0]._meta)
+                                                        {
+                                                           var node_id = data.datasets[0]._meta[key].controller.chart.canvas.classList[0].split(/_/)[1];
+                                                        }
+                                                    var canvases = document.getElementsByClassName('canvas_'+node_id);
+                                                    var html = [];
+                                                    for(var i=0; i<canvases.length; i++){
+                                                        var id = canvases[i].id.split(/-/)[1];
+                                                        var title = retrievedChartsObject[id].options.title.text;
+                                                        var yData = retrievedChartsObject[id].data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                                        html.push(`${title}: ${yData}`);
+                                                    }
+
+                                                    return html
+                                                }
+                                            }
                                         },
-                                        scaleLabel:{
-                                            display:true,
-                                            labelString: 'Data Retrieved'
-                                        }
-                                    }]
-                                }
-                           }
-                        };
 
-                        var chart = new Chart(ctx, config);
-                    }
+                                        maintainAspectRatio: false,
+                                            scales:{
+                                                xAxes: [{
+                                                    type:'time',
+                                                    distribution: 'linear',
+                                                    offset: false,
+                                                    ticks: {
+                                                        major:{
+                                                            enabled: true,
+                                                            fontStyle: 'bold'
+                                                        },
+                                                        source: 'auto',
+                                                        autoSkip: true,
+                                                        autoSkipPadding: 50,
+                                                        maxRotation: 0,
+                                                        sampleSize: 100
+                                                    }
+                                                }],
+                                                yAxes: [{
+                                                    gridLines: {
+                                                        drawBorder: false
+                                                    },
+                                                    scaleLabel:{
+                                                        display:true,
+                                                        labelString: 'Data Retrieved'
+                                                    }
+                                                }]
+                                            }
+                                       }
+                                    };
+
+                                    retrievedChartsObject[parameter] = new Chart(ctx, config);
+
+                                    //tick checkboxes
+                                         var idForm = '#chartForm_'+id + ' [name=chartParameter]';
+                                         var radio = $(idForm);
+                                         for(var i=0; i< radio.length; i++){
+                                            if(radio[i].value == parameter){
+                                                radio[i].checked = true;
+                                            }
+                                         }
+                                     }
                 });
+}
+
+function addNewChart(id){
+     var idForm = '#chartForm_'+id + ' [name=chartParameter]';
+    var radio = $(idForm);
+
+    for(var i=0; i< radio.length; i++){
+        if(radio[i].checked){//checked, add view
+            if($('#retrievedChart_'+id+'-'+radio[i].value).length == 0){ //check in DOM
+                if(cashedCharts.hasOwnProperty(radio[i].value)){
+                    drawAvailableDataCharts(id, radio[i].value);
+                }else{
+                     ajaxRetrieveChart(id, radio[i].value, reservedStartEpoch, reservedEndEpoch);
+                     var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
+                     spinnerNode.classList.add('lds-roller');
+                }
+            }
+
+        }else{// unchecked remove view
+           if($('#retrievedChart_'+id+'-'+radio[i].value).length == 1){
+                $('#retrievedChart_'+id+'-'+radio[i].value).parent().remove();
+           }
+        }
+    }
+}
+
+function drawAvailableDataCharts(id, key){
+    console.log('draw available dataChart');
+style="position: relative;margin: auto;height: 40vh;width: 100vw;"
+                                var parentCharts =  document.getElementById('canvasWrapper_'+id);
+
+                                var parentCanvas = document.createElement('div');
+                                var canvas = document.createElement('canvas');
+                                var btn = document.createElement('button');
+                                parentCanvas.style.position = 'relative';
+                                parentCanvas.style.margin = 'auto';
+                                parentCanvas.style.height= '40vh';
+                                parentCanvas.style.width = '90vw';
+                                parentCanvas.style.marginBottom = '40px';
+
+                                canvas.id = 'retrievedChart_'+id+'-'+key;
+                                canvas.className = 'canvas_'+id;
+
+                                btn.id = 'saveRetrievedChart-'+id + '-'+ key;
+                                btn.className="btn downloadChart";
+                                btn.style.float = "right";
+                                btn.innerHTML = "Download";
+                                btn.addEventListener('click', downloadChart, false);
+
+                                parentCanvas.append(btn);
+                                parentCanvas.append(canvas);
+                                parentCharts.append(parentCanvas);
+
+                                //Chart create
+                                //Chart append
+                                    var labels = cashedCharts[key].map(function(e) {
+                                           return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
+                                        });
+                                        var data = cashedCharts[key].map(function(e) {
+                                           return e.data;
+                                        });;
+
+                                    var ctx = document.getElementById('retrievedChart_'+id+'-'+key);
+
+                                    for(var x=0; x<chartParameters.chart_prop.length; x++){
+                                        if(chartParameters.chart_prop[x].parameter == key){
+                                            if(chartParameters.chart_prop[x].chart_title == null){
+                                                var chartTitle = chartParameters.chart_prop[x].label;
+                                            }else{
+                                                var chartTitle = chartParameters.chart_prop[x].chart_title;
+                                            }
+
+                                        }
+                                    }
+                                    var config = {
+                                       type: 'line',
+                                       data: {
+                                          labels: labels,
+                                          datasets: [{
+                                             label: cashedCharts[key][1].serial,
+                                             data: data,
+                                             fill: false,
+                                             lineTension: 0.5,
+                                             pointRadius: 0,
+                                             borderColor: "#5f76e8",
+                                             backgroundColor: 'rgba(0, 119, 204, 0.3)'
+                                          }]
+                                       },
+                                       options:{
+                                                 legend: {
+                                                            display: false,
+                                                        },
+                                                title: {
+                                                    display: true,
+                                                    text: chartTitle
+                                                },
+                                        tooltips: {
+                                            callbacks: {
+                                                label: function(tooltipItem, data) {
+                                                    for(var key in data.datasets[0]._meta)
+                                                        {
+                                                           var node_id = data.datasets[0]._meta[key].controller.chart.canvas.classList[0].split(/_/)[1];
+                                                        }
+                                                    var canvases = document.getElementsByClassName('canvas_'+node_id);
+                                                    var html = [];
+                                                    for(var i=0; i<canvases.length; i++){
+                                                        var id = canvases[i].id.split(/-/)[1];
+                                                        var title = retrievedChartsObject[id].options.title.text;
+                                                        var yData = retrievedChartsObject[id].data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+                                                        html.push(`${title}: ${yData}`);
+                                                    }
+
+                                                    return html
+                                                }
+                                            }
+                                        },
+                                         maintainAspectRatio: false,
+                                            scales:{
+                                                xAxes: [{
+                                                    type:'time',
+                                                    distribution: 'linear',
+                                                    offset: false,
+                                                    ticks: {
+                                                        major:{
+                                                            enabled: true,
+                                                            fontStyle: 'bold'
+                                                        },
+                                                        source: 'auto',
+                                                        autoSkip: true,
+                                                        autoSkipPadding: 50,
+                                                        maxRotation: 0,
+                                                        sampleSize: 100
+                                                    }
+                                                }],
+                                                yAxes: [{
+                                                    gridLines: {
+                                                        drawBorder: false
+                                                    },
+                                                    scaleLabel:{
+                                                        display:true,
+                                                        labelString: 'Data Retrieved'
+                                                    }
+                                                }]
+                                            }
+                                       }
+                                    };
+
+                                    retrievedChartsObject[key] = new Chart(ctx, config);
+
+}
+
+function resetCharts(id){
+                        document.getElementById("firstParameterSelect_"+id).disabled = false;
+                        document.getElementById("chartParameters_"+id).style.display = "none";
+                        document.getElementById("btnRetrieveChart_"+id).style.display = "block";
+                        document.getElementById("btnRetrieveRawData_"+id).style.display = "block";
+                        document.getElementById("btnAddNewChart_"+id).style.display = "none";
+                        document.getElementById("btnResetCharts_"+id).style.display = "none";
+                        document.getElementById('canvasWrapper_'+id).innerHTML = "";
+                        cashedCharts = {}; //clear cache
+                        chartsRequestedCount = 0;
+                        chartsRetrievedCount = 0;
+
+    var idForm = '#chartForm_'+id + ' [name=chartParameter]';
+    var radio = $(idForm);
+
+    for(var i=0; i< radio.length; i++){
+        if(radio[i].checked){
+            radio[i].checked = false;
+        }
+    }
+}
+
+var downloadChart = function(){
+                      var elem = this.id;
+                      var strings = elem.split('-');
+                      var id = strings[1];
+                      var parameter = strings[2];
+                      console.log(id);
+                      console.log(this);
+                      $("#retrievedChart_"+id+"-"+parameter).get(0).toBlob(function(blob) {
+                        saveAs(blob, "chart.png");
+                      });
+}
+
+function retrieveRawData(id){
+    var chartParameter = $('#firstParameterSelect_'+id).val();
+    var startDate = $('[name= startDateInput_' + id + ']').val();
+    var endDate = $('[name= endDateInput_' + id + ']').val();
+
+    if(startDate=='' || endDate==''){
+        document.getElementById('errorMessage_'+id).innerHTML = '*Fill all the fields';
+    }else{
+            if(moment(endDate).diff(moment(startDate), 'months', true) > 1){
+                    document.getElementById('errorMessage_'+id).innerHTML = '*Date range must be 1 month maximum';
+                }else{
+                    //All accepted
+                    document.getElementById('btnRetrieveRawData_'+id).innerHTML = `<div class="spinner-border" role="status">
+                                                                                      <span class="sr-only">Loading...</span>
+                                                                                    </div>`;
+                    var startEpoch = moment(startDate, 'M/D/YYYY h:mm a').unix();
+                    var endEpoch = moment(endDate, 'M/D/YYYY h:mm a').unix();
+                    reservedStartEpoch = startEpoch;
+                    reservedEndEpoch = endEpoch;
+                    console.log('radio: '+chartParameter);
+                    console.log('start: '+startDate+ ',   Epoch: '+startEpoch);
+                    console.log('end: '+endDate+ ',  Epoch: '+ endEpoch);
+
+                    ajaxRetrieveRawData(id, chartParameter, startEpoch, endEpoch);
+                }
+    }
+}
+
+function ajaxRetrieveRawData(id, parameter, startEpoch, endEpoch){
+    var ajaxCounts = Object.keys(ajaxRequests).length;
+        ajaxRequests[ajaxCounts] = $.ajax({
+                    type: "GET",
+                    url: 'https://api.cl-ds.com/retrieveChart/'+ id + '/' + parameter + '/' + startEpoch + '/' + endEpoch + '/',
+                    headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                    async: true,
+                    //data: "check",
+                    success: function(dataGot){
+                         document.getElementById('btnRetrieveRawData_'+id).innerHTML = "Raw Data";
+                        var jsonObject = JSON.stringify(dataGot);
+                        var csv = ConvertToCSV(jsonObject);
+                        var blob = new Blob([csv], {type:"text/csv"});
+                        saveAs(blob, 'rawdata.csv');
+                    }
+
+                });
+}
+
+function ConvertToCSV(objArray) {
+            var array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
+            var str = '';
+
+            for (var i = 0; i < array.length; i++) {
+                var line = '';
+                for (var index in array[i]) {
+                    if (line != '') line += ','
+
+                    line += array[i][index];
+                }
+
+                str += line + '\r\n';
+            }
+
+            return str;
 }

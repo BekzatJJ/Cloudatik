@@ -67,6 +67,10 @@ function renderConfigAlarm(data){
                                                                                 `</div>
                                                                                 <div class="card-body parameter" style="margin-top:5px;">
                                                                                     <!-- switch -->
+                                                                                    <div class="custom-control custom-switch" style="float:right; margin-left:10px;">
+                                                                                      <input type="checkbox" class="custom-control-input enabler" id="${data.alarm_prop[i].parameter}_plot">
+                                                                                      <label class="custom-control-label" for="${data.alarm_prop[i].parameter}_plot">Plot Limit</label>
+                                                                                    </div>
                                                                                     <div class="custom-control custom-switch" style="float:right;">`+
                                                                                       alarmEnabled +
                                                                                     `</div>
@@ -402,6 +406,7 @@ function saveAlarm(){
         var parameter = changed[i].id;
         console.log(changed[i].id);
         var enabled = document.getElementById(parameter + '_enable').checked;
+        var plot = document.getElementById(parameter + '_plot').checked;
         var categoryId = $('#'+parameter+' .card-body .controller').children(1).attr('id').split(/_/);
         var category = categoryId[1];
         var alarmMax = $('[name='+ changed[i].id + '_max]').val();
@@ -439,6 +444,7 @@ function saveAlarm(){
         dataChanged[i] = {"device_id": device_id,
         "parameter": parameter,
          "enabled": +enabled,
+         "plot_limit": +plot,
           "category":category,
            "limit_low": lowLimit,
             "limit_high": highLimit,
@@ -463,9 +469,15 @@ for (var i = 0; i < dataChanged.length; i++) {
     }else if(dataChanged[i].enabled == "0"){
         var enabled = 'False';
     }
+    if(dataChanged[i].plot == "1"){
+        var plot = 'True';
+    }else if(dataChanged[i].plot == "0"){
+        var plot = 'False';
+    }
         tr.push('<tr>');
         tr.push("<td>" + $('#'+dataChanged[i].parameter +' div a').html() + "</td>");
         tr.push("<td>" + enabled + "</td>");
+        tr.push("<td>" + plot + "</td>");
         tr.push("<td>" + dataChanged[i].limit_low + "</td>");
         tr.push("<td>" + dataChanged[i].limit_high + "</td>");
         tr.push('</tr>');
@@ -507,14 +519,15 @@ function submitToSaveAlarm(){
             document.getElementById('save').disabled = true;
             document.getElementById('clear').disabled = true;
         },
-        failure: function(errMsg) {
+        error: function(request, status, error) {
             document.getElementById('confirmAlarm').disabled = false;
             var spinner = document.getElementById('modalSpinner');
             spinner.classList.remove('lds-roller');
 
-            document.getElementById('alertFailAlarm').innerHTML = data.message;
+            document.getElementById("alertFailAlarm").style.display = "block";
+            document.getElementById('alertFailAlarm').innerHTML = request.responseJSON.message;
             $('#summary').modal('hide');
-            $('#alertSuccesAlarm').fadeIn();
+            $('#alertFailAlarm').fadeIn();
 
 
         }
@@ -526,6 +539,9 @@ function clearAlarm(){
 
             document.getElementById('save').disabled = true;
             document.getElementById('clear').disabled = true;
+            $('#alertSuccesAlarm').fadeOut();
+            $('#alertFailAlarm').fadeOut();
+
 
      renderConfigAlarm(alarmData);
 

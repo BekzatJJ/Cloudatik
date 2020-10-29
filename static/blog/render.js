@@ -207,6 +207,7 @@ function createNodeCards(data){
             var htmlRawDataSection = `<section id="section_${data.node[i].device_id}_rawData" class="sectionNodeLinks" style="display:none;">
                                         <h1>rawData</h1>
                                     </section>`;
+            var htmlRawDataButton = `<button type="button" disabled id="btnRetrieveRawData_${data.node[i].device_id}" onclick="retrieveRawData('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px;">Raw Data</button>`;
         }else if(data.alarm){
             var htmlAlarmHistoryLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'alarmHistory'); loadAlarmHistoryLink('${data.node[i].device_id}');" class="nav-item">
                                             <a class="nav-link" href="#">Alarm History</a>
@@ -256,6 +257,7 @@ function createNodeCards(data){
                                                   </div>
                                             </section>`;;
             var htmlRawDataSection = ``;
+            var htmlRawDataButton = ``;
         }else if(data.raw_data){
             var htmlAlarmHistoryLink = ``;
             var htmlRawDataLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'rawData')" class="nav-item">
@@ -267,6 +269,7 @@ function createNodeCards(data){
             var htmlRawDataSection = `<section id="section_${data.node[i].device_id}_rawData" class="sectionNodeLinks" style="display:none;">
                                         <h1>rawData</h1>
                                     </section>`;
+            var htmlRawDataButton = `<button disabled type="button" id="btnRetrieveRawData_${data.node[i].device_id}" onclick="retrieveRawData('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px;">Raw Data</button>`;
         }else{
             var htmlAlarmHistoryLink = ``;
             var htmlRawDataLink = ``;
@@ -274,6 +277,7 @@ function createNodeCards(data){
             var htmlNewAlarm = ``;
             var htmlAlarmHistorySection = ``;
             var htmlRawDataSection = ``;
+            var htmlRawDataButton = ``;
         }
 
 
@@ -303,14 +307,14 @@ function createNodeCards(data){
                                               <div class="form-group row" style=" margin-top:20px;">
                                                 <label for="remoteInterval" class="col-md-2 col-form-label">Interval(sec)</label>
                                                 <div class="col-md-6">
-                                                  <input type="text"  name="remoteInterval" placeholder="seconds">
+                                                  <input class="form-control" type="text"  name="remoteInterval" placeholder="seconds">
                                                 </div>
                                               </div>
 
                                               <div class="form-group row" style=" margin-top:20px;">
                                                 <label for="modeBtn" class="col-md-2 col-form-label">Mode</label>
                                                 <div class="col-md-6">
-                                                  <select id="modeSelect_${data.node[i].device_id}" onChange="modeSelect()">
+                                                  <select class="form-control" id="modeSelect_${data.node[i].device_id}" onChange="modeSelect()">
                                                     <option value="1">Remote</option>
                                                     <option value="2">Temperature and Humidity Threshold</option>
                                                     <option value="3">Temperature Threshold</option>
@@ -323,15 +327,15 @@ function createNodeCards(data){
                                                 <div class="collapse" id="tth-content_${data.node[i].device_id}">
                                                     <div class="form-group row" style=" margin-top:20px;">
                                                       <label for="slider-tth-t" class="col-md-2 col-form-label">Temperature</label>
-                                                      <div class="col-md-6">
+                                                      <div style="margin-top:20px;" class="col-md-6">
 
-                                                        <div class="d-inline-block" style="margin:13px; width:80%;" id="slider-tth-t_${data.node[i].device_id}"></div>
+                                                        <div  style="margin:13px;" id="slider-tth-t_${data.node[i].device_id}"></div>
 
                                                       </div>
                                                     </div>
                                                     <div class="form-group row" style=" margin-top:40px;">
                                                       <label for="slider-tth-h" class="col-md-2 col-form-label">Humidity</label>
-                                                      <div class="col-md-6">
+                                                      <div style="margin-top:20px;" class="col-md-6">
                                                         <div style="margin:13px;" id="slider-tth-h_${data.node[i].device_id}"></div>
                                                       </div>
                                                     </div>
@@ -339,7 +343,7 @@ function createNodeCards(data){
                                                 <div class="collapse" id="tt-content_${data.node[i].device_id}">
                                                     <div class="form-group row" style=" margin-top:20px;">
                                                       <label for="slider-tt" class="col-md-2 col-form-label">Temperature</label>
-                                                      <div class="col-md-6">
+                                                      <div style="margin-top:20px;" class="col-md-6">
                                                         <div style="margin:13px;" id="slider-tt_${data.node[i].device_id}"></div>
                                                       </div>
                                                     </div>
@@ -348,7 +352,7 @@ function createNodeCards(data){
                                                 <div class="collapse" id="th-content_${data.node[i].device_id}">
                                                     <div class="form-group row" style=" margin-top:20px;">
                                                       <label for="slider-th" class="col-md-2 col-form-label">Humidity</label>
-                                                      <div class="col-md-6">
+                                                      <div style="margin-top:20px;" class="col-md-6">
                                                         <div style="margin:13px;" id="slider-th_${data.node[i].device_id}"></div>
                                                       </div>
                                                     </div>
@@ -394,7 +398,7 @@ function createNodeCards(data){
             </div>
 
 
-            <div class="container-fluid first-section" style="margin-top: 15px;">
+            <div class="first-section" style="margin-top: 15px;">
               <div class="d-flex flex-row justify-content-between">
 
 
@@ -464,7 +468,12 @@ function createNodeCards(data){
                   <form id="chartForm_${data.node[i].device_id}">
                     <h5>Chart title:</h5>
                     <div id="spinnerParCharts_${data.node[i].device_id}" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                    <div id="chartParameters_${data.node[i].device_id}" style="margin-bottom: 20px; margin-left: 30px;">
+                    <div id="firstParameter_${data.node[i].device_id}">
+                      <select class="form-control" id="firstParameterSelect_${data.node[i].device_id}">
+
+                      </select>
+                    </div>
+                    <div id="chartParameters_${data.node[i].device_id}" style="display:none; margin-bottom: 20px; margin-left: 30px;">
 
                     </div>
 
@@ -480,7 +489,7 @@ function createNodeCards(data){
                                     <div class="form-group">
                                         <div class='input-group date' id='startChartDate_${data.node[i].device_id}' data-target-input="nearest">
 
-                                            <input  type='text' name="startDateInput_${data.node[i].device_id}" class="form-control datetimepicker-input" data-target="#startChartDate_${data.node[i].device_id}" />
+                                            <input  type='text' readonly name="startDateInput_${data.node[i].device_id}" class="form-control datetimepicker-input" data-target="#startChartDate_${data.node[i].device_id}" />
                                             <div class="input-group-append" data-target="#startChartDate_${data.node[i].device_id}" data-toggle="datetimepicker">
                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                             </div>
@@ -516,7 +525,10 @@ function createNodeCards(data){
 
 
                       <div class="form-check" style="display: flex;">
-                        <button type="button" id="btnRetrieveChart_${data.node[i].device_id}" onclick="retrieveChart('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px;">Retrieve</button>
+                        <button type="button" id="btnRetrieveChart_${data.node[i].device_id}" disabled onclick="retrieveChart('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px;">Chart</button>`+
+                        htmlRawDataButton +`
+                        <button type="button" id="btnAddNewChart_${data.node[i].device_id}" onclick="addNewChart('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px; display:none;">Add New</button>
+                        <button type="button" id="btnResetCharts_${data.node[i].device_id}" onclick="resetCharts('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px; display:none;">Reset</button>
                         <p id="errorMessage_${data.node[i].device_id}"style="color:red; font-size:13px; margin:5px; "></p>
                       </div>
                     </div>
@@ -527,10 +539,10 @@ function createNodeCards(data){
                 </div>
 
                 <div style="flex:1;" >
-                <button id="saveRetrievedChart_${data.node[i].device_id}" class="btn downloadChart" style="float:right;" disabled>Download</button>
+
                   <div id="spinnerRetrieveCharts_${data.node[i].device_id}" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                  <div id="canvasWrapper_${data.node[i].device_id}">
-                    <canvas id="retrievedChart_${data.node[i].device_id}"></canvas>
+                  <div id="canvasWrapper_${data.node[i].device_id}" >
+
                   </div>
 
                 </div>
@@ -671,16 +683,7 @@ function createNodeCards(data){
                  sectionNodeLinks(elem[0].parentNode.id, "remote");
             });
 
-   //Download Chart listener
-                    $('.downloadChart').on('click', function(){
-                      var elem = this.id;
-                      var strings = elem.split('_');
-                      var id = strings[1];
 
-                      $("#retrievedChart_"+id).get(0).toBlob(function(blob) {
-                        saveAs(blob, "chart.png");
-                      });
-                    });
 
 }
 
