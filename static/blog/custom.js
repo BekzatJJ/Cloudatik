@@ -496,26 +496,44 @@ function requestAjax(id){
                                 if(data[i].chart_prop[0].plot_limit){
                                     if(data[i].chart_prop[0].control_category == "threshold"){
                                         var plot =  [{"y": data[i].chart_prop[0].limit_high}];
-                                        max = parseFloat(data[i].chart_prop[0].limit_high) + (parseFloat(data[i].chart_prop[0].limit_high) * 0.10);
+                                        var temp_max = parseFloat(data[i].chart_prop[0].limit_high);
+                                        if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
                                     }else{
                                         var plot =  [{"y": data[i].chart_prop[0].limit_high},
                                                                    {"y": data[i].chart_prop[0].limit_low}];
-                                         max = parseFloat(data[i].chart_prop[0].limit_high) + (parseFloat(data[i].chart_prop[0].limit_high) * 0.10);
-                                         min = parseFloat(data[i].chart_prop[0].limit_low) - (parseFloat(data[i].chart_prop[0].limit_low) * 0.10);
+                                         var temp_max = parseFloat(data[i].chart_prop[0].limit_high);
+                                         var temp_min = parseFloat(data[i].chart_prop[0].limit_low);
+                                        if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
+                                        if(temp_min < min){
+                                            min = temp_min-(temp_min*0.20);
+                                        }
                                     }
 
                                 }else if(data[i].chart_prop[0].plot_control){
                                     if(data[i].chart_prop[0].control_category == "threshold"){
                                         var plot =  [{"y": data[i].chart_prop[0].control_max,
                                                         "style": "rgba(0,0,255,0.6)"}];
-                                        max = parseFloat(data[i].chart_prop[0].control_max) + (parseFloat(data[i].chart_prop[0].control_max) * 0.10);
+                                        var temp_max = parseFloat(data[i].chart_prop[0].control_max);
+                                    if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
                                     }else{
                                         var plot =  [{"y": data[i].chart_prop[0].control_max,
                                                         "style": "rgba(0,0,255,0.6)"},
                                                                    {"y": data[i].chart_prop[0].control_min,
                                                         "style": "rgba(0,0,255,0.6)"}];
-                                        max = parseFloat(data[i].chart_prop[0].control_max) + (parseFloat(data[i].chart_prop[0].control_max) * 0.10);
-                                         min = parseFloat(data[i].chart_prop[0].control_min) - (parseFloat(data[i].chart_prop[0].control_min) * 0.10);
+                                        var temp_max = parseFloat(data[i].chart_prop[0].control_max);
+                                         var temp_min = parseFloat(data[i].chart_prop[0].control_min);
+                                        if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
+                                         if(temp_min < min){
+                                            min = temp_min-(temp_min*0.20);
+                                        }
                                     }
 
                                 }else{
@@ -1376,6 +1394,18 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                                     var data = cashedCharts[parameter].map(function(e) {
                                            return e.data;
                                         });;
+                                var max = Math.max.apply(this, data);
+                                var min = Math.min.apply(this, data);
+
+                                if(max < 0){
+                                    max = max-(max*0.10);
+                                }else{max = max+(max*0.10);}
+
+                                if(min < 0){
+                                    min = min+(min*0.10);
+                                }else{
+                                    min = min-(min*0.10);
+                                }
 
                                     var ctx = document.getElementById('retrievedChart_'+id+'-'+parameter);
 
@@ -1453,12 +1483,16 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                                                     }
                                                 }],
                                                 yAxes: [{
+                                                    ticks: {
+                                                            min: min,
+                                                            max: max
+                                                                },
                                                     gridLines: {
                                                         drawBorder: false
                                                     },
                                                     scaleLabel:{
                                                         display:true,
-                                                        labelString: 'Data Retrieved'
+                                                        labelString: parameter
                                                     }
                                                 }]
                                             }
@@ -1538,6 +1572,18 @@ style="position: relative;margin: auto;height: 40vh;width: 100vw;"
                                         var data = cashedCharts[key].map(function(e) {
                                            return e.data;
                                         });;
+                                var max = Math.max.apply(this, data);
+                                var min = Math.min.apply(this, data);
+
+                                if(max < 0){
+                                    max = max-(max*0.10);
+                                }else{max = max+(max*0.10);}
+
+                                if(min < 0){
+                                    min = min+(min*0.10);
+                                }else{
+                                    min = min-(min*0.10);
+                                }
 
                                     var ctx = document.getElementById('retrievedChart_'+id+'-'+key);
 
@@ -1612,12 +1658,16 @@ style="position: relative;margin: auto;height: 40vh;width: 100vw;"
                                                     }
                                                 }],
                                                 yAxes: [{
+                                                    ticks: {
+                                                            min: min,
+                                                            max: max
+                                                                },
                                                     gridLines: {
                                                         drawBorder: false
                                                     },
                                                     scaleLabel:{
                                                         display:true,
-                                                        labelString: 'Data Retrieved'
+                                                        labelString: parameter
                                                     }
                                                 }]
                                             }
