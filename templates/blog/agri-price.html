@@ -204,29 +204,126 @@
             <!-- Container fluid  -->
             <!-- ============================================================== -->
             <div class="container-fluid">
-                <div id="agri-spinner" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                <div id="agri-wrapper" style="display:none;">
+                <div id="agri-wrapper" style="display:block;">
                      <div class="form-group">
-                        <label for="Crop">Crop</label>
-                        <select id="Crop">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-4 col-xl-4">
+                                   <label for="year" class="col-form-label">Year</label>
+                                <select id="year" class="form-control first">
+                                    <option value="">Year</option>
+                                    <option value="2012">2012</option>
+                                    <option value="2013">2013</option>
+                                    <option value="2014">2014</option>
+                                    <option value="2015">2015</option>
+                                    <option value="2016">2016</option>
+                                    <option value="2017">2017</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2019">2019</option>
+                                    <option value="2020">2020</option>
+                                </select>
+                            </div>
 
-                        </select>
+                            <div class="col-sm-12 col-md-4 col-xl-4">
+                                    <label for="month" class="col-form-label">Month</label>
+                                <select id="month" class="form-control first">
+                                     <option value="">Month</option>
+                                    <option value="01">Jan</option>
+                                    <option value="02">Feb</option>
+                                    <option value="03">Mar</option>
+                                    <option value="04">Apr</option>
+                                    <option value="05">May</option>
+                                    <option value="06">Jun</option>
+                                    <option value="07">Jul</option>
+                                    <option value="08">Aug</option>
+                                    <option value="09">Sep</option>
+                                    <option value="10">Oct</option>
+                                    <option value="11">Nov</option>
+                                    <option value="12">Dec</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-md-4 col-xl-4">
+                                    <label for="supply" class="col-form-label">Supply</label>
+                                <select id="supply" class="form-control first">
+                                     <option value="">Supply</option>
+                                    <option value="farm">Farm</option>
+                                    <option value="retail">Retail</option>
+                                    <option value="wholesales">Wholesales</option>
+                                </select>
+                            </div>
+
+                        </div>
+
                      </div>
 
-                     <div class="form-group">
-                        <label for="Crop"></label>
-                        <select id="Crop">
-
-                        </select>
-                     </div>
 
               </div>
+                <!-- Button -->
+                    <div class="form-group">
+                      <div class="row">
+                        <div class="col text-center">
+                          <button id="getDetails" onclick="getDetails();" class="btn btn-primary btn-lg" style="border-radius: 10px !important;">Get</button>
+                        </div>
+                      </div>
+                    </div>
+
+
+              <div class="collapse" id="details">
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-3 col-xl-3">
+                                   <label for="crop" class="col-form-label">Crop</label>
+                                <select id="crop" class="form-control">
+
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-md-3 col-xl-3">
+                                    <label for="grade" class="col-form-label">Grade</label>
+                                <select id="grade" class="form-control">
+
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-md-3 col-xl-3">
+                                    <label for="state" class="col-form-label">State</label>
+                                <select id="state" class="form-control">
+                                    <option value="">State</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-12 col-md-3 col-xl-3">
+                                    <label for="city" class="col-form-label">City</label>
+                                <select id="city" class="form-control">
+                                    <option value="">City</option>
+                                </select>
+                            </div>
+
+
+                        </div>
+
+                     </div>
+
+                     <div class="form-group">
+                      <div class="row">
+                        <div class="col text-center">
+                          <button id="getChart" onclick="getChart();" class="btn btn-primary btn-lg" style="border-radius: 10px !important;">Chart</button>
+                        </div>
+                      </div>
+                    </div>
+
+              </div>
+
+
+
+              <div id="agri-spinner" class=""><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                <div id="chart-wrapper">
+                    <canvas id="chart"></canvas>
+                </div>
             </div>
 
 
 
-
-            </div>
 
 
             <!-- ============================================================== -->
@@ -429,14 +526,14 @@
     <script src="{%  static 'blog/assetsLogin_user/js/metisMenu.min.js' %}"></script>
     <script src="{%  static 'blog/assetsLogin_user/js/jquery.slimscroll.min.js' %}"></script>
     <script src="{%  static 'blog/assetsLogin_user/js/jquery.slicknav.min.js' %}"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 
     <!-- others plugins -->
     <script src="{%  static 'blog/assetsLogin_user/js/plugins.js' %}"></script>
     <script src="{%  static 'blog/assetsLogin_user/js/scripts.js' %}"></script>
 
 
-
+    <script src="{%  static 'blog/agri-price.js' %}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 
@@ -444,128 +541,17 @@
     username = '{{ user.get_username }}';
 
         $(document).ready(function(){
+            window.geoObj = {};
             document.getElementById('currentDate').innerHTML = moment().format('MMM DD');
-             led1 = new steelseries.Led('canvasLed', {
-                            width: 50,
-                            height: 50
-                            });
-             led1.setLedColor(steelseries.LedColor.RED_LED);
-            connectMqtt();
+
+
           });
 </script>
 
 
 <script type="text/javascript">
 
-function connectMqtt(){
 
-    // Create a client instance
-    client = new Paho.MQTT.Client("mqtt.hphttech.com", Number(9001), "bekzat");
-
-    // set callback handlers
-    //client.onConnectionLost = onConnectionLost;
-    client.onMessageArrived = onMessageArrived;
-
-    // connect the client
-    client.connect({onSuccess:onConnect, useSSL: true});
-
-    // called when the client connects
-    function onConnect() {
-    // Once a connection has been made, make a subscription and send a message.
-      serial = "HT0098";
-      console.log("connected");
-      client.subscribe("World");
-      client.subscribe("env/ack/HT0098");
-      client.subscribe("env/aswa/HT0098");
-      client.subscribe("env"  + "/mprp/" + serial);
-      message = new Paho.MQTT.Message("");
-      message.destinationName = "env/hb/HT0098";
-      client.send(message);
-    }
-}
-
-    function onMessageArrived(message) {
-          console.log("Message Arrived: " + message.payloadString);
-          console.log("Topic:     " + message.destinationName);
-          console.log(message.destinationName.split("/")[1]);
-          if(message.destinationName.split("/")[1] == "ack"){
-            status(message.payloadString);
-          }
-          if(message.destinationName.split("/")[1] == "aswa"){
-            state(message.payloadString);
-          }
-          if(message.destinationName.split("/")[1] == "mprp"){
-            sett(message.payloadString);
-          }
-
-}
-
-function sett(data){
- var data = JSON.parse(data);
- var html = `
-itv:` + data.itv +`<br>
-md:` + data.md +`<br>
-ttl:` + data.ttl +`<br>
-tth:` + data.tth +`<br>
-htl:` + data.htl +`<br>
-hth:` + data.hth+`<br>
-do0:` + data.do0;
-
-document.getElementById('sett').innerHTML = html;
-}
-function status(data){
-    var data = JSON.parse(data);
-
-    if(data.online){
-        document.getElementById('status').innerHTML = `Online`
-    }else{
-        document.getElementById('status').innerHTML = `Offline`
-    }
-
-    if(data.do0){
-        led1.setLedColor(steelseries.LedColor.GREEN_LED);
-        led1.setLedOnOff(true)
-        document.getElementById('status').className = "on";
-    }else{
-        led1.setLedColor(steelseries.LedColor.RED_LED);
-        led1.setLedOnOff(false)
-        document.getElementById('status').className = "off";
-    }
-}
-
-function state(data){
-    var data = JSON.parse(data);
-    if(data.do0){
-        led1.setLedColor(steelseries.LedColor.GREEN_LED);
-        led1.setLedOnOff(true);
-        document.getElementById('status').className = "on";
-    }else{
-        led1.setLedColor(steelseries.LedColor.RED_LED);
-        led1.setLedOnOff(false);
-        document.getElementById('status').className = "off";
-    }
-
-}
-function sendMQTT(){
-    if(document.getElementById("status").className == "on"){
-            message = new Paho.MQTT.Message('{"do0":"0"}');
-        message.destinationName = "env/aswr/HT0098";
-        client.send(message);
-    }else{
-        message = new Paho.MQTT.Message('{"do0":"1"}');
-        message.destinationName = "env/aswr/HT0098";
-        client.send(message);
-    }
-
-    console.log("sent");
-
-}
-
-function readSett(){
-    message = new Paho.MQTT.Message('{"do0":"0"}');
-    message.destinationName = "env/mprd/HT0098";
-    client.send(message);
-}
 
 </script>
 
