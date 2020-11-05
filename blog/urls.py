@@ -15,7 +15,8 @@ urlpatterns = [
     path('admin/new/sensor', views.newSensor, name="blog-newSensor"),
     path('map/', views.map, name="blog-map"),
     path('rmt/', views.rmt, name="blog-rmt"),
-    path('agri-price', views.agri, name="blog-agri")
+    path('agri-price', views.agri, name="blog-agri"),
+    path('daily-chart', views.chart, name="blog-chart")
 
 
 ]

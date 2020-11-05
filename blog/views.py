@@ -98,3 +98,6 @@ def rmt(request):
 
 def agri(request):
     return render(request, 'blog/agri-price.html')
+
+def chart(request):
+    return render(request, 'blog/daily-chart.html')
