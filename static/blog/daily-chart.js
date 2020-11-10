@@ -22,160 +22,6 @@ function callAPI(){
 
 
 
-
-  function callChart(data){
-
-
-Chart.defaults.groupableHBar = Chart.helpers.clone(Chart.defaults.horizontalBar);
-
-Chart.controllers.groupableHBar = Chart.controllers.horizontalBar.extend({
-    calculateBarY: function(index, datasetIndex, ruler) {
-        var me = this;
-        var meta = me.getMeta();
-        var yScale = me.getScaleForId(meta.yAxisID);
-        var barIndex = me.getBarIndex(datasetIndex);
-        var topTick = yScale.getPixelForValue(null, index, datasetIndex, me.chart.isCombo);
-        topTick -= me.chart.isCombo ? (ruler.tickHeight / 2) : 0;
-        var stackIndex = this.getMeta().stackIndex;
-
-        if (yScale.options.stacked) {
-            if(ruler.datasetCount>1) {
-                var spBar=ruler.categorySpacing/ruler.datasetCount;
-                var h=me.calculateBarHeight(ruler);
-
-                return topTick + (((ruler.categoryHeight - h) / 2)+ruler.categorySpacing-spBar/2)+(h+spBar)*stackIndex;
-            }
-            return topTick + (ruler.categoryHeight / 2) + ruler.categorySpacing;
-        }
-
-        return topTick +
-            (ruler.barHeight / 2) +
-            ruler.categorySpacing +
-            (ruler.barHeight * barIndex) +
-            (ruler.barSpacing / 2) +
-            (ruler.barSpacing * barIndex);
-    },
-    calculateBarHeight: function(ruler) {
-        var returned=0;
-        var me = this;
-        var yScale = me.getScaleForId(me.getMeta().yAxisID);
-        if (yScale.options.barThickness) {
-            returned = yScale.options.barThickness;
-        }
-        else {
-            returned= yScale.options.stacked ? ruler.categoryHeight : ruler.barHeight;
-        }
-        if(ruler.datasetCount>1) {
-            returned=returned/ruler.datasetCount;
-        }
-        return returned;
-    },
-    getBarCount: function () {
-        var stacks = [];
-
-        // put the stack index in the dataset meta
-        Chart.helpers.each(this.chart.data.datasets, function (dataset, datasetIndex) {
-            var meta = this.chart.getDatasetMeta(datasetIndex);
-            if (meta.bar && this.chart.isDatasetVisible(datasetIndex)) {
-                var stackIndex = stacks.indexOf(dataset.stack);
-                if (stackIndex === -1) {
-                    stackIndex = stacks.length;
-                    stacks.push(dataset.stack);
-                }
-                meta.stackIndex = stackIndex;
-            }
-        }, this);
-
-        this.getMeta().stacks = stacks;
-
-        return stacks.length;
-    }
-});
-
-
-    var mainLabels = ['day', 'midnight', 'morning', 'afternoon', 'evening']
-    var datasets = [];
-    console.log(moment().subtract(data.day_plot-1, 'days').format('YYYY-MM-DD'));
-  for(var b=0; b< data.day_plot; b++ ){
-    var dateCurrent = moment().subtract(b, 'days').format('YYYY-MM-DD');
-    for(var i=1; i<=4; i++){
-    var tempDataset = {};
-    var arrData = [];
-      if(eval('data.chart_prop[0].parameter0'+i) != null){
-              switch(i){
-                case 1: var color = 'rgba(233,214,98,0.6)';break;
-                case 2: var color = 'rgba(12,255,63,0.6)';break;
-                case 3: var color = 'rgba(142,112,53,0.6)';break;
-                case 4: var color = 'rgba(43,187,1,0.6)';break;
-              }
-              var parameter = eval('data.chart_prop[0].parameter0'+i);
-              tempDataset.label = eval('data.chart_prop[0].label0'+i);
-              for(var a=0; a<mainLabels.length; a++){
-                for(var x=0; x<data.data.length; x++){
-                  if(data.data[x].date == dateCurrent && data.data[x].time == mainLabels[a]){
-                    var pushData = data.data[x][parameter];
-                  }
-                }
-                arrData[a] = pushData;
-              }
-              tempDataset.data = arrData;
-              tempDataset.backgroundColor = color;
-              tempDataset.stack = b+1;
-              tempDataset.xAxisID = 'x-axis-0';
-              tempDataset.yAxisID = 'y-axis-0';
-              datasets.push(tempDataset);
-
-      }
-
-    }
-  }
-
-console.log(datasets);
-    var ctx = document.getElementById('bar');
-
-    var myBarChart = new Chart(ctx, {
-        type: 'groupableHBar',
-        data: {
-           labels: mainLabels,
-            datasets: datasets
-        },
-        options: {
-            legend:{display: false},
-            tooltips: {
-              mode: 'single'
-            },
-            scales: {
-                     xAxes: [{
-                        stacked: true,
-                        type: 'linear',
-                        ticks: {
-                          beginAtZero:true
-                        },
-                        gridLines: {
-                          display: false,
-                          drawTicks: true,
-                        },
-                        id: 'x-axis-0'
-                      }],
-
-                yAxes: [{
-                     stacked: true,
-                      type: 'category',
-                      id: 'y-axis-0'
-                }]
-            }
-        }
-    });
-  }
-
-
-
-
-
-
-
-
-
 function callChartV(data){
 
  Chart.defaults.groupableBar = Chart.helpers.clone(Chart.defaults.bar);
@@ -261,15 +107,18 @@ Chart.Tooltip.positioners.custom = function(elements, eventPosition) {
     };
 }
 
+
+
 for (var w=0; w<data.chart_prop.length; w++){
-    var mainLabels = ['day', 'midnight', 'morning', 'afternoon', 'evening']
+  var mainLabels =[];
+    for(var b=data.day_plot-1; b>-1; b--){
+      mainLabels.push(moment().subtract(b, 'days').format('DD/MM')+ ' (' + moment().subtract(b, 'days').format('ddd')+')');
+    }
     var datasets = [];
-    var days = [];
-    var dayLabels = [];
+    var time = ['day', 'midnight', 'morning', 'afternoon', 'evening'];
+    var timeLabels = [];
     console.log(moment().subtract(data.day_plot-1, 'days').format('YYYY-MM-DD'));
-  for(var b=data.day_plot-1; b>-1; b-- ){
-    var dateCurrent = moment().subtract(b, 'days').format('YYYY-MM-DD');
-    days.push(moment(dateCurrent).format('DD/MM'));
+  for(var a=0; a<time.length; a++){
     for(var i=1; i<=4; i++){
     var tempDataset = {};
     var arrData = [];
@@ -282,19 +131,22 @@ for (var w=0; w<data.chart_prop.length; w++){
               }
               var parameter = eval('data.chart_prop[w].parameter0'+i);
               tempDataset.label = eval('data.chart_prop[w].label0'+i);
-              for(var a=0; a<mainLabels.length; a++){
+              var tempCount = 0;
+              for(var b=data.day_plot-1; b>-1; b--){
+                var dateCurrent = moment().subtract(b, 'days').format('YYYY-MM-DD');
                 var pushData = null;
                 for(var x=0; x<data.data.length; x++){
 
-                  if(data.data[x].date == dateCurrent && data.data[x].time == mainLabels[a]){
+                  if(data.data[x].date == dateCurrent && data.data[x].time == time[a]){
                     var pushData = data.data[x][parameter];
                   }
                 }
-                arrData[a] = pushData;
+                arrData[tempCount] = pushData;
+                tempCount++;
               }
               tempDataset.data = arrData;
               tempDataset.backgroundColor = color;
-              tempDataset.stack = b+1;
+              tempDataset.stack = a+1;
               tempDataset.xAxisID = 'x-axis-1';
               tempDataset.yAxisID = 'y-axis-0';
               tempDataset.barPercentage = 0.7;
@@ -308,11 +160,11 @@ for (var w=0; w<data.chart_prop.length; w++){
 
   for(var i=0; i<mainLabels.length; i++){
 
-    for(var a=0; a< days.length; a++){
-      dayLabels.push(days[a]);
+    for(var a=0; a< time.length; a++){
+      timeLabels.push(time[a]);
     }
   }
-console.log(dayLabels);
+console.log(timeLabels);
 console.log(datasets);
 
     var canvas = document.createElement('canvas');
@@ -322,6 +174,12 @@ console.log(datasets);
     canvas.style.marginTop = '50px';
     document.getElementById('canvasWrapper').append(canvas);
 
+    //stack or overlay
+    if(data.chart_prop[w].chart_category == "Stacked"){
+      var stacked = true;
+    }else{
+      var stacked = false;
+    }
 
     var ctx = document.getElementById(w);
 
@@ -358,17 +216,24 @@ console.log(datasets);
               },
             scales: {
                      xAxes: [{
-                      labels: dayLabels
+                      labels: timeLabels,
+                      ticks: {
+                          autoSkip: false,
+                          maxRotation: 90,
+                          minRotation: 90
+                      }
                      },{
                      stacked: true,
                       type: 'category',
                       id: 'x-axis-1',
                       offset: true,
+
                       gridLines: {
-                        offsetGridLines: true
+                        offsetGridLines: true,
+                        lineWidth: 4
                       }}],
                 yAxes: [{
-                  stacked: false,
+                  stacked: stacked,
                         type: 'linear',
                         ticks: {
                           beginAtZero:false
