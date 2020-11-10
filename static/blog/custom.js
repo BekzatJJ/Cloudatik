@@ -1352,7 +1352,7 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
     var ajaxCounts = Object.keys(ajaxRequests).length;
         ajaxRequests[ajaxCounts] = $.ajax({
                     type: "GET",
-                    url: 'https://api.cl-ds.com/retrieveChart/'+ id + '/' + parameter + '/' + startEpoch + '/' + endEpoch + '/',
+                    url: 'https://api.cl-ds.com/retrieveChartV2/'+ id + '/' + parameter + '/' + startEpoch + '/' + endEpoch + '/',
                     headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                     async: true,
                     //data: "check",
@@ -1396,13 +1396,15 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                                 parentCanvas.append(canvas);
                                 parentCharts.append(parentCanvas);
 
+
+                                var chart_category = cashedCharts[parameter].chart_prop[0].chart_category;
                                 //Chart create
                                 //Chart append
-                                    var labels = cashedCharts[parameter].map(function(e) {
+                                    var labels = cashedCharts[parameter].data.map(function(e) {
                                            return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
                                         });
-                                    var data = cashedCharts[parameter].map(function(e) {
-                                           return e.data;
+                                    var data = cashedCharts[parameter].data.map(function(e) {
+                                           return e[parameter];
                                         });;
                                 var max = Math.max.apply(this, data);
                                 var min = Math.min.apply(this, data);
@@ -1429,6 +1431,56 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
 
                                         }
                                     }
+                          //Plot limits and chart max with min
+                                if(cashedCharts[parameter].chart_prop[0].plot_limit){
+                                    if(cashedCharts[parameter].chart_prop[0].control_category == "threshold"){
+                                        var plot =  [{"y": cashedCharts[parameter].chart_prop[0].limit_high}];
+                                        var temp_max = parseFloat(cashedCharts[parameter].chart_prop[0].limit_high);
+                                        if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
+                                    }else{
+                                        var plot =  [{"y": cashedCharts[parameter].chart_prop[0].limit_high},
+                                                                   {"y": cashedCharts[parameter].chart_prop[0].limit_low}];
+                                         var temp_max = parseFloat(cashedCharts[parameter].chart_prop[0].limit_high);
+                                         var temp_min = parseFloat(cashedCharts[parameter].chart_prop[0].limit_low);
+                                        if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
+                                        if(temp_min < min){
+                                            min = temp_min-(temp_min*0.20);
+                                        }
+                                    }
+
+                                }else if(cashedCharts[parameter].chart_prop[0].plot_control){
+                                    if(cashedCharts[parameter].chart_prop[0].control_category == "threshold"){
+                                        var plot =  [{"y": cashedCharts[parameter].chart_prop[0].control_max,
+                                                        "style": "rgba(0,0,255,0.6)"}];
+                                        var temp_max = parseFloat(cashedCharts[parameter].chart_prop[0].control_max);
+                                    if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
+                                    }else{
+                                        var plot =  [{"y": cashedCharts[parameter].chart_prop[0].control_max,
+                                                        "style": "rgba(0,0,255,0.6)"},
+                                                                   {"y": cashedCharts[parameter].chart_prop[0].control_min,
+                                                        "style": "rgba(0,0,255,0.6)"}];
+                                        var temp_max = parseFloat(cashedCharts[parameter].chart_prop[0].control_max);
+                                         var temp_min = parseFloat(cashedCharts[parameter].chart_prop[0].control_min);
+                                        if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
+                                         if(temp_min < min){
+                                            min = temp_min-(temp_min*0.20);
+                                        }
+                                    }
+
+                                }else{
+                                    var plot =  [];
+                                }
+
+
+
 
                                     var config = {
                                        type: 'line',
@@ -1445,7 +1497,7 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                                              backgroundColor: 'rgba(0, 119, 204, 0.3)'
                                           }]
                                        },
-                                       options:{
+                                       options:{"horizontalLine": plot,
                                                 legend: {
                                                     display: false,
                                                 },
@@ -1508,6 +1560,56 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                                             }
                                        }
                                     };
+
+//registration plugin
+var horizonalLinePlugin = {
+  afterDraw: function(chartInstance) {
+    var yValue;
+    var yScale = chartInstance.scales["y-axis-0"];
+    var canvas = chartInstance.chart;
+    var ctx = canvas.ctx;
+    var index;
+    var line;
+    var style;
+
+    if (chartInstance.options.horizontalLine) {
+      for (index = 0; index < chartInstance.options.horizontalLine.length; index++) {
+        line = chartInstance.options.horizontalLine[index];
+
+        if (!line.style) {
+          style = "rgba(255,0,0, .6)";
+        } else {
+          style = line.style;
+        }
+
+        if (line.y) {
+          yValue = yScale.getPixelForValue(line.y);
+        } else {
+          yValue = 0;
+        }
+
+        ctx.lineWidth = 1;
+
+        if (yValue) {
+          ctx.setLineDash([5, 3]);
+          ctx.beginPath();
+          ctx.moveTo(canvas.chartArea.left, yValue);
+          ctx.lineTo(canvas.width, yValue);
+          ctx.strokeStyle = style;
+          ctx.stroke();
+        }
+
+        if (line.text) {
+          ctx.fillStyle = style;
+          ctx.fillText(line.text, 0, yValue + ctx.lineWidth);
+        }
+      }
+      return;
+    }
+  }
+};
+Chart.pluginService.register(horizonalLinePlugin);
+
 
                                     retrievedChartsObject[parameter] = new Chart(ctx, config);
 
@@ -1607,6 +1709,56 @@ style="position: relative;margin: auto;height: 40vh;width: 100vw;"
 
                                         }
                                     }
+
+                             //Plot limits and chart max with min
+                                if(cashedCharts[key].chart_prop[0].plot_limit){
+                                    if(cashedCharts[key].chart_prop[0].control_category == "threshold"){
+                                        var plot =  [{"y": cashedCharts[key].chart_prop[0].limit_high}];
+                                        var temp_max = parseFloat(cashedCharts[key].chart_prop[0].limit_high);
+                                        if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
+                                    }else{
+                                        var plot =  [{"y": cashedCharts[key].chart_prop[0].limit_high},
+                                                                   {"y": cashedCharts[key].chart_prop[0].limit_low}];
+                                         var temp_max = parseFloat(cashedCharts[key].chart_prop[0].limit_high);
+                                         var temp_min = parseFloat(cashedCharts[key].chart_prop[0].limit_low);
+                                        if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
+                                        if(temp_min < min){
+                                            min = temp_min-(temp_min*0.20);
+                                        }
+                                    }
+
+                                }else if(cashedCharts[key].chart_prop[0].plot_control){
+                                    if(cashedCharts[key].chart_prop[0].control_category == "threshold"){
+                                        var plot =  [{"y": cashedCharts[key].chart_prop[0].control_max,
+                                                        "style": "rgba(0,0,255,0.6)"}];
+                                        var temp_max = parseFloat(cashedCharts[key].chart_prop[0].control_max);
+                                    if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
+                                    }else{
+                                        var plot =  [{"y": cashedCharts[key].chart_prop[0].control_max,
+                                                        "style": "rgba(0,0,255,0.6)"},
+                                                                   {"y": cashedCharts[key].chart_prop[0].control_min,
+                                                        "style": "rgba(0,0,255,0.6)"}];
+                                        var temp_max = parseFloat(cashedCharts[key].chart_prop[0].control_max);
+                                         var temp_min = parseFloat(cashedCharts[key].chart_prop[0].control_min);
+                                        if(temp_max > max){
+                                            max = temp_max+(temp_max*0.20);
+                                        }
+                                         if(temp_min < min){
+                                            min = temp_min-(temp_min*0.20);
+                                        }
+                                    }
+
+                                }else{
+                                    var plot =  [];
+                                }
+
+
                                     var config = {
                                        type: 'line',
                                        data: {
@@ -1621,7 +1773,7 @@ style="position: relative;margin: auto;height: 40vh;width: 100vw;"
                                              backgroundColor: 'rgba(0, 119, 204, 0.3)'
                                           }]
                                        },
-                                       options:{
+                                       options:{"horizontalLine": plot,
                                                  legend: {
                                                             display: false,
                                                         },
@@ -1683,6 +1835,54 @@ style="position: relative;margin: auto;height: 40vh;width: 100vw;"
                                             }
                                        }
                                     };
+//registration plugin
+var horizonalLinePlugin = {
+  afterDraw: function(chartInstance) {
+    var yValue;
+    var yScale = chartInstance.scales["y-axis-0"];
+    var canvas = chartInstance.chart;
+    var ctx = canvas.ctx;
+    var index;
+    var line;
+    var style;
+
+    if (chartInstance.options.horizontalLine) {
+      for (index = 0; index < chartInstance.options.horizontalLine.length; index++) {
+        line = chartInstance.options.horizontalLine[index];
+
+        if (!line.style) {
+          style = "rgba(255,0,0, .6)";
+        } else {
+          style = line.style;
+        }
+
+        if (line.y) {
+          yValue = yScale.getPixelForValue(line.y);
+        } else {
+          yValue = 0;
+        }
+
+        ctx.lineWidth = 1;
+
+        if (yValue) {
+          ctx.setLineDash([5, 3]);
+          ctx.beginPath();
+          ctx.moveTo(canvas.chartArea.left, yValue);
+          ctx.lineTo(canvas.width, yValue);
+          ctx.strokeStyle = style;
+          ctx.stroke();
+        }
+
+        if (line.text) {
+          ctx.fillStyle = style;
+          ctx.fillText(line.text, 0, yValue + ctx.lineWidth);
+        }
+      }
+      return;
+    }
+  }
+};
+Chart.pluginService.register(horizonalLinePlugin);
 
                                     retrievedChartsObject[key] = new Chart(ctx, config);
 

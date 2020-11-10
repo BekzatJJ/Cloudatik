@@ -259,7 +259,7 @@ function drawChart(filteredDataLatest){
                                                 },
                                                 title: {
                                                     display: true,
-                                                    text: 'Here title'
+                                                    text: [$('#crop').val() + ' from '+ $('#supply').val(), $('#month option:selected').text() + ' ' + $('#year').val(), $('#city').val() + ', ' + $('#state').val()]
                                                 },
 
                                         maintainAspectRatio: false,
@@ -294,7 +294,7 @@ function drawChart(filteredDataLatest){
                                                     },
                                                     scaleLabel:{
                                                         display:true,
-                                                        labelString: "scaleLabel"
+                                                        labelString: "Price"
                                                     }
                                                 }]
                                             }
