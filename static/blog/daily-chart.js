@@ -123,11 +123,12 @@ for (var w=0; w<data.chart_prop.length; w++){
     var tempDataset = {};
     var arrData = [];
       if(eval('data.chart_prop[w].parameter0'+i) != null){
+
               switch(i){
-                case 1: var color = 'rgba(233,214,98,0.6)';break;
-                case 2: var color = 'rgba(12,255,63,0.6)';break;
-                case 3: var color = 'rgba(142,112,53,0.6)';break;
-                case 4: var color = 'rgba(43,187,1,0.6)';break;
+                case 1: var color = 'rgba(233,214,98,0.4)';break;
+                case 2: var color = 'rgba(0,255,31,0.6)';break;
+                case 3: var color = 'rgba(0,0,255,1)';break;
+                case 4: var color = 'rgba(43,187,1,1)';break;
               }
               var parameter = eval('data.chart_prop[w].parameter0'+i);
               tempDataset.label = eval('data.chart_prop[w].label0'+i);
