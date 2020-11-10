@@ -30,16 +30,63 @@ function getDetails(){
                     });
                     crops = remove_duplicates(crops);
 
-                    var grades = data.map(function(item){
-                        return item.grade;
-                    });
-                    grades = remove_duplicates(grades);
+
 
                     var states = data.map(function(item){
                         return item.state + "_" + item.city ;
                     });
                     states = remove_duplicates(states);
 
+
+
+
+                    for(var i=0; i<crops.length; i++){
+                        var parent = document.getElementById('crop');
+                        var option = document.createElement('option');
+                        option.value =  crops[i];
+                        option.innerHTML = crops[i];
+
+                        parent.append(option);
+                    }
+                    $('#crop').on('change', function() {
+                        document.getElementById('grade').innerHTML = '<option value="">Grade</option>';
+                        document.getElementById('state').innerHTML = '';
+                        document.getElementById('city').innerHTML = '';
+                        var val = $(this).val();
+                        filteredData = mixedData.filter(function (el){
+                            return el.crop == val
+                        });
+
+                        var grades = filteredData.map(function(item){
+                            return item.grade;
+                        });
+                        grades = remove_duplicates(grades);
+
+                    for(var i=0; i<grades.length; i++){
+                        var parent = document.getElementById('grade');
+                        var option = document.createElement('option');
+                        option.value =  grades[i];
+                        option.innerHTML = grades[i];
+
+                        parent.append(option);
+                    }
+
+                    });
+
+                    $('#grade').on('change', function() {
+                        document.getElementById('state').innerHTML = '<option value="">State</option>';
+                        document.getElementById('city').innerHTML = '';
+
+                        var val = $(this).val();
+
+                        filteredDataGrade = filteredData.filter(function (el){
+                            return el.grade == val
+                        });
+
+                    var states = filteredDataGrade.map(function(item){
+                        return item.state + "_" + item.city ;
+                    });
+                    states = remove_duplicates(states);
 
                     var tempCities = [];
                     for(var i=0; i<states.length; i++){
@@ -57,23 +104,6 @@ function getDetails(){
 
                     }
 
-                    for(var i=0; i<crops.length; i++){
-                        var parent = document.getElementById('crop');
-                        var option = document.createElement('option');
-                        option.value =  crops[i];
-                        option.innerHTML = crops[i];
-
-                        parent.append(option);
-                    }
-                    for(var i=0; i<grades.length; i++){
-                        var parent = document.getElementById('grade');
-                        var option = document.createElement('option');
-                        option.value =  grades[i];
-                        option.innerHTML = grades[i];
-
-                        parent.append(option);
-                    }
-
                     for(var state in geoObj){
                         var parent = document.getElementById('state');
                         var option = document.createElement('option');
@@ -82,8 +112,13 @@ function getDetails(){
 
                         parent.append(option);
                     }
+
+                    });
+
+
                     //city in state
                     $('#state').on('change', function() {
+                        document.getElementById('city').innerHTML = '<option value="">City</option>';
                           var parent = document.getElementById('city');
                           parent.innerHTML = "";
                           var city = geoObj[this.value];
@@ -98,9 +133,6 @@ function getDetails(){
 
                     });
 
-                    console.log(crops);
-                    console.log(grades);
-                    console.log(geoObj);
 
                     $('#details').collapse('show');
                 }
@@ -132,35 +164,39 @@ function getChart(){
  var state = $('#state').val();
  var city = $('#city').val();
 
-var filteredData = mixedData.filter(function (el){
+var filteredDataLatest = mixedData.filter(function (el){
     return el.crop == crop &&
            el.grade == grade &&
            el.state == state &&
            el.city == city ;
 });
 
-        if(filteredData.length > 0){
-            drawChart(filteredData);
+        if(filteredDataLatest.length > 0){
+            drawChart(filteredDataLatest);
         }else{
             alert('No data available for chosen options');
         }
 }
 
-function drawChart(filteredData){
-    console.log(filteredData);
-                                    var labels = filteredData.map(function(e) {
+function drawChart(filteredDataLatest){
+    console.log(filteredDataLatest);
+                                    var labels = filteredDataLatest.map(function(e) {
                                         minX = e.month + "/01";
                                         maxX = e.month + "/" + moment(e.year+"-"+e.month, "YYYY-MM").daysInMonth();
                                             var date = e.month+'/'+ e.day +'/'+ e.year;
                                            return moment(date).format('MM/DD');
                                         });
-                                    console.log(labels);
-                                    var data = filteredData.map(function(e) {
+                                    var dataAvg = filteredDataLatest.map(function(e) {
                                            return e.average;
                                         });
-                                    console.log(data);
-                                var max = Math.max.apply(this, data);
-                                var min = Math.min.apply(this, data);
+                                     var dataHigh = filteredDataLatest.map(function(e) {
+                                           return e.high;
+                                        });
+                                     var dataLow = filteredDataLatest.map(function(e) {
+                                           return e.low;
+                                        });
+                                var max = Math.max.apply(this, dataHigh);
+                                var min = Math.min.apply(this, dataLow);
 
                                 if(max < 0){
                                     max = max-(max*0.10);
@@ -172,6 +208,12 @@ function drawChart(filteredData){
                                     min = min-(min*0.10);
                                 }
 
+                                    document.getElementById('chart-wrapper').innerHTML = '';
+                                    var canvas = document.createElement('canvas');
+                                    canvas.id = "chart";
+                                    canvas.width = '400';
+                                    canvas.height = '150';
+                                    document.getElementById('chart-wrapper').append(canvas);
 
                                     var ctx = document.getElementById('chart');
 
@@ -181,14 +223,35 @@ function drawChart(filteredData){
                                           labels: labels,
                                           datasets: [{
 
-                                             data: data,
+                                             data: dataAvg,
                                              fill: false,
                                              lineTension: 0.5,
                                              pointRadius: 2.2,
                                              borderWidth: 2,
                                              borderColor: "#5f76e8",
                                              backgroundColor: 'rgba(0, 119, 204, 0.3)'
-                                          }]
+                                          },
+                                          {
+
+                                             data: dataHigh,
+                                             fill: false,
+                                             lineTension: 0.5,
+                                             pointRadius: 2.2,
+                                             borderWidth: 2,
+                                             borderColor: "#3f91a3",
+                                             backgroundColor: 'rgba(123, 0, 17, 0.3)'
+                                          },
+                                          {
+
+                                             data: dataLow,
+                                             fill: false,
+                                             lineTension: 0.5,
+                                             pointRadius: 2.2,
+                                             borderWidth: 2,
+                                             borderColor: "#4f11f9",
+                                             backgroundColor: 'rgba(111, 234, 123, 0.3)'
+                                          },
+                                          ]
                                        },
                                        options:{
                                                 legend: {

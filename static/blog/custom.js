@@ -650,7 +650,8 @@ Chart.pluginService.register(horizonalLinePlugin);
                                         data: dataChart,
                                         fill: false,
                                         lineTension: 0.5,
-                                        borderColor: 'rgba(151, 190, 252,0.8)'
+                                        borderColor: 'rgba(151, 190, 252,0.8)',
+                                        backgroundColor: 'rgba(151, 190, 252,1)'
                                     }]
                                 };
 
@@ -1130,7 +1131,7 @@ function loadAlarmHistoryLink(id){
         var ajaxCounts = Object.keys(ajaxRequests).length;
         ajaxRequests[ajaxCounts] = $.ajax({
                     type: "GET",
-                    url: 'https://api.cl-ds.com/getAlarmHistory/' + id + '/?format=json',
+                    url: 'https://api.cl-ds.com/getAlarmHistoryV2/' + id + '/?format=json',
                     headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                     async: true,
                     //data: "check",
@@ -1144,7 +1145,8 @@ function loadAlarmHistoryLink(id){
                              document.getElementById('alarmHistory_'+ id).appendChild(text);
                              ajaxAlarmHistoryProcess[id] = true;
                         }else{
-                            var nodeID = document.getElementsByClassName(data[0].serial);
+
+                            var nodeID = document.getElementsByClassName(data.alarm_prop[0].serial);
                             var spinnerNode = document.getElementById('spinnerAlarmHistory_'+ nodeID[0].id);
                             spinnerNode.classList.remove('lds-roller');
 
@@ -1154,7 +1156,7 @@ function loadAlarmHistoryLink(id){
 
                             //Append Table Rows
                             var alarmHistoryTable = document.getElementById('alarmHistoryTable_' + nodeID[0].id).getElementsByTagName('tbody')[0];
-                            for(var a=0; a<data.length; a++){
+                            for(var a=0; a<data.history.length; a++){
                                 var newRow   = alarmHistoryTable.insertRow(a);
                                 console.log('History all inserted');
                                 // Insert a cell in the row at index 0
@@ -1167,14 +1169,19 @@ function loadAlarmHistoryLink(id){
                                 var ackBy  = newRow.insertCell(6);
                                 var ackTime  = newRow.insertCell(7);
 
-                                alarmTime.innerHTML=moment(data[a].alarm_datetime).format('h:mm a, DD-MMM-YYYY');
-                                serial.innerHTML=data[a].serial;
-                                parameter.innerHTML=data[a].parameter;
-                                value.innerHTML=data[a].value;
-                                lower_lim.innerHTML=data[a].limitLower;
-                                upper_lim.innerHTML=data[a].limitUpper;
-                                ackBy.innerHTML=data[a].user_removal;
-                                ackTime.innerHTML=moment(data[a].remove_datetime).format('h:mm a, DD-MMM-YYYY');
+                                alarmTime.innerHTML=moment(data.history[a].alarm_datetime).format('h:mm a, DD-MMM-YYYY');
+                                serial.innerHTML=data.history[a].serial;
+                                for(var x=0; x<data.alarm_prop.length; x++){
+                                    if(data.history[a].parameter == data.alarm_prop[x].parameter){
+                                        parameter.innerHTML=data.alarm_prop[x].label;
+                                    }
+                                }
+
+                                value.innerHTML=data.history[a].value;
+                                lower_lim.innerHTML=data.history[a].limitLower;
+                                upper_lim.innerHTML=data.history[a].limitUpper;
+                                ackBy.innerHTML=data.history[a].user_removal;
+                                ackTime.innerHTML=moment(data.history[a].remove_datetime).format('h:mm a, DD-MMM-YYYY');
 
                             }
                         }
@@ -1199,8 +1206,9 @@ function loadChartsLink(id){
                         spinnerNode.classList.add('lds-roller');
                         var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
                         spinnerNode.classList.remove('lds-roller');
-                        document.getElementById("btnRetrieveChart_"+id).style.display = "block";
-                        document.getElementById("btnRetrieveRawData_"+id).style.display = "block";
+                        //document.getElementById("btnRetrieveChart_"+id).style.display = "block";
+                        //document.getElementById("btnRetrieveRawData_"+id).style.display = "block";
+                        $('#controlButtons_'+id).hide();
                         document.getElementById("btnAddNewChart_"+id).style.display = "none";
                         document.getElementById("btnResetCharts_"+id).style.display = "none";
                         document.getElementById('canvasWrapper_'+id).innerHTML = "";
@@ -1234,8 +1242,9 @@ $(function () {
                     chartParameters = data;
                     var spinnerNode = document.getElementById('spinnerParCharts_'+id);
                         spinnerNode.classList.remove('lds-roller');
-                    $('#btnRetrieveChart_'+id).removeAttr('disabled');
-                    $('#btnRetrieveRawData_'+id).removeAttr('disabled');
+                    //$('#btnRetrieveChart_'+id).removeAttr('disabled');
+                    //$('#btnRetrieveRawData_'+id).removeAttr('disabled');
+                    $('#controlButtons_'+id).show();
                     var parentForm = document.getElementById('chartParameters_'+id);
                     //create first parameter
                     var parentFirstParam = document.getElementById('firstParameterSelect_'+id);
@@ -1358,8 +1367,9 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                         document.getElementById("firstParameterSelect_"+id).disabled = true;
                         document.getElementById("chartParameters_"+id).style.display = "block";
                         $('#saveRetrievedChart_'+id).removeAttr('disabled');
-                        document.getElementById("btnRetrieveChart_"+id).style.display = "none";
-                        document.getElementById("btnRetrieveRawData_"+id).style.display = "none";
+                        //document.getElementById("btnRetrieveChart_"+id).style.display = "none";
+                        //document.getElementById("btnRetrieveRawData_"+id).style.display = "none";
+                        $('#controlButtons_'+id).hide();
                         document.getElementById("btnAddNewChart_"+id).style.display = "block";
                         document.getElementById("btnResetCharts_"+id).style.display = "block";
 
@@ -1681,8 +1691,9 @@ style="position: relative;margin: auto;height: 40vh;width: 100vw;"
 function resetCharts(id){
                         document.getElementById("firstParameterSelect_"+id).disabled = false;
                         document.getElementById("chartParameters_"+id).style.display = "none";
-                        document.getElementById("btnRetrieveChart_"+id).style.display = "block";
-                        document.getElementById("btnRetrieveRawData_"+id).style.display = "block";
+                        //document.getElementById("btnRetrieveChart_"+id).style.display = "block";
+                        //document.getElementById("btnRetrieveRawData_"+id).style.display = "block";
+                        $('#controlButtons_'+id).show();
                         document.getElementById("btnAddNewChart_"+id).style.display = "none";
                         document.getElementById("btnResetCharts_"+id).style.display = "none";
                         document.getElementById('canvasWrapper_'+id).innerHTML = "";

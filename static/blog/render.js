@@ -207,7 +207,7 @@ function createNodeCards(data){
             var htmlRawDataSection = `<section id="section_${data.node[i].device_id}_rawData" class="sectionNodeLinks" style="display:none;">
                                         <h1>rawData</h1>
                                     </section>`;
-            var htmlRawDataButton = `<button type="button" disabled id="btnRetrieveRawData_${data.node[i].device_id}" onclick="retrieveRawData('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px;">Raw Data</button>`;
+            var htmlRawDataButton = `<button type="button" id="btnRetrieveRawData_${data.node[i].device_id}" onclick="retrieveRawData('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px;">Raw Data</button>`;
         }else if(data.alarm){
             var htmlAlarmHistoryLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'alarmHistory'); loadAlarmHistoryLink('${data.node[i].device_id}');" class="nav-item">
                                             <a class="nav-link" href="#">Alarm History</a>
@@ -269,7 +269,7 @@ function createNodeCards(data){
             var htmlRawDataSection = `<section id="section_${data.node[i].device_id}_rawData" class="sectionNodeLinks" style="display:none;">
                                         <h1>rawData</h1>
                                     </section>`;
-            var htmlRawDataButton = `<button disabled type="button" id="btnRetrieveRawData_${data.node[i].device_id}" onclick="retrieveRawData('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px;">Raw Data</button>`;
+            var htmlRawDataButton = `<button type="button" id="btnRetrieveRawData_${data.node[i].device_id}" onclick="retrieveRawData('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px;">Raw Data</button>`;
         }else{
             var htmlAlarmHistoryLink = ``;
             var htmlRawDataLink = ``;
@@ -414,7 +414,6 @@ function createNodeCards(data){
                         `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'charts'); loadChartsLink('${data.node[i].device_id}');" class="nav-item">
                             <a class="nav-link" href="#">Retrieve Charts</a>
                         </li>`+
-                        htmlRawDataLink+
                         htmlAlarmHistoryLink +
 
                       `<li class="nav-item">
@@ -457,7 +456,6 @@ function createNodeCards(data){
 
             htmlAlarmHistorySection+
 
-            htmlRawDataSection+
 
             htmlRemoteSection+
 
@@ -525,8 +523,9 @@ function createNodeCards(data){
 
 
                       <div class="form-check" style="display: flex;">
-                        <button type="button" id="btnRetrieveChart_${data.node[i].device_id}" disabled onclick="retrieveChart('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px;">Chart</button>`+
-                        htmlRawDataButton +`
+                      <div id="controlButtons_${data.node[i].device_id}" style="padding:25px;">
+                        <button type="button" id="btnRetrieveChart_${data.node[i].device_id}" onclick="retrieveChart('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px; margin-right:10px;">Chart</button>`+
+                        htmlRawDataButton +`</div>
                         <button type="button" id="btnAddNewChart_${data.node[i].device_id}" onclick="addNewChart('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px; display:none;">Add New</button>
                         <button type="button" id="btnResetCharts_${data.node[i].device_id}" onclick="resetCharts('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px; display:none;">Reset</button>
                         <p id="errorMessage_${data.node[i].device_id}"style="color:red; font-size:13px; margin:5px; "></p>
