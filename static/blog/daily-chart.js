@@ -1,20 +1,17 @@
-  $(document).ready(function(){
-    callAPI();
 
-  });
 
-function callAPI(){
+function callAPI(id){
       $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardChartData/O4mJwE/',
+                url: 'https://api.cl-ds.com/getDashboardChartData/'+id+'/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
                     var spinnerNode = document.getElementById('chart-spinner');
                     spinnerNode.classList.remove('lds-roller');
                     //callChart(data);
-                    callChartV(data);
-                    rain(data);
+                    callChartV(data, id);
+
                 }
             });
 };
@@ -22,408 +19,333 @@ function callAPI(){
 
 
 
-function callChartV(data){
-
- Chart.defaults.groupableBar = Chart.helpers.clone(Chart.defaults.bar);
-
-var helpers = Chart.helpers;
-Chart.controllers.groupableBar = Chart.controllers.bar.extend({
-  calculateBarX: function (index, datasetIndex) {
-    // position the bars based on the stack index
-    var stackIndex = this.getMeta().stackIndex;
-    return Chart.controllers.bar.prototype.calculateBarX.apply(this, [index, stackIndex]);
-  },
-
-  hideOtherStacks: function (datasetIndex) {
-    var meta = this.getMeta();
-    var stackIndex = meta.stackIndex;
-
-    this.hiddens = [];
-    for (var i = 0; i < datasetIndex; i++) {
-      var dsMeta = this.chart.getDatasetMeta(i);
-      if (dsMeta.stackIndex !== stackIndex) {
-        this.hiddens.push(dsMeta.hidden);
-        dsMeta.hidden = true;
-      }
-    }
-  },
-
-  unhideOtherStacks: function (datasetIndex) {
-    var meta = this.getMeta();
-    var stackIndex = meta.stackIndex;
-
-    for (var i = 0; i < datasetIndex; i++) {
-      var dsMeta = this.chart.getDatasetMeta(i);
-      if (dsMeta.stackIndex !== stackIndex) {
-        dsMeta.hidden = this.hiddens.unshift();
-      }
-    }
-  },
-
-  calculateBarY: function (index, datasetIndex) {
-    this.hideOtherStacks(datasetIndex);
-    var barY = Chart.controllers.bar.prototype.calculateBarY.apply(this, [index, datasetIndex]);
-    this.unhideOtherStacks(datasetIndex);
-    return barY;
-  },
-
-  calculateBarBase: function (datasetIndex, index) {
-    this.hideOtherStacks(datasetIndex);
-    var barBase = Chart.controllers.bar.prototype.calculateBarBase.apply(this, [datasetIndex, index]);
-    this.unhideOtherStacks(datasetIndex);
-    return barBase;
-  },
-
-  getBarCount: function () {
-    var stacks = [];
-
-    // put the stack index in the dataset meta
-    Chart.helpers.each(this.chart.data.datasets, function (dataset, datasetIndex) {
-      var meta = this.chart.getDatasetMeta(datasetIndex);
-      if (meta.bar && this.chart.isDatasetVisible(datasetIndex)) {
-        var stackIndex = stacks.indexOf(dataset.stack);
-        if (stackIndex === -1) {
-          stackIndex = stacks.length;
-          stacks.push(dataset.stack);
-        }
-        meta.stackIndex = stackIndex;
-      }
-    }, this);
-
-    this.getMeta().stacks = stacks;
-    return stacks.length;
-  },
-});
-
-Chart.Tooltip.positioners.custom = function(elements, eventPosition) {
-    /** @type {Chart.Tooltip} */
-    var tooltip = this;
-
-    /* ... */
-
-    return {
-        x: eventPosition.x,
-        y: eventPosition.y
-    };
-}
-
-
+function callChartV(data, id){
 
 for (var w=0; w<data.chart_prop.length; w++){
+  var mainData = {};
   var mainLabels =[];
     for(var b=data.day_plot-1; b>-1; b--){
-      mainLabels.push(moment().subtract(b, 'days').format('DD/MM')+ ' (' + moment().subtract(b, 'days').format('ddd')+')');
+      mainLabels.push(moment().subtract(b, 'days').format('MM/DD')+ ' (' + moment().subtract(b, 'days').format('ddd')+')');
     }
     var datasets = [];
     var time = ['day', 'midnight', 'morning', 'afternoon', 'evening'];
-    var timeLabels = [];
-    console.log(moment().subtract(data.day_plot-1, 'days').format('YYYY-MM-DD'));
-  for(var a=0; a<time.length; a++){
-    for(var i=1; i<=4; i++){
-    var tempDataset = {};
-    var arrData = [];
-      if(eval('data.chart_prop[w].parameter0'+i) != null){
+    //count parameters
+    var parameter_count=0;
+    for(var b=1; b>0; b++){
+      if(data.chart_prop[w].hasOwnProperty("parameter0"+b)){
+        parameter_count++;
+      }else{
+        break;
+      }
+    }
 
-              switch(i){
-                case 1: var color = 'rgba(233,214,98,0.4)';break;
-                case 2: var color = 'rgba(0,255,31,0.6)';break;
-                case 3: var color = 'rgba(0,0,255,1)';break;
-                case 4: var color = 'rgba(43,187,1,1)';break;
-              }
-              var parameter = eval('data.chart_prop[w].parameter0'+i);
-              tempDataset.label = eval('data.chart_prop[w].label0'+i);
-              var tempCount = 0;
-              for(var b=data.day_plot-1; b>-1; b--){
-                var dateCurrent = moment().subtract(b, 'days').format('YYYY-MM-DD');
-                var pushData = null;
-                for(var x=0; x<data.data.length; x++){
+console.log(mainLabels);
+console.log(parameter_count);
 
-                  if(data.data[x].date == dateCurrent && data.data[x].time == time[a]){
-                    var pushData = data.data[x][parameter];
-                  }
-                }
-                arrData[tempCount] = pushData;
-                tempCount++;
-              }
-              tempDataset.data = arrData;
-              tempDataset.backgroundColor = color;
-              tempDataset.stack = a+1;
-              tempDataset.xAxisID = 'x-axis-1';
-              tempDataset.yAxisID = 'y-axis-0';
-              tempDataset.barPercentage = 0.7;
-              tempDataset.categoryPercentage = 1;
-              datasets.push(tempDataset);
+for(var i=0; i<mainLabels.length; i++){
+  var tempData = {};
+  for(var b=0; b<time.length; b++){
+    var tempParamData ={};
+    for(var c=1; c<=parameter_count; c++){
+      if(eval('data.chart_prop[w].parameter0'+c) != null){
+        var date = mainLabels[i].split(/ /)[0] + '/'+ moment().format('YYYY');
+        date = moment(date).format('YYYY-MM-DD');
+        for(var x=0; x<data.data.length; x++){
+          if(data.data[x].date == date && data.data[x].time == time[b]){
+            tempParamData[eval('data.chart_prop[w].label0'+c)] = data.data[x][eval('data.chart_prop[w].parameter0'+c)];
+          }
+        }
 
       }
 
     }
+    tempData[time[b]] = tempParamData;
+  }
+  mainData[mainLabels[i]] =  tempData;
+}
+  var parametersConfig = {};
+ for(var c=1; c<=parameter_count; c++){
+  if(eval('data.chart_prop[w].parameter0'+c) !== null){
+    parametersConfig[eval('data.chart_prop[w].label0'+c)] = {
+      axis: eval('data.chart_prop[w].axis0'+c),
+      unit: eval('data.chart_prop[w].unit0'+c)
+    };
   }
 
-  for(var i=0; i<mainLabels.length; i++){
+ }
+ var chartConfig = {
+  chart_category: eval('data.chart_prop[w].chart_category'),
+  chart_title:  eval('data.chart_prop[w].chart_title'),
+  priority: eval('data.chart_prop[w].priority'),
+  parameters: parametersConfig
+ };
+console.log(mainData);
 
-    for(var a=0; a< time.length; a++){
-      timeLabels.push(time[a]);
-    }
-  }
-console.log(timeLabels);
-console.log(datasets);
+  callAmChart(id,mainData,  mainLabels, time, w, chartConfig);
 
-    var canvas = document.createElement('canvas');
-    canvas.id = w;
-    canvas.width = '400';
-    canvas.height = '100';
-    canvas.style.marginTop = '50px';
-    document.getElementById('canvasWrapper').append(canvas);
 
-    //stack or overlay
-    if(data.chart_prop[w].chart_category == "Stacked"){
-      var stacked = true;
+}
+
+}
+
+
+function callAmChart(id, data, mainLabels, time, w, chartConfig) {
+//<div id="chartdiv" style="width: 100%; height:500px;"></div>
+
+var parent = document.getElementById('am_'+id);
+var child = document.createElement('div');
+child.id = 'chart_'+w+'_'+id;
+child.style.width = '100%';
+child.style.height = '500px';
+
+parent.appendChild(child);
+// Themes begin
+am4core.useTheme(am4themes_animated);
+// Themes end
+
+var chart = am4core.create('chart_'+w+'_'+id, am4charts.XYChart);
+
+// some extra padding for range labels
+chart.paddingBottom = 50;
+
+chart.cursor = new am4charts.XYCursor();
+chart.cursor.lineX.disabled = false;
+chart.cursor.lineY.disabled = false;
+//chart.cursor.maxTooltipDistance = -1;
+chart.scrollbarX = new am4core.Scrollbar();
+chart.logo.disabled = true;
+
+//title
+
+var topContainer = chart.chartContainer.createChild(am4core.Container);
+topContainer.layout = "absolute";
+topContainer.toBack();
+topContainer.paddingBottom = 15;
+topContainer.width = am4core.percent(100);
+
+var title = topContainer.createChild(am4core.Label);
+title.text = chartConfig.chart_title;
+title.fontWeight = 600;
+title.align = "center";
+// will use this to store colors of the same items
+var colors = {};
+
+var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+categoryAxis.dataFields.category = "category";
+categoryAxis.renderer.minGridDistance = 10;
+categoryAxis.renderer.grid.template.location = 0;
+categoryAxis.dataItems.template.text = "{realName}";
+categoryAxis.renderer.labels.template.rotation = -90;
+categoryAxis.renderer.labels.template.horizontalCenter = "right";
+categoryAxis.renderer.labels.template.verticalCenter = "middle";
+categoryAxis.adapter.add("tooltipText", function(tooltipText, target){
+  return categoryAxis.tooltipDataItem.dataContext.realName;
+})
+
+var axes = {};
+var series = {};
+var shiftPixels = -5;
+var axisCount = 0;
+for(var parameter in chartConfig.parameters){
+  //yAxes
+  if(!axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)]){
+    if(axisCount == 0){
+      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)] = chart.yAxes.push(new am4charts.ValueAxis());
+      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].tooltip.disabled = false;
+      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].title.text = chartConfig.parameters[parameter].unit;
     }else{
-      var stacked = false;
+      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)] = chart.yAxes.push(new am4charts.ValueAxis());
+      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].tooltip.disabled = false;
+      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].title.text = chartConfig.parameters[parameter].unit;
+      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].renderer.opposite = 'opposite';
+    }
+     axisCount++;
+  }
+
+  //series
+  series[parameter] = chart.series.push(new am4charts.ColumnSeries());
+  series[parameter].columns.template.width = am4core.percent(30);
+  series[parameter].tooltipText = "{provider}: "+parameter+", {valueY}";;
+  series[parameter].dataFields.categoryX = "category";
+  series[parameter].dataFields.valueY = parameter;
+
+  series[parameter].columns.template.column.cornerRadiusTopLeft = 2;
+  series[parameter].columns.template.column.cornerRadiusTopRight = 2;
+
+  series[parameter].yAxis = axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)];
+  if(chartConfig.chart_category == 'Overlay'){
+      series[parameter].clustered = false;
+      series[parameter].columns.template.dx = shiftPixels;
+      shiftPixels += 5;
+  }else if(chartConfig.chart_category == 'Stacked'){
+       series[parameter].stacked = true;
+  }else if(chartConfig.chart_category == 'Group'){
+      series[parameter].clustered = true;
+  }
+
+
+
+  }
+
+console.log(series);
+var counter = 0;
+var brightness = 0;
+for(var parameter in chartConfig.parameters){
+
+    switch(counter){
+      case 0:      series[parameter].columns.template.adapter.add("fill", function(fill, target) {
+                   var name = target.dataItem.dataContext.realName;
+                   var item = target.dataItem.dataContext.itemName;
+                   if (!colors[name]) {
+                      chart.colors.step = 5;
+                     colors[name] = chart.colors.next();
+                   }
+                   target.stroke = colors[name];
+                   return colors[name];
+                  }); break;
+      case 1:     series[parameter].columns.template.adapter.add("fill", function(fill, target) {
+                   var name = target.dataItem.dataContext.realName;
+                   var item = target.dataItem.dataContext.itemName;
+                   if (!colors[name]) {
+                     colors[name] = chart.colors.next();
+                   }
+                   target.stroke = colors[name].brighten(-0.2);
+                   return colors[name].brighten(-0.2);
+                  });break;
+      case 2:     series[parameter].columns.template.adapter.add("fill", function(fill, target) {
+                   var name = target.dataItem.dataContext.realName;
+                   var item = target.dataItem.dataContext.itemName;
+                   if (!colors[name]) {
+                     colors[name] = chart.colors.next();
+                   }
+                   target.stroke = colors[name].brighten(-0.4);
+                   return colors[name].brighten(-0.4);
+                  });break;
+      case 3:     series[parameter].columns.template.adapter.add("fill", function(fill, target) {
+                   var name = target.dataItem.dataContext.realName;
+                   var item = target.dataItem.dataContext.itemName;
+                   if (!colors[name]) {
+                     colors[name] = chart.colors.next();
+                   }
+                   target.stroke = colors[name].brighten(-0.6);
+                   return colors[name].brighten(-0.6);
+                  });break;
+      case 4:     series[parameter].columns.template.adapter.add("fill", function(fill, target) {
+                   var name = target.dataItem.dataContext.realName;
+                   var item = target.dataItem.dataContext.itemName;
+                   if (!colors[name]) {
+                     colors[name] = chart.colors.next();
+                   }
+                   target.stroke = colors[name].brighten(-0.8);
+                   return colors[name].brighten(-0.8);
+                  });break;
+      case 5:     series[parameter].columns.template.adapter.add("fill", function(fill, target) {
+                   var name = target.dataItem.dataContext.realName;
+                   var item = target.dataItem.dataContext.itemName;
+                   if (!colors[name]) {
+                     colors[name] = chart.colors.next();
+                   }
+                   target.stroke = colors[name].brighten(-1);
+                   return colors[name].brighten(-1);
+                  });break;
     }
 
-    var ctx = document.getElementById(w);
+    counter++;
 
-    var myBarChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-           labels: mainLabels,
-            datasets: datasets
-        },
-        options: {
-
-            legend:{display: false},
-              tooltips: {
-                mode: 'single',
-                position: 'nearest',
-                callbacks: {
-                  label: function(tti, data){
-                    console.log(tti);
-                    var stack = data.datasets[tti.datasetIndex].stack;
-                    var dataArray = [];
-                    var str = [];
-                    for(var i=0; i<data.datasets.length; i++){
-                      if(data.datasets[i].stack == stack){
-                        dataArray.push(data.datasets[i]);
-                      }
-                    }
-                    console.log(dataArray);
-                    for(var i=0; i< dataArray.length; i++){
-                      str.push(dataArray[i].label+': ' + dataArray[i].data[tti.index]);
-                    }
-                    return str
-                  }
-                }
-              },
-            scales: {
-                     xAxes: [{
-                      labels: timeLabels,
-                      ticks: {
-                          autoSkip: false,
-                          maxRotation: 90,
-                          minRotation: 90
-                      }
-                     },{
-                     stacked: true,
-                      type: 'category',
-                      id: 'x-axis-1',
-                      offset: true,
-
-                      gridLines: {
-                        offsetGridLines: true,
-                        lineWidth: 4
-                      }}],
-                yAxes: [{
-                  stacked: stacked,
-                        type: 'linear',
-                        ticks: {
-                          beginAtZero:false
-                        },
-                        gridLines: {
-                          display: false,
-                          drawTicks: true,
-                        },
-                        id: 'y-axis-0'
-                }]
-            },
-
-          /*animation: {
-            onComplete: function () {
-              var chartInstance = this.chart;
-              var ctx = chartInstance.ctx;
-              console.log(chartInstance);
-              var height = chartInstance.controller.boxes[0].bottom;
-              ctx.textAlign = "center";
-              Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
-                var meta = chartInstance.controller.getDatasetMeta(i);
-                Chart.helpers.each(meta.data.forEach(function (bar, index) {
-                  ctx.fillText(dataset.data[index], bar._model.x, bar._model.y);
-                }),this)
-              }),this);
-            }
-          }*/
-        }
-    });
 }
 
 
-  }
+
+var rangeTemplate = categoryAxis.axisRanges.template;
+rangeTemplate.tick.disabled = false;
+rangeTemplate.tick.location = 0;
+rangeTemplate.tick.strokeOpacity = 0.6;
+rangeTemplate.tick.length = 60;
+rangeTemplate.grid.strokeOpacity = 0.5;
+rangeTemplate.label.tooltip = new am4core.Tooltip();
+rangeTemplate.label.tooltip.dy = -10;
+rangeTemplate.label.cloneTooltip = false;
+
+///// DATA
+var chartData = [];
+var lineSeriesData = [];
 
 
 
+// process data ant prepare it for the chart
+for (var providerName in data) {
+ var providerData = data[providerName];
 
-function rain(data){
-      var mainLabels = ['day', 'midnight', 'morning', 'afternoon', 'evening']
-    var datasets = [];
-    var days = [];
-    var dayLabels = [];
-    var stack = 0;
-    console.log(moment().subtract(data.day_plot-1, 'days').format('YYYY-MM-DD'));
-  for(var b=data.day_plot-1; b>-1; b-- ){
-    stack++;
-    var dateCurrent = moment().subtract(b, 'days').format('YYYY-MM-DD');
-    days.push(moment(dateCurrent).format('DD/MM'));
-    for(var i=1; i<=4; i++){
-    var tempDataset = {};
-    var arrData = [];
-      if(eval('data.chart_prop[1].parameter0'+i) != null){
-              switch(i){
-                case 1: var color = 'rgba(233,214,98,0.6)';break;
-                case 2: var color = 'rgba(12,255,63,0.6)';break;
-                case 3: var color = 'rgba(142,112,53,0.6)';break;
-                case 4: var color = 'rgba(43,187,1,0.6)';break;
-              }
-              var parameter = eval('data.chart_prop[1].parameter0'+i);
-              tempDataset.label = eval('data.chart_prop[1].label0'+i);
-              for(var a=0; a<mainLabels.length; a++){
-                var pushData = null;
-                for(var x=0; x<data.data.length; x++){
-
-                  if(data.data[x].date == dateCurrent && data.data[x].time == mainLabels[a]){
-                    var pushData = data.data[x][parameter];
-                  }
-                }
-                arrData[a] = pushData;
-              }
-              tempDataset.data = arrData;
-              tempDataset.backgroundColor = color;
-              tempDataset.stack = stack;
-              tempDataset.xAxisID = 'x-axis-1';
-              if(i==2){
-                tempDataset.yAxisID = 'y-axis-2';
-              }else{
-                tempDataset.yAxisID = 'y-axis-1';
-              }
-
-              tempDataset.barPercentage = 0.7;
-              tempDataset.categoryPercentage = 1;
-              datasets.push(tempDataset);
-
-      }
-
-    }
-  }
-
-  for(var i=0; i<mainLabels.length; i++){
-
-    for(var a=0; a< days.length; a++){
-      dayLabels.push(days[a]);
-    }
-  }
-console.log(dayLabels);
-console.log(datasets);
+ // add data of one provider to temp array
+ var tempArray = [];
+ var count = 0;
+ // add items
+ for (var itemName in providerData) {
+  var itemData = providerData[itemName];
+   if(itemName != "quantity"){
+   count++;
+   var tempObject = {
+          category: providerName + "_" + itemName,
+          realName: itemName,
+          provider: providerName
+        };
+     for(var item in itemData){
+      tempObject[item] = itemData[item];
+     }
+      // we generate unique category for each column (providerName + "_" + itemName) and store realName
+        tempArray.push(tempObject);
+   }
+ }
 
 
 
+ // push to the final data
+ am4core.array.each(tempArray, function(item) {
+   chartData.push(item);
+ })
 
-    var ctx = document.getElementById('vBar');
+ // create range (the additional label at the bottom)
+ var range = categoryAxis.axisRanges.create();
+ range.category = tempArray[0].category;
+ range.endCategory = tempArray[tempArray.length - 1].category;
+ range.label.text = tempArray[0].provider;
+ range.label.dy = 0;
+ range.label.truncate = true;
+ range.label.fontWeight = "bold";
+ range.label.rotation = 0;
+ range.label.inside = true;
+ range.label.horizontalCenter = "middle";
+ range.label.valign = "top";
+// range.label.align = "center";
+ range.label.tooltipText = tempArray[0].provider;
 
-    var myBarChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-           labels: mainLabels,
-            datasets: datasets
-        },
-        options: {
-
-            legend:{display: false},
-              tooltips: {
-                mode: 'single',
-                position: 'nearest',
-                callbacks: {
-                  label: function(tti, data){
-                    console.log(tti);
-                    var stack = data.datasets[tti.datasetIndex].stack;
-                    var dataArray = [];
-                    var str = [];
-                    for(var i=0; i<data.datasets.length; i++){
-                      if(data.datasets[i].stack == stack){
-                        dataArray.push(data.datasets[i]);
-                      }
-                    }
-                    console.log(dataArray);
-                    for(var i=0; i< dataArray.length; i++){
-                      str.push(dataArray[i].label+': ' + dataArray[i].data[tti.index]);
-                    }
-                    return str
-                  }
-                }
-              },
-            scales: {
-                     xAxes: [{
-                      labels: dayLabels
-                     },{
-                     stacked: true,
-                      type: 'category',
-                      id: 'x-axis-1',
-                      offset: true,
-                      gridLines: {
-                        offsetGridLines: true
-                      }}],
-                yAxes: [{
-                  stacked: false,
-                        type: 'linear',
-                        ticks: {
-                          beginAtZero:false
-                        },
-                        gridLines: {
-                          display: false,
-                          drawTicks: true,
-                        },
-                        position: 'left',
-                        id: 'y-axis-1'
-                },
-
-                {
-                  stacked: false,
-                        type: 'linear',
-                        ticks: {
-                          beginAtZero:false
-                        },
-                        gridLines: {
-                          display: false,
-                          drawTicks: true,
-                        },
-                        position: 'right',
-                        id: 'y-axis-2'
-                }]
-            },
-
-          /*animation: {
-            onComplete: function () {
-              var chartInstance = this.chart;
-              var ctx = chartInstance.ctx;
-              console.log(chartInstance);
-              var height = chartInstance.controller.boxes[0].bottom;
-              ctx.textAlign = "center";
-              Chart.helpers.each(this.data.datasets.forEach(function (dataset, i) {
-                var meta = chartInstance.controller.getDatasetMeta(i);
-                Chart.helpers.each(meta.data.forEach(function (bar, index) {
-                  ctx.fillText(dataset.data[index], bar._model.x, bar._model.y);
-                }),this)
-              }),this);
-            }
-          }*/
-        }
-    });
+ range.label.adapter.add("maxWidth", function(maxWidth, target){
+   var range = target.dataItem;
+   var startPosition = categoryAxis.categoryToPosition(range.category, 0);
+   var endPosition = categoryAxis.categoryToPosition(range.endCategory, 1);
+   var startX = categoryAxis.positionToCoordinate(startPosition);
+   var endX = categoryAxis.positionToCoordinate(endPosition);
+   return endX - startX;
+ })
 }
+
+
+chart.data = chartData;
+
+
+// last tick
+var range = categoryAxis.axisRanges.create();
+range.category = chart.data[chart.data.length - 1].category;
+range.label.disabled = true;
+range.tick.location = 1;
+range.grid.location = 1;
+
+
+
+
+}
+
+
+
+
+

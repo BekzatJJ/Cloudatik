@@ -58,6 +58,9 @@
 
   <script src="https://unpkg.com/leaflet@1.3.1/dist/leaflet.js" integrity="sha512-/Nsx9X4HebavoBvEBuyp3I7od5tA0UzAxs+j83KgC8PU0kgB4XiK4Lfe4y4cgBtaRJQEIFCW+oC506aPT2L1zw==" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
+
+
+
 </head>
 
 <body>
@@ -176,27 +179,84 @@
             <!-- ============================================================== -->
             <!-- Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
+<section id="section_Dashboard" style="display:block;">
             <div class="page-breadcrumb">
-                                <div class="row">
-                                    <div class="col-7 align-self-center">
-                                        <div class="d-flex align-items-center">
-                                            <nav aria-label="breadcrumb">
-                                                <ol  id="breadcrumbConfig" class="breadcrumb m-0 p-0">
-                                                    <li class="breadcrumb-item" aria-current="page"><a href="/">Dashboard</a>
-                                                    </li>
-                                                    <li class="breadcrumb-item active" aria-current="page"><a href="#">Daily-chart</a>
-                                                    </li>
-                                                </ol>
-                                            </nav>
-                                        </div>
-                                    </div>
-                                    <div class="col-5 align-self-center">
-                                        <div class="customize-input float-right">
-                                            <div id="currentDate" class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius"></div>
-                                        </div>
-                                    </div>
-                                </div>
+                <div class="row">
+                    <div class="col-7 align-self-center">
+                        <h3 id="salutation" class="page-title text-truncate text-dark font-weight-medium mb-1 salutation"></h3>
+                        <div class="d-flex align-items-center">
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb m-0 p-0">
+                                    <li class="breadcrumb-item active" onClick="section_dashboard()" aria-current="page"><a href="#">Dashboard</a>
+                                    </li>
+                                </ol>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="col-5 align-self-center">
+                        <div class="customize-input float-right">
+                            <div id="currentDate" class="custom-select custom-select-set form-control bg-white border-0 custom-shadow custom-radius dateBadge"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
+
+
+
+            <div id="dashboard-content" class="container-fluid dashboard-content">
+              <div class="row" style="margin-bottom: 10px; margin-top:10px;">
+                <div class="col-md-12 text-center">
+                  <div class="btn-group" role="group" aria-label="DashLayout">
+                    <button  onclick="dashLayout();" type="button" style="color:black;" class="btn btn-secondary">Grid</button>
+                    <button id="mapButton" disabled  onclick="mapClickEvent();" type="button" class="btn btn-secondary">Map</button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="spinnerMain" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+
+              <div class="card-group" id="nodesList">
+                <!--
+                {% for node in nodes.node %}
+                <div id="{{node.device_id}}"class="card border-success mb-3 node {{node.serial}}" style="max-width: 18rem;">
+                  <div class="card-header bg-transparent border-success first" onclick="section_node(this)">{{node.tag}} <br> <p style="font-size:11px; color: black; margin-top:1px; margin-bottom:0;">{{node.serial}}</p></div>
+                  <div class="card-body text-dark float-right">
+                    <canvas id="canvasLed_{{node.serial}}" class="leds" width="25" height="25"></canvas>
+                    <a href="" class="float-right mr-1" data-toggle="popover" data-placement="bottom" data-content="Node Configurations"><i data-feather="settings" class="feather-icon"></i></a>
+                    {% if nodes.alarm == 'true' %}
+                      <a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Alarm History"><i data-feather="clock" class="feather-icon"></i></a>
+                    {% endif %}
+                    <a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Charts"><i data-feather="bar-chart-2" class="feather-icon"></i></a>
+                    {% if node.remote == 'true' %}
+                      <a href="#" class="float-right mr-3" data-toggle="popover" data-placement="bottom" data-content="Remote Control"><i data-feather="sliders" class="feather-icon"></i></a>
+                    {% endif %}
+                  </div>
+                </div>
+                {% endfor %}-->
+
+
+
+
+
+
+              </div>
+
+
+            </div>
+
+
+</section>
+
+
+<section id="map-content"  style="display:none;">
+
+</section>
+
+
+
+<div id="secondLayer">
+
+</div>
             <!-- ============================================================== -->
             <!-- End Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
@@ -205,10 +265,10 @@
             <!-- ============================================================== -->
             <div class="container-fluid">
                  <div id="chart-spinner" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                 <div id='canvasWrapper'>
+
+                 <div id="am" style="margion-top:50px;">
 
                  </div>
-                 <canvas id="vBar" width ="400" height="150" style="margin-top:90px"></canvas>
             </div>
 
 
@@ -420,29 +480,382 @@
     <!-- others plugins -->
     <script src="{%  static 'blog/assetsLogin_user/js/plugins.js' %}"></script>
     <script src="{%  static 'blog/assetsLogin_user/js/scripts.js' %}"></script>
-
+    <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/themes/dark.js"></script>
+    <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
 
     <script src="{%  static 'blog/daily-chart.js' %}"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js" type="text/javascript"></script>
 
 <script type="text/javascript">
-    username = '{{ user.get_username }}';
+
+
+        var username = '{{ user.get_username }}';
+        var logo = '{{ logo | safe}}';
+        logo = logo.split(/"/)[1];
+
+        window.profile = {};
+
+        function dashLayout(){
+            var dash = document.getElementById('section_Dashboard');
+            var map = document.getElementById('map-content');
+
+            map.setAttribute('style', 'display:none');
+            dash.setAttribute('style', 'display:block');
+        }
+        function sectionNodeLinks(id, section){
+            console.log(id, section);
+            document.getElementById('section_Dashboard').setAttribute('style', 'display:none;');
+            var nodeSection = document.getElementById('section_'+ id);
+            var nodeSectionDashboard = document.getElementById('section_'+ id + "_dashboard");
+            var sectionLinks = document.getElementsByClassName('sectionNodeLinks');
+            var currentSection = document.getElementById('section_'+id+'_'+section);
+
+            nodeSection.setAttribute('style', 'display:block;');
+            nodeSectionDashboard.setAttribute('style', 'display:none;');
+            for(var i=0; i< sectionLinks.length; i++){
+                sectionLinks[i].setAttribute('style', 'display:none;');
+            }
+            currentSection.setAttribute('style', 'display:block;');
+
+            //remote call mqtt
+            if(section == "remote"){
+                connectMqtt(id);
+            }
+            //Abort all ajax requests
+            for(var i=0; i< Object.keys(ajaxRequests).length; i++){
+                        ajaxRequests[i].abort();
+                        console.log('aborted from links')
+                    }
+
+
+
+        }
+        function section_dashboard(){
+            var nodes = document.getElementsByClassName('sectionNode');
+            for(var i=0; i< nodes.length; i++){
+                nodes[i].setAttribute('style', 'display:none;');
+            }
+            if(document.getElementById('map-content').style.display === 'block'){
+
+            }else{
+               document.getElementById('section_Dashboard').setAttribute('style', 'display:block;');
+            }
+
+        }
+
+        function section_node(elem){
+            var nodes = document.getElementsByClassName('sectionNode');
+            var sectionLinks = document.getElementsByClassName('sectionNodeLinks');
+            var node = document.getElementById('section_'+elem.parentNode.id);
+            for(var i=0; i< nodes.length; i++){
+                nodes[i].setAttribute('style', 'display:none;');
+            }
+            for(var i=0; i< sectionLinks.length; i++){
+                sectionLinks[i].setAttribute('style', 'display:none;');
+            }
+            document.getElementById('section_Dashboard').setAttribute('style', 'display:none;');
+            document.getElementById('section_'+ elem.parentNode.id + '_dashboard').setAttribute('style', 'display:block');
+            node.setAttribute('style', 'display:block;');
+
+            //Request Ajax for this node and abort all other
+
+
+            if(ajaxNodeProcess[elem.parentNode.id] == false){
+                //disable links
+                var navLinks = document.getElementById('nodeLinks_'+elem.parentNode.id);
+                for(var i=0; i< navLinks.children.length; i++){
+                    navLinks.children[i].setAttribute('style', 'pointer-events:none');
+                }
+                var spinnerNode = document.getElementById('spinner_'+elem.parentNode.id);
+                spinnerNode.classList.add('lds-roller');
+                for(var i=0; i< Object.keys(ajaxRequests).length; i++){
+                        ajaxRequests[i].abort();
+                         console.log('aborted')
+                    }
+                if(nodeStatus[elem.parentNode.id]){
+                    requestAjax(elem.parentNode.id);
+                }else{
+                    requestAjaxOffline(elem.parentNode.id);
+                }
+
+
+
+
+                console.log('aborted all and requested current')
+
+            }else{
+
+            }
+
+        }
+        function section_node_extra(id){
+            var nodes = document.getElementsByClassName('sectionNode');
+            var sectionLinks = document.getElementsByClassName('sectionNodeLinks');
+            var node = document.getElementById('section_'+id);
+            for(var i=0; i< nodes.length; i++){
+                nodes[i].setAttribute('style', 'display:none;');
+            }
+            for(var i=0; i< sectionLinks.length; i++){
+                sectionLinks[i].setAttribute('style', 'display:none;');
+            }
+            console.log(id);
+            document.getElementById('section_Dashboard').setAttribute('style', 'display:none;');
+            document.getElementById('section_'+ id + '_dashboard').setAttribute('style', 'display:block');
+            node.setAttribute('style', 'display:block;');
+
+            //Request Ajax for this node and abort all other
+
+
+            if(ajaxNodeProcess[id] == false){
+                //disable links
+                var navLinks = document.getElementById('nodeLinks_'+id);
+                for(var i=0; i< navLinks.children.length; i++){
+                    navLinks.children[i].setAttribute('style', 'pointer-events:none');
+                }
+                var spinnerNode = document.getElementById('spinner_'+id);
+                spinnerNode.classList.add('lds-roller');
+                for(var i=0; i< Object.keys(ajaxRequests).length; i++){
+                        ajaxRequests[i].abort();
+                         console.log('aborted')
+                    }
+                requestAjax(id);
+                console.log('aborted all and requested current')
+
+            }else{
+
+            }
+
+        }
+
 
         $(document).ready(function(){
-            window.geoObj = {};
-            document.getElementById('currentDate').innerHTML = moment().format('MMM DD');
+
+            if(logo){
+                document.getElementById('logo-a').innerHTML = `<img id="logo" src="static/blog/logo/`+logo+`" width="140" height="90">`
+
+            }else{
+                 document.getElementById('logo-a').innerHTML = ``;
+            }
+
+
+            var salutation = document.getElementsByClassName('salutation');
+            for(var i=0; i< salutation.length; i++){
+                salutation[i].innerHTML = `Good ` + getGreetingTime(moment()) + '!';
+            }
+            var dateBadge = document.getElementsByClassName('dateBadge');
+            for(var i=0; i< dateBadge.length; i++){
+                dateBadge[i].innerHTML = moment().format('MMM DD');
+            }
+
+            //map
+            $(document).on('click', '.ack-send', function(e){
+                e.preventDefault();
+                $('[data-toggle="popoverClick"]').popover('hide');
+                var id = e.target.id.split(/_/)[0];
+                var serial = e.target.id.split(/_/)[1];
+                var device_id = document.getElementsByClassName(serial)[0].id;
+                var data = {"device_id": device_id, "alarm_id": id, "username": username};
+                alarmRemoveTempData = {"device_id": device_id, "serial": serial};
+
+                console.log(data);
+                       $.ajax({
+
+                            type: "POST",
+                            url: "https://api.cl-ds.com/deleteAlarm/",
+                            headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                            // The key needs to match your method's input parameter (case-sensitive).
+                            data: JSON.stringify(data),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function(data){
+                                alert(data.message);
+                                if(data.success){
+                                    mapMarkers["marker_"+ alarmRemoveTempData.serial]._popup.setContent('<div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div>');
+                                    callMapData(alarmRemoveTempData.device_id);
+                                }
+                            },
+                            failure: function(errMsg) {
+                                alert(errMsg);
+                                console.log('hrq');
+                            }
+                        });
+            });
+
+            $(document).on('click', '.ack-no', function(e){
+                e.preventDefault();
+                $('[data-toggle="popoverClick"]').popover('hide');
+            });
 
 
           });
-</script>
 
+function getGreetingTime (m) {
+  var g = null; //return g
+
+  if(!m || !m.isValid()) { return; } //if we can't find a valid or filled moment, we return.
+
+  var split_afternoon = 12 //24hr time to split the afternoon
+  var split_evening = 17 //24hr time to split the evening
+  var currentHour = parseFloat(m.format("HH"));
+
+  if(currentHour >= split_afternoon && currentHour <= split_evening) {
+    g = "afternoon";
+  } else if(currentHour >= split_evening) {
+    g = "evening";
+  } else {
+    g = "morning";
+  }
+
+  return g;
+}
+
+</script>
 
 <script type="text/javascript">
+    //Profile request and store
+function profileExec(){
+    $('#myProfile').modal('show');
 
+    if(Object.keys(profile).length === 0){
+        //ajax request profile
+        $.ajax({
+                type: "GET",
+                url: 'https://api.cl-ds.com/getUserInfo/' + username + '/',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                //data: "check",
+                success: function(data){
+                    var spinnerNode = document.getElementById('profileCardSpinner');
+                    spinnerNode.classList.remove('lds-roller');
 
+                    profile = data;
+                    var parent = document.getElementById('profileCard');
 
+                    var usernameProfile = data.username;
+                    var fullname = data.fullname;
+                    var company = data.company;
+                    var email = data.email;
+                    var phone = data.phone;
+
+                    var child = `<div class="cardProfile">
+
+                                      <h1>${fullname}</h1>
+                                      <p class="titleProfile">Company: ${company}</p>
+                                      <p>Username: ${usernameProfile}</p>
+                                      <p>Email: ${email}</p>
+                                      <p>Phone: ${phone}</p>
+
+                                      <p><button id="editProfile" onclick="editProfile();" class="btn btn-primary">Edit Profile</button></p>
+                                    </div>`;
+                    parent.innerHTML = child;
+                }
+            });
+    }else{
+        var spinnerNode = document.getElementById('profileCardSpinner');
+                    spinnerNode.classList.remove('lds-roller');
+
+                    var parent = document.getElementById('profileCard');
+
+                    var usernameProfile = profile.username;
+                    var fullname = profile.fullname;
+                    var company = profile.company;
+                    var email = profile.email;
+                    var phone = profile.phone;
+
+                    var child = `<div class="cardProfile">
+
+                                      <h1>${fullname}</h1>
+                                      <p class="titleProfile">Company: ${company}</p>
+                                      <p>Username: ${usernameProfile}</p>
+                                      <p>Email: ${email}</p>
+                                      <p>Phone: ${phone}</p>
+
+                                      <p><button id="editProfile" onclick="editProfile();" class="btn btn-primary">Edit Profile</button></p>
+                                    </div>`;
+                    parent.innerHTML = child;
+    }
+}
+
+function editProfile(){
+    $('#myProfile').modal('hide');
+
+    $('#editProfileModal').modal('show')
+
+    $('#savedProfileSuccess').html('');
+    $('#savedProfileFail').html('');
+    $('#savedProfileSuccess').removeAttr("style").hide();
+    $('#savedProfileFail').removeAttr("style").hide();
+    $("#saveProfile").html('Save');
+    $("#saveProfile").attr("disabled", false);
+
+    $('#userNameEdit').html();
+    $('#userNameEdit').html(profile.username);
+    $('[name=name]').val(profile.fullname);
+    $('[name=company]').val(profile.company);
+    $('[name=email]').val(profile.email);
+    $('[name=phone]').val(profile.phone);
+
+}
+
+function saveProfile(){
+    $('#savedProfileSuccess').html('');
+    $('#savedProfileFail').html('');
+    $('#savedProfileSuccess').removeAttr("style").hide();
+    $('#savedProfileFail').removeAttr("style").hide();
+    $("#saveProfile").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
+    $("#saveProfile").attr("disabled", true);
+
+    var fullname = $('[name=name]').val();
+    var username = profile.username;
+    var company = $('[name=company]').val();
+    var email = $('[name=email]').val();
+    var phone = $('[name=phone]').val();
+
+   var data = {"username": username, "company":company, "fullname":fullname, "email":email, "phone":phone};
+
+    $.ajax({
+                type: "PUT",
+                url: 'https://api.cl-ds.com/saveUserInfo/' + username + '/?format=json',
+                headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(resp){
+                    if(resp.success){
+                        $("#saveProfile").html('Save');
+                        $('#savedProfileSuccess').show();
+                        $('#savedProfileSuccess').html('Saved successfully!');
+                        $("#saveProfile").removeAttr("disabled");
+
+                        var parent = document.getElementById('profileCard');
+                        parent.innerHTML = '';
+                        var spinnerNode = document.getElementById('profileCardSpinner');
+                        spinnerNode.classList.add('lds-roller');
+                        profile = {};
+
+                    }else{
+                        $('#savedProfileFail').show();
+                        $('#savedProfileFail').html('Failed to save, try again later!');
+                    }
+                }
+            });
+
+}
 </script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="{% static 'blog/render1.js' %}"></script>
+    <script src="{% static 'blog/custom1.js' %}"></script>
+    <script src="{% static 'blog/statusLED.js' %}"></script>
+    <script src="{% static 'blog/singleLCD.js' %}"></script>
+    <script src="{% static 'blog/dynamicCharts.js' %}"></script>
+    <script src="{% static 'blog/removeAlarm.js' %}"></script>
+    <script src="{% static 'blog/map.js' %}"></script>
+    <script src="{% static 'blog/rmt.js' %}"></script>
 
 </body>
 
