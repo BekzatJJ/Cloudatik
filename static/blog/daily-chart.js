@@ -179,8 +179,6 @@ for(var parameter in chartConfig.parameters){
       shiftPixels += 5;
   }else if(chartConfig.chart_category == 'Stacked'){
        series[parameter].stacked = true;
-  }else if(chartConfig.chart_category == 'Group'){
-      series[parameter].clustered = true;
   }
 
 
