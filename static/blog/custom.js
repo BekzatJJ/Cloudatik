@@ -274,6 +274,7 @@ function reConstructSingleJSON(data){
 }
 
 function requestAjax(id){
+    callDailyChart(id);
     var ajaxCounts = Object.keys(ajaxRequests).length;
     ajaxRequests[ajaxCounts] = $.ajax({
                 type: "GET",
@@ -755,6 +756,7 @@ Chart.pluginService.register(horizonalLinePlugin);
 
 //Offline ajax id request
 function requestAjaxOffline(id){
+    callDailyChart(id);
     var ajaxCounts = Object.keys(ajaxRequests).length;
     ajaxRequests[ajaxCounts] = $.ajax({
                 type: "GET",
@@ -1419,6 +1421,8 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                                     min = min-(min*0.10);
                                 }
 
+                                console.log(labels);
+                                console.log(data);
                                     var ctx = document.getElementById('retrievedChart_'+id+'-'+parameter);
 
                                     for(var x=0; x<chartParameters.chart_prop.length; x++){
