@@ -1377,55 +1377,17 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
 
 //<button id="saveRetrievedChart_${data.node[i].device_id}" class="btn downloadChart" style="float:right;" disabled>Download</button>
                         var parentCharts =  document.getElementById('canvasWrapper_'+id);
-                                var parentCanvas = document.createElement('div');
-                                var canvas = document.createElement('canvas');
-                                var btn = document.createElement('button');
-                                parentCanvas.style.position = 'relative';
-                                parentCanvas.style.margin = 'auto';
-                                parentCanvas.style.height= '40vh';
-                                parentCanvas.style.width = '90vw';
-                                parentCanvas.style.marginBottom = '40px';
+                                var child = document.createElement('div');
+                                child.id = 'retrievedChart_'+id+'-'+parameter;
+                                child.style.width = '100%';
+                                child.style.height = '500px';
 
-                                canvas.id = 'retrievedChart_'+id+'-'+parameter;
-                                canvas.className = 'canvas_'+id;
-
-                                btn.id = 'saveRetrievedChart-'+id + '-' + parameter;
-                                btn.className="btn downloadChart";
-                                btn.style.float = "right";
-                                btn.innerHTML = "Download";
-                                btn.addEventListener('click', downloadChart, false);
-                                parentCanvas.append(btn);
-                                parentCanvas.append(canvas);
-                                parentCharts.append(parentCanvas);
+                                parentCharts.appendChild(child);
 
 
                                 var chart_category = cashedCharts[parameter].chart_prop[0].chart_category;
                                 //Chart create
-                                //Chart append
-                                    var labels = cashedCharts[parameter].data.map(function(e) {
-                                           return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
-                                        });
-                                    var data = cashedCharts[parameter].data.map(function(e) {
-                                           return e[parameter];
-                                        });;
-                                var max = Math.max.apply(this, data);
-                                var min = Math.min.apply(this, data);
-
-                                if(max < 0){
-                                    max = max-(max*0.10);
-                                }else{max = max+(max*0.10);}
-
-                                if(min < 0){
-                                    min = min+(min*0.10);
-                                }else{
-                                    min = min-(min*0.10);
-                                }
-
-                                console.log(labels);
-                                console.log(data);
-                                    var ctx = document.getElementById('retrievedChart_'+id+'-'+parameter);
-
-                                    for(var x=0; x<chartParameters.chart_prop.length; x++){
+                                for(var x=0; x<chartParameters.chart_prop.length; x++){
                                         if(chartParameters.chart_prop[x].parameter == parameter){
                                             if(chartParameters.chart_prop[x].chart_title == null){
                                                 var chartTitle = chartParameters.chart_prop[x].label;
@@ -1435,187 +1397,101 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
 
                                         }
                                     }
-                          //Plot limits and chart max with min
-                                if(cashedCharts[parameter].chart_prop[0].plot_limit){
-                                    if(cashedCharts[parameter].chart_prop[0].control_category == "threshold"){
-                                        var plot =  [{"y": cashedCharts[parameter].chart_prop[0].limit_high}];
-                                        var temp_max = parseFloat(cashedCharts[parameter].chart_prop[0].limit_high);
-                                        if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                    }else{
-                                        var plot =  [{"y": cashedCharts[parameter].chart_prop[0].limit_high},
-                                                                   {"y": cashedCharts[parameter].chart_prop[0].limit_low}];
-                                         var temp_max = parseFloat(cashedCharts[parameter].chart_prop[0].limit_high);
-                                         var temp_min = parseFloat(cashedCharts[parameter].chart_prop[0].limit_low);
-                                        if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                        if(temp_min < min){
-                                            min = temp_min-(temp_min*0.20);
-                                        }
-                                    }
-
-                                }else if(cashedCharts[parameter].chart_prop[0].plot_control){
-                                    if(cashedCharts[parameter].chart_prop[0].control_category == "threshold"){
-                                        var plot =  [{"y": cashedCharts[parameter].chart_prop[0].control_max,
-                                                        "style": "rgba(0,0,255,0.6)"}];
-                                        var temp_max = parseFloat(cashedCharts[parameter].chart_prop[0].control_max);
-                                    if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                    }else{
-                                        var plot =  [{"y": cashedCharts[parameter].chart_prop[0].control_max,
-                                                        "style": "rgba(0,0,255,0.6)"},
-                                                                   {"y": cashedCharts[parameter].chart_prop[0].control_min,
-                                                        "style": "rgba(0,0,255,0.6)"}];
-                                        var temp_max = parseFloat(cashedCharts[parameter].chart_prop[0].control_max);
-                                         var temp_min = parseFloat(cashedCharts[parameter].chart_prop[0].control_min);
-                                        if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                         if(temp_min < min){
-                                            min = temp_min-(temp_min*0.20);
-                                        }
-                                    }
-
-                                }else{
-                                    var plot =  [];
+                                //Chart append
+                                    var labels = cashedCharts[parameter].data.map(function(e) {
+                                           return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
+                                        });
+                                    var data = cashedCharts[parameter].data.map(function(e) {
+                                           return e[parameter];
+                                        });;
+                                    var chartData = [];
+                                for(var i=0; i< labels.length; i++){
+                                    var tempObj ={};
+                                    tempObj.date = labels[i];
+                                    tempObj.value = data[i];
+                                    chartData.push(tempObj);
                                 }
 
+                                console.log(chartData);
+                                //Chart starts
+                                am4core.useTheme(am4themes_animated);
+                                // Themes end
 
+                                // Create chart instance
+                                var chart = am4core.create('retrievedChart_'+id+'-'+parameter, am4charts.XYChart);
 
+                                chart.data = chartData;
+                                chart.exporting.menu = new am4core.ExportMenu();
+                                chart.exporting.filePrefix = "ChartView";
+                                chart.logo.disabled =true;
+                                chart.dateFormatter.inputDateFormat = "MM/dd/yyyy hh:mm:ss a";
+                                chart.export = true;
+                                //title
+                                var topContainer = chart.chartContainer.createChild(am4core.Container);
+                                topContainer.layout = "absolute";
+                                topContainer.toBack();
+                                topContainer.paddingBottom = 15;
+                                topContainer.width = am4core.percent(100);
 
-                                    var config = {
-                                       type: 'line',
-                                       data: {
-                                          labels: labels,
-                                          datasets: [{
-
-                                             data: data,
-                                             fill: false,
-                                             lineTension: 0.5,
-                                             pointRadius: 2.2,
-                                             borderWidth: 2,
-                                             borderColor: "#5f76e8",
-                                             backgroundColor: 'rgba(0, 119, 204, 0.3)'
-                                          }]
-                                       },
-                                       options:{"horizontalLine": plot,
-                                                legend: {
-                                                    display: false,
-                                                },
-                                                title: {
-                                                    display: true,
-                                                    text: chartTitle
-                                                },
-                                        tooltips: {
-                                            callbacks: {
-                                                label: function(tooltipItem, data) {
-                                                    for(var key in data.datasets[0]._meta)
-                                                        {
-                                                           var node_id = data.datasets[0]._meta[key].controller.chart.canvas.classList[0].split(/_/)[1];
-                                                        }
-                                                    var canvases = document.getElementsByClassName('canvas_'+node_id);
-                                                    var html = [];
-                                                    for(var i=0; i<canvases.length; i++){
-                                                        var id = canvases[i].id.split(/-/)[1];
-                                                        var title = retrievedChartsObject[id].options.title.text;
-                                                        var yData = retrievedChartsObject[id].data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                                                        html.push(`${title}: ${yData}`);
-                                                    }
-
-                                                    return html
-                                                }
-                                            }
-                                        },
-
-                                        maintainAspectRatio: false,
-                                            scales:{
-                                                xAxes: [{
-                                                    type:'time',
-                                                    distribution: 'linear',
-                                                    offset: false,
-                                                    ticks: {
-                                                        major:{
-                                                            enabled: true,
-                                                            fontStyle: 'bold'
-                                                        },
-                                                        source: 'auto',
-                                                        autoSkip: true,
-                                                        autoSkipPadding: 50,
-                                                        maxRotation: 0,
-                                                        sampleSize: 100
-                                                    }
-                                                }],
-                                                yAxes: [{
-                                                    ticks: {
-                                                            min: min,
-                                                            max: max
-                                                                },
-                                                    gridLines: {
-                                                        drawBorder: false
-                                                    },
-                                                    scaleLabel:{
-                                                        display:true,
-                                                        labelString: parameter
-                                                    }
-                                                }]
-                                            }
-                                       }
-                                    };
-
-//registration plugin
-var horizonalLinePlugin = {
-  afterDraw: function(chartInstance) {
-    var yValue;
-    var yScale = chartInstance.scales["y-axis-0"];
-    var canvas = chartInstance.chart;
-    var ctx = canvas.ctx;
-    var index;
-    var line;
-    var style;
-
-    if (chartInstance.options.horizontalLine) {
-      for (index = 0; index < chartInstance.options.horizontalLine.length; index++) {
-        line = chartInstance.options.horizontalLine[index];
-
-        if (!line.style) {
-          style = "rgba(255,0,0, .6)";
-        } else {
-          style = line.style;
-        }
-
-        if (line.y) {
-          yValue = yScale.getPixelForValue(line.y);
-        } else {
-          yValue = 0;
-        }
-
-        ctx.lineWidth = 1;
-
-        if (yValue) {
-          ctx.setLineDash([5, 3]);
-          ctx.beginPath();
-          ctx.moveTo(canvas.chartArea.left, yValue);
-          ctx.lineTo(canvas.width, yValue);
-          ctx.strokeStyle = style;
-          ctx.stroke();
-        }
-
-        if (line.text) {
-          ctx.fillStyle = style;
-          ctx.fillText(line.text, 0, yValue + ctx.lineWidth);
-        }
-      }
-      return;
-    }
-  }
+                                var title = topContainer.createChild(am4core.Label);
+                                title.text = chartTitle;
+                                title.fontWeight = 600;
+                                title.align = "center";
+// Create axes
+var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+dateAxis.groupData = true;
+dateAxis.baseInterval = {
+  "timeUnit": "minute",
+  "count": 1
 };
-Chart.pluginService.register(horizonalLinePlugin);
+dateAxis.skipEmptyPeriods = true;
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
+// Create series
+var series = chart.series.push(new am4charts.LineSeries());
+series.dataFields.valueY = "value";
+series.dataFields.dateX = "date";
+series.tooltipText = "{value}"
+series.strokeWidth = 2;
+series.minBulletDistance = 15;
 
-                                    retrievedChartsObject[parameter] = new Chart(ctx, config);
+// Drop-shaped tooltips
+series.tooltip.background.cornerRadius = 20;
+series.tooltip.background.strokeOpacity = 0;
+series.tooltip.pointerOrientation = "vertical";
+series.tooltip.label.minWidth = 40;
+series.tooltip.label.minHeight = 40;
+series.tooltip.label.textAlign = "middle";
+series.tooltip.label.textValign = "middle";
+
+// Make bullets grow on hover
+var bullet = series.bullets.push(new am4charts.CircleBullet());
+bullet.circle.strokeWidth = 2;
+bullet.circle.radius = 4;
+bullet.circle.fill = am4core.color("#fff");
+
+var bullethover = bullet.states.create("hover");
+bullethover.properties.scale = 1.3;
+
+// Make a panning cursor
+chart.cursor = new am4charts.XYCursor();
+chart.cursor.behavior = "panXY";
+chart.cursor.xAxis = dateAxis;
+chart.cursor.snapToSeries = series;
+
+// Create vertical scrollbar and place it before the value axis
+chart.scrollbarY = new am4core.Scrollbar();
+chart.scrollbarY.parent = chart.leftAxesContainer;
+chart.scrollbarY.toBack();
+
+// Create a horizontal scrollbar with previe and place it underneath the date axis
+chart.scrollbarX = new am4charts.XYChartScrollbar();
+chart.scrollbarX.series.push(series);
+chart.scrollbarX.parent = chart.bottomAxesContainer;
+
+dateAxis.start = 0.79;
+dateAxis.keepSelection = true;
+
 
                                     //tick checkboxes
                                          var idForm = '#chartForm_'+id + ' [name=chartParameter]';
@@ -1647,7 +1523,7 @@ function addNewChart(id){
 
         }else{// unchecked remove view
            if($('#retrievedChart_'+id+'-'+radio[i].value).length == 1){
-                $('#retrievedChart_'+id+'-'+radio[i].value).parent().remove();
+                $('#retrievedChart_'+id+'-'+radio[i].value).remove();
            }
         }
     }
@@ -1656,54 +1532,20 @@ function addNewChart(id){
 function drawAvailableDataCharts(id, key){
     console.log('draw available dataChart');
 style="position: relative;margin: auto;height: 40vh;width: 100vw;"
-                                var parentCharts =  document.getElementById('canvasWrapper_'+id);
 
-                                var parentCanvas = document.createElement('div');
-                                var canvas = document.createElement('canvas');
-                                var btn = document.createElement('button');
-                                parentCanvas.style.position = 'relative';
-                                parentCanvas.style.margin = 'auto';
-                                parentCanvas.style.height= '40vh';
-                                parentCanvas.style.width = '90vw';
-                                parentCanvas.style.marginBottom = '40px';
 
-                                canvas.id = 'retrievedChart_'+id+'-'+key;
-                                canvas.className = 'canvas_'+id;
+                                 var parentCharts =  document.getElementById('canvasWrapper_'+id);
+                                var child = document.createElement('div');
+                                child.id = 'retrievedChart_'+id+'-'+key;
+                                child.style.width = '100%';
+                                child.style.height = '500px';
 
-                                btn.id = 'saveRetrievedChart-'+id + '-'+ key;
-                                btn.className="btn downloadChart";
-                                btn.style.float = "right";
-                                btn.innerHTML = "Download";
-                                btn.addEventListener('click', downloadChart, false);
+                                parentCharts.appendChild(child);
 
-                                parentCanvas.append(btn);
-                                parentCanvas.append(canvas);
-                                parentCharts.append(parentCanvas);
 
+                                var chart_category = cashedCharts[key].chart_prop[0].chart_category;
                                 //Chart create
-                                //Chart append
-                                    var labels = cashedCharts[key].map(function(e) {
-                                           return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
-                                        });
-                                        var data = cashedCharts[key].map(function(e) {
-                                           return e.data;
-                                        });;
-                                var max = Math.max.apply(this, data);
-                                var min = Math.min.apply(this, data);
-
-                                if(max < 0){
-                                    max = max-(max*0.10);
-                                }else{max = max+(max*0.10);}
-
-                                if(min < 0){
-                                    min = min+(min*0.10);
-                                }else{
-                                    min = min-(min*0.10);
-                                }
-
-                                    var ctx = document.getElementById('retrievedChart_'+id+'-'+key);
-
-                                    for(var x=0; x<chartParameters.chart_prop.length; x++){
+                                for(var x=0; x<chartParameters.chart_prop.length; x++){
                                         if(chartParameters.chart_prop[x].parameter == key){
                                             if(chartParameters.chart_prop[x].chart_title == null){
                                                 var chartTitle = chartParameters.chart_prop[x].label;
@@ -1713,182 +1555,99 @@ style="position: relative;margin: auto;height: 40vh;width: 100vw;"
 
                                         }
                                     }
-
-                             //Plot limits and chart max with min
-                                if(cashedCharts[key].chart_prop[0].plot_limit){
-                                    if(cashedCharts[key].chart_prop[0].control_category == "threshold"){
-                                        var plot =  [{"y": cashedCharts[key].chart_prop[0].limit_high}];
-                                        var temp_max = parseFloat(cashedCharts[key].chart_prop[0].limit_high);
-                                        if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                    }else{
-                                        var plot =  [{"y": cashedCharts[key].chart_prop[0].limit_high},
-                                                                   {"y": cashedCharts[key].chart_prop[0].limit_low}];
-                                         var temp_max = parseFloat(cashedCharts[key].chart_prop[0].limit_high);
-                                         var temp_min = parseFloat(cashedCharts[key].chart_prop[0].limit_low);
-                                        if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                        if(temp_min < min){
-                                            min = temp_min-(temp_min*0.20);
-                                        }
-                                    }
-
-                                }else if(cashedCharts[key].chart_prop[0].plot_control){
-                                    if(cashedCharts[key].chart_prop[0].control_category == "threshold"){
-                                        var plot =  [{"y": cashedCharts[key].chart_prop[0].control_max,
-                                                        "style": "rgba(0,0,255,0.6)"}];
-                                        var temp_max = parseFloat(cashedCharts[key].chart_prop[0].control_max);
-                                    if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                    }else{
-                                        var plot =  [{"y": cashedCharts[key].chart_prop[0].control_max,
-                                                        "style": "rgba(0,0,255,0.6)"},
-                                                                   {"y": cashedCharts[key].chart_prop[0].control_min,
-                                                        "style": "rgba(0,0,255,0.6)"}];
-                                        var temp_max = parseFloat(cashedCharts[key].chart_prop[0].control_max);
-                                         var temp_min = parseFloat(cashedCharts[key].chart_prop[0].control_min);
-                                        if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                         if(temp_min < min){
-                                            min = temp_min-(temp_min*0.20);
-                                        }
-                                    }
-
-                                }else{
-                                    var plot =  [];
+                                //Chart append
+                                    var labels = cashedCharts[key].data.map(function(e) {
+                                           return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
+                                        });
+                                    var data = cashedCharts[key].data.map(function(e) {
+                                           return e[key];
+                                        });;
+                                    var chartData = [];
+                                for(var i=0; i< labels.length; i++){
+                                    var tempObj ={};
+                                    tempObj.date = labels[i];
+                                    tempObj.value = data[i];
+                                    chartData.push(tempObj);
                                 }
 
 
-                                    var config = {
-                                       type: 'line',
-                                       data: {
-                                          labels: labels,
-                                          datasets: [{
-                                             label: cashedCharts[key][1].serial,
-                                             data: data,
-                                             fill: false,
-                                             lineTension: 0.5,
-                                             pointRadius: 0,
-                                             borderColor: "#5f76e8",
-                                             backgroundColor: 'rgba(0, 119, 204, 0.3)'
-                                          }]
-                                       },
-                                       options:{"horizontalLine": plot,
-                                                 legend: {
-                                                            display: false,
-                                                        },
-                                                title: {
-                                                    display: true,
-                                                    text: chartTitle
-                                                },
-                                        tooltips: {
-                                            callbacks: {
-                                                label: function(tooltipItem, data) {
-                                                    for(var key in data.datasets[0]._meta)
-                                                        {
-                                                           var node_id = data.datasets[0]._meta[key].controller.chart.canvas.classList[0].split(/_/)[1];
-                                                        }
-                                                    var canvases = document.getElementsByClassName('canvas_'+node_id);
-                                                    var html = [];
-                                                    for(var i=0; i<canvases.length; i++){
-                                                        var id = canvases[i].id.split(/-/)[1];
-                                                        var title = retrievedChartsObject[id].options.title.text;
-                                                        var yData = retrievedChartsObject[id].data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
-                                                        html.push(`${title}: ${yData}`);
-                                                    }
+                                //Chart starts
+                                am4core.useTheme(am4themes_animated);
+                                // Themes end
 
-                                                    return html
-                                                }
-                                            }
-                                        },
-                                         maintainAspectRatio: false,
-                                            scales:{
-                                                xAxes: [{
-                                                    type:'time',
-                                                    distribution: 'linear',
-                                                    offset: false,
-                                                    ticks: {
-                                                        major:{
-                                                            enabled: true,
-                                                            fontStyle: 'bold'
-                                                        },
-                                                        source: 'auto',
-                                                        autoSkip: true,
-                                                        autoSkipPadding: 50,
-                                                        maxRotation: 0,
-                                                        sampleSize: 100
-                                                    }
-                                                }],
-                                                yAxes: [{
-                                                    ticks: {
-                                                            min: min,
-                                                            max: max
-                                                                },
-                                                    gridLines: {
-                                                        drawBorder: false
-                                                    },
-                                                    scaleLabel:{
-                                                        display:true,
-                                                        labelString: parameter
-                                                    }
-                                                }]
-                                            }
-                                       }
-                                    };
-//registration plugin
-var horizonalLinePlugin = {
-  afterDraw: function(chartInstance) {
-    var yValue;
-    var yScale = chartInstance.scales["y-axis-0"];
-    var canvas = chartInstance.chart;
-    var ctx = canvas.ctx;
-    var index;
-    var line;
-    var style;
+                                // Create chart instance
+                                var chart = am4core.create('retrievedChart_'+id+'-'+key, am4charts.XYChart);
 
-    if (chartInstance.options.horizontalLine) {
-      for (index = 0; index < chartInstance.options.horizontalLine.length; index++) {
-        line = chartInstance.options.horizontalLine[index];
+                                chart.data = chartData;
+                                chart.exporting.menu = new am4core.ExportMenu();
+                                chart.exporting.filePrefix = "ChartView";
+                                chart.logo.disabled =true;
+                                chart.dateFormatter.inputDateFormat = "MM/dd/yyyy hh:mm:ss a";
+                                chart.export = true;
+                                var topContainer = chart.chartContainer.createChild(am4core.Container);
+                                topContainer.layout = "absolute";
+                                topContainer.toBack();
+                                topContainer.paddingBottom = 15;
+                                topContainer.width = am4core.percent(100);
 
-        if (!line.style) {
-          style = "rgba(255,0,0, .6)";
-        } else {
-          style = line.style;
-        }
-
-        if (line.y) {
-          yValue = yScale.getPixelForValue(line.y);
-        } else {
-          yValue = 0;
-        }
-
-        ctx.lineWidth = 1;
-
-        if (yValue) {
-          ctx.setLineDash([5, 3]);
-          ctx.beginPath();
-          ctx.moveTo(canvas.chartArea.left, yValue);
-          ctx.lineTo(canvas.width, yValue);
-          ctx.strokeStyle = style;
-          ctx.stroke();
-        }
-
-        if (line.text) {
-          ctx.fillStyle = style;
-          ctx.fillText(line.text, 0, yValue + ctx.lineWidth);
-        }
-      }
-      return;
-    }
-  }
+                                var title = topContainer.createChild(am4core.Label);
+                                title.text = chartTitle;
+                                title.fontWeight = 600;
+                                title.align = "center";
+// Create axes
+var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+dateAxis.groupData = true;
+dateAxis.baseInterval = {
+  "timeUnit": "minute",
+  "count": 1
 };
-Chart.pluginService.register(horizonalLinePlugin);
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
-                                    retrievedChartsObject[key] = new Chart(ctx, config);
+// Create series
+var series = chart.series.push(new am4charts.LineSeries());
+series.dataFields.valueY = "value";
+series.dataFields.dateX = "date";
+series.tooltipText = "{value}"
+series.strokeWidth = 2;
+series.minBulletDistance = 15;
+
+// Drop-shaped tooltips
+series.tooltip.background.cornerRadius = 20;
+series.tooltip.background.strokeOpacity = 0;
+series.tooltip.pointerOrientation = "vertical";
+series.tooltip.label.minWidth = 40;
+series.tooltip.label.minHeight = 40;
+series.tooltip.label.textAlign = "middle";
+series.tooltip.label.textValign = "middle";
+
+// Make bullets grow on hover
+var bullet = series.bullets.push(new am4charts.CircleBullet());
+bullet.circle.strokeWidth = 2;
+bullet.circle.radius = 4;
+bullet.circle.fill = am4core.color("#fff");
+
+var bullethover = bullet.states.create("hover");
+bullethover.properties.scale = 1.3;
+
+// Make a panning cursor
+chart.cursor = new am4charts.XYCursor();
+chart.cursor.behavior = "panXY";
+chart.cursor.xAxis = dateAxis;
+chart.cursor.snapToSeries = series;
+
+// Create vertical scrollbar and place it before the value axis
+chart.scrollbarY = new am4core.Scrollbar();
+chart.scrollbarY.parent = chart.leftAxesContainer;
+chart.scrollbarY.toBack();
+
+// Create a horizontal scrollbar with previe and place it underneath the date axis
+chart.scrollbarX = new am4charts.XYChartScrollbar();
+chart.scrollbarX.series.push(series);
+chart.scrollbarX.parent = chart.bottomAxesContainer;
+
+dateAxis.start = 0.79;
+dateAxis.keepSelection = true;
+
 
 }
 
