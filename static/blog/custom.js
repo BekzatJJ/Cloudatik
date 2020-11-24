@@ -1501,7 +1501,7 @@ dateAxis.keepSelection = true;
                                         range.grid.stroke = am4core.color("#396478");
                                         range.grid.strokeWidth = 2;
                                         range.grid.strokeOpacity = 1;
-                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2);
+                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2));
                                     }else{
                                         var range = valueAxis.axisRanges.create();
                                         range.value = cashedCharts[parameter].chart_prop[0].limit_high;
@@ -1513,7 +1513,7 @@ dateAxis.keepSelection = true;
                                         range2.grid.stroke = am4core.color("#A96478");
                                         range2.grid.strokeWidth = 2;
                                         range2.grid.strokeOpacity = 1;
-                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2);
+                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2));
                                         valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)*0.2));
                                     }
 
@@ -1524,7 +1524,7 @@ dateAxis.keepSelection = true;
                                         range.grid.stroke = am4core.color("#396478");
                                         range.grid.strokeWidth = 2;
                                         range.grid.strokeOpacity = 1;
-                                        valueAxis.max =(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)+(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)*0.2);
+                                        valueAxis.max =(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)+(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)*0.2));
                                     }else{
                                         var range = valueAxis.axisRanges.create();
                                         range.value = cashedCharts[parameter].chart_prop[0].control_max;
