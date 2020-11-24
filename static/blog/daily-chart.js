@@ -488,7 +488,7 @@ for(var parameter in chartConfig.parameters){
   //series
   series[parameter] = chart.series.push(new am4charts.ColumnSeries());
   series[parameter].columns.template.height = am4core.percent(30);
-  series[parameter].tooltipText = "{provider}: "+parameter+", {valueY}";;
+  series[parameter].tooltipText = ""+parameter+": {valueX}";;
   series[parameter].dataFields.categoryY = "category";
   series[parameter].dataFields.valueX = parameter;
 

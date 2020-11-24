@@ -1444,7 +1444,7 @@ dateAxis.baseInterval = {
   "timeUnit": "minute",
   "count": 1
 };
-dateAxis.skipEmptyPeriods = true;
+dateAxis.skipEmptyPeriods = false;
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
 // Create series
@@ -1461,6 +1461,7 @@ series.tooltip.background.strokeOpacity = 0;
 series.tooltip.pointerOrientation = "vertical";
 series.tooltip.label.minWidth = 40;
 series.tooltip.label.minHeight = 40;
+series.connect = false;
 series.tooltip.label.textAlign = "middle";
 series.tooltip.label.textValign = "middle";
 
@@ -1489,8 +1490,59 @@ chart.scrollbarX = new am4charts.XYChartScrollbar();
 chart.scrollbarX.series.push(series);
 chart.scrollbarX.parent = chart.bottomAxesContainer;
 
-dateAxis.start = 0.79;
+dateAxis.start = 0.00;
 dateAxis.keepSelection = true;
+
+                          //Plot limits and chart max with min
+                                if(cashedCharts[parameter].chart_prop[0].plot_limit){
+                                    if(cashedCharts[parameter].chart_prop[0].control_category == "threshold"){
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = cashedCharts[parameter].chart_prop[0].limit_high;
+                                        range.grid.stroke = am4core.color("#396478");
+                                        range.grid.strokeWidth = 2;
+                                        range.grid.strokeOpacity = 1;
+                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2);
+                                    }else{
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = cashedCharts[parameter].chart_prop[0].limit_high;
+                                        range.grid.stroke = am4core.color("#396478");
+                                        range.grid.strokeWidth = 2;
+                                        range.grid.strokeOpacity = 1;
+                                        var range2 = valueAxis.axisRanges.create();
+                                        range2.value = cashedCharts[parameter].chart_prop[0].limit_low;
+                                        range2.grid.stroke = am4core.color("#A96478");
+                                        range2.grid.strokeWidth = 2;
+                                        range2.grid.strokeOpacity = 1;
+                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2);
+                                        valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)*0.2));
+                                    }
+
+                                }else if(cashedCharts[parameter].chart_prop[0].plot_control){
+                                    if(cashedCharts[parameter].chart_prop[0].control_category == "threshold"){
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = cashedCharts[parameter].chart_prop[0].control_max;
+                                        range.grid.stroke = am4core.color("#396478");
+                                        range.grid.strokeWidth = 2;
+                                        range.grid.strokeOpacity = 1;
+                                        valueAxis.max =(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)+(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)*0.2);
+                                    }else{
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = cashedCharts[parameter].chart_prop[0].control_max;
+                                        range.grid.stroke = am4core.color("#396478");
+                                        range.grid.strokeWidth = 2;
+                                        range.grid.strokeOpacity = 1;
+                                        var range2 = valueAxis.axisRanges.create();
+                                        range2.value = cashedCharts[parameter].chart_prop[0].control_min;
+                                        range2.grid.stroke = am4core.color("#A96478");
+                                        range2.grid.strokeWidth = 2;
+                                        range2.grid.strokeOpacity = 1;
+                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].control_max)+(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)*0.2));
+                                        valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].control_min)+(parseFloat(cashedCharts[parameter].chart_prop[0].control_min)*0.2));
+                                    }
+
+                                }
+
+
 
 
                                     //tick checkboxes

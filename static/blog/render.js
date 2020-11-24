@@ -443,13 +443,15 @@ function createNodeCards(data){
 
             <section id="section_${data.node[i].device_id}_dashboard" class="nodeDash">
               <div id="spinner_${data.node[i].device_id}" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-                 <div id="am_${data.node[i].device_id}" style="margion-top:50px;">
 
-                 </div>
               <div id="${data.node[i].serial}-parameters" class="container parameters" style="">
 
 
-              </div>`+
+              </div>
+              <div id="am_${data.node[i].device_id}" class="container" style="margin-top:30px;">
+
+              </div>
+              `+
 
               htmlNewAlarm+
 
