@@ -85,11 +85,9 @@ for(var i=0; i<mainLabels.length; i++){
  };
 console.log(mainData);
 
-  if(mobileAndTabletCheck()){
-    callAmChartMobile(id,mainData,  mainLabels, time, w, chartConfig);
-  }else{
+
     callAmChart(id,mainData,  mainLabels, time, w, chartConfig);
-  }
+
 
 
 
@@ -145,7 +143,6 @@ chart.responsive.rules.push({
     if (target instanceof am4core.Scrollbar) {
       var state = target.states.create(stateId);
       state.properties.start = 0.79;
-      state.properties.maxWidth = 30;
       state.properties.keepSelection = true;
       return state;
     }
@@ -160,17 +157,6 @@ chart.responsive.rules.push({
       return state;
     }
 
-
-
-
-
-
-    // if ((target instanceof am4core.Rectangle) && (target.parent instanceof am4charts.AxisLabel) && (target.parent.parent instanceof am4charts.AxisRendererY)) {
-    //   var state = target.states.create(stateId);
-    //   state.properties.fill = am4core.color("#f00");
-    //   state.properties.fillOpacity = 0.5;
-    //   return state;
-    // }
 
     return null;
   }
@@ -407,264 +393,7 @@ range.grid.location = 1;
 }
 
 
-function callAmChartMobile(id, data, mainLabels, time, w, chartConfig) {
-//<div id="chartdiv" style="width: 100%; height:500px;"></div>
 
-var parent = document.getElementById('am_'+id);
-var child = document.createElement('div');
-child.id = 'chart_'+w+'_'+id;
-child.style.width = '100%';
-child.style.height = '1024px';
-
-parent.appendChild(child);
-// Themes begin
-am4core.useTheme(am4themes_animated);
-// Themes end
-
-var chart = am4core.create('chart_'+w+'_'+id, am4charts.XYChart);
-
-// some extra padding for range labels
-chart.paddingBottom = 50;
-
-chart.cursor = new am4charts.XYCursor();
-chart.cursor.lineX.disabled = true;
-chart.cursor.lineY.disabled = true;
-chart.cursor.behavior = "none";
-//chart.cursor.maxTooltipDistance = -1;
-//chart.scrollbarY = new am4core.Scrollbar();
-chart.logo.disabled = true;
-chart.responsive.enabled = true;
-
-
-//title
-var topContainer = chart.chartContainer.createChild(am4core.Container);
-topContainer.layout = "absolute";
-topContainer.toBack();
-topContainer.paddingBottom = 15;
-topContainer.width = am4core.percent(100);
-
-var title = topContainer.createChild(am4core.Label);
-title.text = chartConfig.chart_title;
-title.fontWeight = 600;
-title.align = "center";
-// will use this to store colors of the same items
-var colors = {};
-
-var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
-categoryAxis.dataFields.category = "category";
-categoryAxis.renderer.minGridDistance = 10;
-categoryAxis.renderer.grid.template.location = 0;
-categoryAxis.dataItems.template.text = "{realName}";
-categoryAxis.renderer.labels.template.rotation = 0;
-categoryAxis.renderer.inversed = true
-categoryAxis.renderer.labels.template.horizontalCenter = "right";
-categoryAxis.renderer.labels.template.verticalCenter = "middle";
-categoryAxis.adapter.add("tooltipText", function(tooltipText, target){
-  return categoryAxis.tooltipDataItem.dataContext.realName;
-})
-
-var axes = {};
-var series = {};
-var shiftPixels = -5;
-var axisCount = 0;
-for(var parameter in chartConfig.parameters){
-  //yAxes
-  if(!axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)]){
-    if(axisCount == 0){
-      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)] = chart.xAxes.push(new am4charts.ValueAxis());
-      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].tooltip.disabled = false;
-      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].title.text = chartConfig.parameters[parameter].unit;
-      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].extraMax = 0.2;
-    }else{
-      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)] = chart.xAxes.push(new am4charts.ValueAxis());
-      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].tooltip.disabled = false;
-      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].title.text = chartConfig.parameters[parameter].unit;
-      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].renderer.opposite = 'opposite';
-      axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)].extraMax = 0.2;
-    }
-     axisCount++;
-  }
-
-  //series
-  series[parameter] = chart.series.push(new am4charts.ColumnSeries());
-  series[parameter].columns.template.height = am4core.percent(30);
-  series[parameter].tooltipText = ""+parameter+": {valueX}";;
-  series[parameter].dataFields.categoryY = "category";
-  series[parameter].dataFields.valueX = parameter;
-
-  series[parameter].columns.template.column.cornerRadiusTopLeft = 2;
-  series[parameter].columns.template.column.cornerRadiusTopRight = 2;
-
-  series[parameter].xAxis = axes['yAxis'+ eval(chartConfig.parameters[parameter].axis)];
-  if(chartConfig.chart_category == 'Overlay'){
-      series[parameter].clustered = false;
-      series[parameter].columns.template.dy = shiftPixels;
-      shiftPixels += 5;
-  }else if(chartConfig.chart_category == 'Stack'){
-       series[parameter].stacked = true;
-  }
-
-
-
-  }
-
-console.log(series);
-var counter = 0;
-var brightness = 0;
-for(var parameter in chartConfig.parameters){
-
-    switch(counter){
-      case 0:      series[parameter].columns.template.adapter.add("fill", function(fill, target) {
-                   var name = target.dataItem.dataContext.realName;
-                   var item = target.dataItem.dataContext.itemName;
-                   if (!colors[name]) {
-                      chart.colors.step = 3;
-                     colors[name] = chart.colors.next();
-                   }
-                   target.stroke = colors[name];
-                   return colors[name];
-                  }); break;
-      case 1:     series[parameter].columns.template.adapter.add("fill", function(fill, target) {
-                   var name = target.dataItem.dataContext.realName;
-                   var item = target.dataItem.dataContext.itemName;
-                   if (!colors[name]) {
-                     colors[name] = chart.colors.next();
-                   }
-                   target.stroke = colors[name].brighten(-0.1);
-                   return colors[name].brighten(-0.1);
-                  });break;
-      case 2:     series[parameter].columns.template.adapter.add("fill", function(fill, target) {
-                   var name = target.dataItem.dataContext.realName;
-                   var item = target.dataItem.dataContext.itemName;
-                   if (!colors[name]) {
-                     colors[name] = chart.colors.next();
-                   }
-                   target.stroke = colors[name].brighten(-0.2);
-                   return colors[name].brighten(-0.2);
-                  });break;
-      case 3:     series[parameter].columns.template.adapter.add("fill", function(fill, target) {
-                   var name = target.dataItem.dataContext.realName;
-                   var item = target.dataItem.dataContext.itemName;
-                   if (!colors[name]) {
-                     colors[name] = chart.colors.next();
-                   }
-                   target.stroke = colors[name].brighten(-0.3);
-                   return colors[name].brighten(-0.3);
-                  });break;
-      case 4:     series[parameter].columns.template.adapter.add("fill", function(fill, target) {
-                   var name = target.dataItem.dataContext.realName;
-                   var item = target.dataItem.dataContext.itemName;
-                   if (!colors[name]) {
-                     colors[name] = chart.colors.next();
-                   }
-                   target.stroke = colors[name].brighten(-0.4);
-                   return colors[name].brighten(-0.4);
-                  });break;
-      case 5:     series[parameter].columns.template.adapter.add("fill", function(fill, target) {
-                   var name = target.dataItem.dataContext.realName;
-                   var item = target.dataItem.dataContext.itemName;
-                   if (!colors[name]) {
-                     colors[name] = chart.colors.next();
-                   }
-                   target.stroke = colors[name].brighten(-0.5);
-                   return colors[name].brighten(-0.5);
-                  });break;
-    }
-
-    counter++;
-
-}
-
-
-
-var rangeTemplate = categoryAxis.axisRanges.template;
-rangeTemplate.tick.disabled = false;
-rangeTemplate.tick.location = 0;
-rangeTemplate.tick.strokeOpacity = 0.6;
-rangeTemplate.tick.length = 60;
-rangeTemplate.grid.strokeOpacity = 0.5;
-rangeTemplate.label.tooltip = new am4core.Tooltip();
-rangeTemplate.label.tooltip.dy = -10;
-rangeTemplate.label.cloneTooltip = false;
-
-///// DATA
-var chartData = [];
-var lineSeriesData = [];
-
-
-
-// process data ant prepare it for the chart
-for (var providerName in data) {
- var providerData = data[providerName];
-
- // add data of one provider to temp array
- var tempArray = [];
- var count = 0;
- // add items
- for (var itemName in providerData) {
-  var itemData = providerData[itemName];
-   if(itemName != "quantity"){
-   count++;
-   var tempObject = {
-          category: providerName + "_" + itemName,
-          realName: itemName,
-          provider: providerName
-        };
-     for(var item in itemData){
-      tempObject[item] = itemData[item];
-     }
-      // we generate unique category for each column (providerName + "_" + itemName) and store realName
-        tempArray.push(tempObject);
-   }
- }
-
-
-
- // push to the final data
- am4core.array.each(tempArray, function(item) {
-   chartData.push(item);
- })
-
- // create range (the additional label at the bottom)
- var range = categoryAxis.axisRanges.create();
- range.category = tempArray[0].category;
- range.endCategory = tempArray[tempArray.length - 1].category;
- range.label.text = tempArray[0].provider;
- range.label.dx = 0;
- range.label.truncate = true;
- range.label.fontWeight = "bold";
- range.label.rotation = 0;
- range.label.inside = true;
- range.label.horizontalCenter = "middle";
- range.label.align = "right";
-// range.label.align = "center";
- range.label.tooltipText = tempArray[0].provider;
-
- range.label.adapter.add("maxWidth", function(maxWidth, target){
-   var range = target.dataItem;
-   var startPosition = categoryAxis.categoryToPosition(range.category, 0);
-   var endPosition = categoryAxis.categoryToPosition(range.endCategory, 1);
-   var startX = categoryAxis.positionToCoordinate(startPosition);
-   var endX = categoryAxis.positionToCoordinate(endPosition);
-   return endX - startX;
- })
-}
-
-
-chart.data = chartData;
-
-
-// last tick
-var range = categoryAxis.axisRanges.create();
-range.category = chart.data[chart.data.length - 1].category;
-range.label.disabled = true;
-range.tick.location = 1;
-range.grid.location = 1;
-
-
-
-
-}
 
 
 

@@ -1,7 +1,11 @@
 function createNodeCards(data){
     var list = document.getElementById('nodesList');
     var secondLayer = document.getElementById('secondLayer');
-
+    window.permission = {
+      alarm: data.alarm,
+      map: data.map,
+      raw_data: data.raw_data
+    };
     //Remove previos children
         list.innerHTML='';
         secondLayer.innerHTML='';
@@ -530,7 +534,7 @@ function createNodeCards(data){
                       <div class="form-check" style="display: flex;">
                       <div id="controlButtons_${data.node[i].device_id}" style="padding:25px;">
                         <button type="button" id="btnRetrieveChart_${data.node[i].device_id}" onclick="retrieveChart('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px; margin-right:10px;">Chart</button>`+
-                        htmlRawDataButton +`</div>
+                        `</div>
                         <button type="button" id="btnAddNewChart_${data.node[i].device_id}" onclick="addNewChart('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px; display:none;">Add New</button>
                         <button type="button" id="btnResetCharts_${data.node[i].device_id}" onclick="resetCharts('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px; display:none;">Reset</button>
                         <p id="errorMessage_${data.node[i].device_id}"style="color:red; font-size:13px; margin:5px; "></p>

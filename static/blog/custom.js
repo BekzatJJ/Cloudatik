@@ -1423,6 +1423,36 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                                 chart.data = chartData;
                                 chart.exporting.menu = new am4core.ExportMenu();
                                 chart.exporting.filePrefix = "ChartView";
+                                if(permission.raw_data){
+                                    var raw_data = {
+                                            "label": "Data",
+                                            "menu": [
+                                              { "type": "json", "label": "JSON" },
+                                              { "type": "csv", "label": "CSV" },
+                                              { "type": "xlsx", "label": "XLSX" },
+                                              { "type": "html", "label": "HTML" },
+                                              { "type": "pdfdata", "label": "PDF" }
+                                            ]
+                                          };
+                                }
+                                chart.exporting.menu.items = [
+                                      {
+                                        "label": "...",
+                                        "menu": [
+                                          {
+                                            "label": "Image",
+                                            "menu": [
+                                              { "type": "png", "label": "PNG" },
+                                              { "type": "jpg", "label": "JPG" },
+                                              { "type": "svg", "label": "SVG" },
+                                              { "type": "pdf", "label": "PDF" }
+                                            ]
+                                          }, raw_data, {
+                                            "label": "Print", "type": "print"
+                                          }
+                                        ]
+                                      }
+                                    ];
                                 chart.logo.disabled =true;
                                 chart.dateFormatter.inputDateFormat = "MM/dd/yyyy hh:mm:ss a";
                                 chart.export = true;
@@ -1444,7 +1474,7 @@ dateAxis.baseInterval = {
   "timeUnit": "minute",
   "count": 1
 };
-dateAxis.skipEmptyPeriods = false;
+
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
 // Create series
@@ -1498,46 +1528,59 @@ dateAxis.keepSelection = true;
                                     if(cashedCharts[parameter].chart_prop[0].control_category == "threshold"){
                                         var range = valueAxis.axisRanges.create();
                                         range.value = cashedCharts[parameter].chart_prop[0].limit_high;
-                                        range.grid.stroke = am4core.color("#396478");
-                                        range.grid.strokeWidth = 2;
-                                        range.grid.strokeOpacity = 1;
+                                        range.grid.stroke = am4core.color("#FF0000");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
                                         valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2));
+                                        valueAxis.extraMax = 0.2;
                                     }else{
                                         var range = valueAxis.axisRanges.create();
                                         range.value = cashedCharts[parameter].chart_prop[0].limit_high;
-                                        range.grid.stroke = am4core.color("#396478");
-                                        range.grid.strokeWidth = 2;
-                                        range.grid.strokeOpacity = 1;
+                                        range.grid.stroke = am4core.color("#FF0000");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
                                         var range2 = valueAxis.axisRanges.create();
                                         range2.value = cashedCharts[parameter].chart_prop[0].limit_low;
-                                        range2.grid.stroke = am4core.color("#A96478");
-                                        range2.grid.strokeWidth = 2;
-                                        range2.grid.strokeOpacity = 1;
+                                        range2.grid.stroke = am4core.color("#FF0000");
+                                        range2.grid.strokeWidth = 1;
+                                        range2.grid.strokeOpacity = 0.6;
+                                        range2.grid.strokeDasharray = "3,3";
                                         valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2));
-                                        valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)*0.2));
+                                        valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)-(parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)*0.2));
+                                        valueAxis.extraMax = 0.2;
+                                        valueAxis.extraMin = 0.2;
                                     }
 
                                 }else if(cashedCharts[parameter].chart_prop[0].plot_control){
                                     if(cashedCharts[parameter].chart_prop[0].control_category == "threshold"){
                                         var range = valueAxis.axisRanges.create();
                                         range.value = cashedCharts[parameter].chart_prop[0].control_max;
-                                        range.grid.stroke = am4core.color("#396478");
-                                        range.grid.strokeWidth = 2;
-                                        range.grid.strokeOpacity = 1;
+                                        range.grid.stroke = am4core.color("#0000FF");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
                                         valueAxis.max =(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)+(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)*0.2));
+                                        valueAxis.extraMax = 0.2;
+                                        valueAxis.extraMin = 0.2;
                                     }else{
                                         var range = valueAxis.axisRanges.create();
                                         range.value = cashedCharts[parameter].chart_prop[0].control_max;
-                                        range.grid.stroke = am4core.color("#396478");
-                                        range.grid.strokeWidth = 2;
-                                        range.grid.strokeOpacity = 1;
+                                        range.grid.stroke = am4core.color("#0000FF");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
                                         var range2 = valueAxis.axisRanges.create();
                                         range2.value = cashedCharts[parameter].chart_prop[0].control_min;
-                                        range2.grid.stroke = am4core.color("#A96478");
-                                        range2.grid.strokeWidth = 2;
-                                        range2.grid.strokeOpacity = 1;
+                                        range2.grid.stroke = am4core.color("#0000FF");
+                                        range2.grid.strokeWidth = 1;
+                                        range2.grid.strokeOpacity = 0.6;
+                                        range2.grid.strokeDasharray = "3,3";
                                         valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].control_max)+(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)*0.2));
-                                        valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].control_min)+(parseFloat(cashedCharts[parameter].chart_prop[0].control_min)*0.2));
+                                        valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].control_min)-(parseFloat(cashedCharts[parameter].chart_prop[0].control_min)*0.2));
+                                        valueAxis.extraMax = 0.2;
+                                        valueAxis.extraMin = 0.2;
                                     }
 
                                 }
@@ -1633,6 +1676,36 @@ style="position: relative;margin: auto;height: 40vh;width: 100vw;"
                                 chart.data = chartData;
                                 chart.exporting.menu = new am4core.ExportMenu();
                                 chart.exporting.filePrefix = "ChartView";
+                                if(permission.raw_data){
+                                    var raw_data = {
+                                            "label": "Data",
+                                            "menu": [
+                                              { "type": "json", "label": "JSON" },
+                                              { "type": "csv", "label": "CSV" },
+                                              { "type": "xlsx", "label": "XLSX" },
+                                              { "type": "html", "label": "HTML" },
+                                              { "type": "pdfdata", "label": "PDF" }
+                                            ]
+                                          };
+                                }
+                                chart.exporting.menu.items = [
+                                      {
+                                        "label": "...",
+                                        "menu": [
+                                          {
+                                            "label": "Image",
+                                            "menu": [
+                                              { "type": "png", "label": "PNG" },
+                                              { "type": "jpg", "label": "JPG" },
+                                              { "type": "svg", "label": "SVG" },
+                                              { "type": "pdf", "label": "PDF" }
+                                            ]
+                                          }, raw_data, {
+                                            "label": "Print", "type": "print"
+                                          }
+                                        ]
+                                      }
+                                    ];
                                 chart.logo.disabled =true;
                                 chart.dateFormatter.inputDateFormat = "MM/dd/yyyy hh:mm:ss a";
                                 chart.export = true;
@@ -1699,6 +1772,70 @@ chart.scrollbarX.parent = chart.bottomAxesContainer;
 
 dateAxis.start = 0.79;
 dateAxis.keepSelection = true;
+
+
+ //Plot limits and chart max with min
+                                if(cashedCharts[key].chart_prop[0].plot_limit){
+                                    if(cashedCharts[key].chart_prop[0].control_category == "threshold"){
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = cashedCharts[key].chart_prop[0].limit_high;
+                                        range.grid.stroke = am4core.color("#FF0000");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
+                                        valueAxis.max = (parseFloat(cashedCharts[key].chart_prop[0].limit_high)+(parseFloat(cashedCharts[key].chart_prop[0].limit_high)*0.2));
+                                        valueAxis.extraMax = 0.2;
+                                        valueAxis.extraMin = 0.2;
+                                    }else{
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = cashedCharts[key].chart_prop[0].limit_high;
+                                        range.grid.stroke = am4core.color("#FF0000");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
+                                        var range2 = valueAxis.axisRanges.create();
+                                        range2.value = cashedCharts[key].chart_prop[0].limit_low;
+                                        range2.grid.stroke = am4core.color("#FF0000");
+                                        range2.grid.strokeWidth = 1;
+                                        range2.grid.strokeOpacity = 0.6;
+                                        range2.grid.strokeDasharray = "3,3";
+                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2));
+                                        valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)-(parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)*0.2));
+                                        valueAxis.extraMax = 0.2;
+                                        valueAxis.extraMin = 0.2;
+                                    }
+
+                                }else if(cashedCharts[key].chart_prop[0].plot_control){
+                                    if(cashedCharts[key].chart_prop[0].control_category == "threshold"){
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = cashedCharts[key].chart_prop[0].control_max;
+                                        range.grid.stroke = am4core.color("#0000FF");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
+                                        valueAxis.max =(parseFloat(cashedCharts[key].chart_prop[0].control_max)+(parseFloat(cashedCharts[key].chart_prop[0].control_max)*0.2));
+                                        valueAxis.extraMax = 0.2;
+                                        valueAxis.extraMin = 0.2;
+                                    }else{
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = cashedCharts[key].chart_prop[0].control_max;
+                                        range.grid.stroke = am4core.color("#0000FF");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
+                                        var range2 = valueAxis.axisRanges.create();
+                                        range2.value = cashedCharts[key].chart_prop[0].control_min;
+                                        range2.grid.stroke = am4core.color("#0000FF");
+                                        range2.grid.strokeWidth = 1;
+                                        range2.grid.strokeOpacity = 0.6;
+                                        range2.grid.strokeDasharray = "3,3";
+                                        valueAxis.max = (parseFloat(cashedCharts[key].chart_prop[0].control_max)+(parseFloat(cashedCharts[key].chart_prop[0].control_max)*0.2));
+                                        valueAxis.min = (parseFloat(cashedCharts[key].chart_prop[0].control_min)-(parseFloat(cashedCharts[key].chart_prop[0].control_min)*0.2));
+                                        valueAxis.extraMax = 0.2;
+                                        valueAxis.extraMin = 0.2;
+                                    }
+
+                                }
 
 
 }
