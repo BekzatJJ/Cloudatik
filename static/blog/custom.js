@@ -1403,7 +1403,11 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                                         });
                                     var data = cashedCharts[parameter].data.map(function(e) {
                                            return e[parameter];
-                                        });;
+                                        });
+
+                                    var maxEst = Math.max.apply(this, data);
+                                    var minEst = Math.min.apply(this, data);
+                                    console.log(maxEst +' '+ minEst);
                                     var chartData = [];
                                 for(var i=0; i< labels.length; i++){
                                     var tempObj ={};
@@ -1476,7 +1480,8 @@ dateAxis.baseInterval = {
 };
 
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-
+valueAxis.extraMin = 0.2;
+valueAxis.extraMax = 0.2;
 // Create series
 var series = chart.series.push(new am4charts.LineSeries());
 series.dataFields.valueY = "value";
@@ -1532,8 +1537,12 @@ dateAxis.keepSelection = true;
                                         range.grid.strokeWidth = 1;
                                         range.grid.strokeOpacity = 0.6;
                                         range.grid.strokeDasharray = "3,3";
-                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2));
-                                        valueAxis.extraMax = 0.2;
+
+                                        if(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high) >= maxEst){
+                                            valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2));
+                                            valueAxis.extraMax = 0.2;
+                                        }
+
                                     }else{
                                         var range = valueAxis.axisRanges.create();
                                         range.value = cashedCharts[parameter].chart_prop[0].limit_high;
@@ -1547,10 +1556,15 @@ dateAxis.keepSelection = true;
                                         range2.grid.strokeWidth = 1;
                                         range2.grid.strokeOpacity = 0.6;
                                         range2.grid.strokeDasharray = "3,3";
-                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2));
-                                        valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)-(parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)*0.2));
-                                        valueAxis.extraMax = 0.2;
-                                        valueAxis.extraMin = 0.2;
+
+                                        if(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high) >= maxEst){
+                                            valueAxis.max = parseFloat(cashedCharts[parameter].chart_prop[0].limit_high);
+                                            valueAxis.extraMax = 0.2;
+                                        }
+                                        if(parseFloat(cashedCharts[parameter].chart_prop[0].limit_low) <= minEst){
+                                            valueAxis.min = parseFloat(cashedCharts[parameter].chart_prop[0].limit_low);
+                                            valueAxis.extraMin = 0.2;
+                                        }
                                     }
 
                                 }else if(cashedCharts[parameter].chart_prop[0].plot_control){
@@ -1561,9 +1575,12 @@ dateAxis.keepSelection = true;
                                         range.grid.strokeWidth = 1;
                                         range.grid.strokeOpacity = 0.6;
                                         range.grid.strokeDasharray = "3,3";
-                                        valueAxis.max =(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)+(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)*0.2));
-                                        valueAxis.extraMax = 0.2;
-                                        valueAxis.extraMin = 0.2;
+
+                                        if(parseFloat(cashedCharts[parameter].chart_prop[0].control_max) >= maxEst){
+                                            valueAxis.max = parseFloat(cashedCharts[parameter].chart_prop[0].control_max);
+                                            valueAxis.extraMax = 0.2;
+                                        }
+
                                     }else{
                                         var range = valueAxis.axisRanges.create();
                                         range.value = cashedCharts[parameter].chart_prop[0].control_max;
@@ -1577,10 +1594,16 @@ dateAxis.keepSelection = true;
                                         range2.grid.strokeWidth = 1;
                                         range2.grid.strokeOpacity = 0.6;
                                         range2.grid.strokeDasharray = "3,3";
-                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].control_max)+(parseFloat(cashedCharts[parameter].chart_prop[0].control_max)*0.2));
-                                        valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].control_min)-(parseFloat(cashedCharts[parameter].chart_prop[0].control_min)*0.2));
-                                        valueAxis.extraMax = 0.2;
-                                        valueAxis.extraMin = 0.2;
+
+                                        if(parseFloat(cashedCharts[parameter].chart_prop[0].control_max) >= maxEst){
+                                            valueAxis.max = parseFloat(cashedCharts[parameter].chart_prop[0].control_max);
+                                            valueAxis.extraMax = 0.2;
+                                        }
+                                        if(parseFloat(cashedCharts[parameter].chart_prop[0].control_min) <= minEst){
+                                            valueAxis.min = parseFloat(cashedCharts[parameter].chart_prop[0].control_min);
+                                            valueAxis.extraMin = 0.2;
+                                        }
+
                                     }
 
                                 }
@@ -1656,7 +1679,11 @@ style="position: relative;margin: auto;height: 40vh;width: 100vw;"
                                         });
                                     var data = cashedCharts[key].data.map(function(e) {
                                            return e[key];
-                                        });;
+                                        });
+
+                                    var maxEst = Math.max.apply(this, data);
+                                    var minEst = Math.min.apply(this, data);
+
                                     var chartData = [];
                                 for(var i=0; i< labels.length; i++){
                                     var tempObj ={};
@@ -1774,7 +1801,7 @@ dateAxis.start = 0.79;
 dateAxis.keepSelection = true;
 
 
- //Plot limits and chart max with min
+                           //Plot limits and chart max with min
                                 if(cashedCharts[key].chart_prop[0].plot_limit){
                                     if(cashedCharts[key].chart_prop[0].control_category == "threshold"){
                                         var range = valueAxis.axisRanges.create();
@@ -1783,9 +1810,12 @@ dateAxis.keepSelection = true;
                                         range.grid.strokeWidth = 1;
                                         range.grid.strokeOpacity = 0.6;
                                         range.grid.strokeDasharray = "3,3";
-                                        valueAxis.max = (parseFloat(cashedCharts[key].chart_prop[0].limit_high)+(parseFloat(cashedCharts[key].chart_prop[0].limit_high)*0.2));
-                                        valueAxis.extraMax = 0.2;
-                                        valueAxis.extraMin = 0.2;
+
+                                        if(parseFloat(cashedCharts[key].chart_prop[0].limit_high) >= maxEst){
+                                            valueAxis.max = (parseFloat(cashedCharts[key].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2));
+                                            valueAxis.extraMax = 0.2;
+                                        }
+
                                     }else{
                                         var range = valueAxis.axisRanges.create();
                                         range.value = cashedCharts[key].chart_prop[0].limit_high;
@@ -1799,10 +1829,15 @@ dateAxis.keepSelection = true;
                                         range2.grid.strokeWidth = 1;
                                         range2.grid.strokeOpacity = 0.6;
                                         range2.grid.strokeDasharray = "3,3";
-                                        valueAxis.max = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)+(parseFloat(cashedCharts[parameter].chart_prop[0].limit_high)*0.2));
-                                        valueAxis.min = (parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)-(parseFloat(cashedCharts[parameter].chart_prop[0].limit_low)*0.2));
-                                        valueAxis.extraMax = 0.2;
-                                        valueAxis.extraMin = 0.2;
+
+                                        if(parseFloat(cashedCharts[key].chart_prop[0].limit_high) >= maxEst){
+                                            valueAxis.max = parseFloat(cashedCharts[key].chart_prop[0].limit_high);
+                                            valueAxis.extraMax = 0.2;
+                                        }
+                                        if(parseFloat(cashedCharts[key].chart_prop[0].limit_low) <= minEst){
+                                            valueAxis.min = parseFloat(cashedCharts[key].chart_prop[0].limit_low);
+                                            valueAxis.extraMin = 0.2;
+                                        }
                                     }
 
                                 }else if(cashedCharts[key].chart_prop[0].plot_control){
@@ -1813,9 +1848,12 @@ dateAxis.keepSelection = true;
                                         range.grid.strokeWidth = 1;
                                         range.grid.strokeOpacity = 0.6;
                                         range.grid.strokeDasharray = "3,3";
-                                        valueAxis.max =(parseFloat(cashedCharts[key].chart_prop[0].control_max)+(parseFloat(cashedCharts[key].chart_prop[0].control_max)*0.2));
-                                        valueAxis.extraMax = 0.2;
-                                        valueAxis.extraMin = 0.2;
+
+                                        if(parseFloat(cashedCharts[key].chart_prop[0].control_max) >= maxEst){
+                                            valueAxis.max = parseFloat(cashedCharts[key].chart_prop[0].control_max);
+                                            valueAxis.extraMax = 0.2;
+                                        }
+
                                     }else{
                                         var range = valueAxis.axisRanges.create();
                                         range.value = cashedCharts[key].chart_prop[0].control_max;
@@ -1829,10 +1867,16 @@ dateAxis.keepSelection = true;
                                         range2.grid.strokeWidth = 1;
                                         range2.grid.strokeOpacity = 0.6;
                                         range2.grid.strokeDasharray = "3,3";
-                                        valueAxis.max = (parseFloat(cashedCharts[key].chart_prop[0].control_max)+(parseFloat(cashedCharts[key].chart_prop[0].control_max)*0.2));
-                                        valueAxis.min = (parseFloat(cashedCharts[key].chart_prop[0].control_min)-(parseFloat(cashedCharts[key].chart_prop[0].control_min)*0.2));
-                                        valueAxis.extraMax = 0.2;
-                                        valueAxis.extraMin = 0.2;
+
+                                        if(parseFloat(cashedCharts[key].chart_prop[0].control_max) >= maxEst){
+                                            valueAxis.max = parseFloat(cashedCharts[key].chart_prop[0].control_max);
+                                            valueAxis.extraMax = 0.2;
+                                        }
+                                        if(parseFloat(cashedCharts[key].chart_prop[0].control_min) <= minEst){
+                                            valueAxis.min = parseFloat(cashedCharts[key].chart_prop[0].control_min);
+                                            valueAxis.extraMin = 0.2;
+                                        }
+
                                     }
 
                                 }
