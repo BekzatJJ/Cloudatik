@@ -128,6 +128,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
         'D:\\Bekzat\\Cloudatik\\Django\\cloudatik\\static',
     '/home/clds/cloudatik/static',
+    'E:\\Cloudatik\\Django\\Cloudatik\\static'
     )
 
 LOGIN_URL = '/login'
