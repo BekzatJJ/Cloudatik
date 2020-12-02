@@ -1481,12 +1481,10 @@ dateAxis.baseInterval = {
 };
 
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-<<<<<<< Updated upstream
 valueAxis.extraMin = 0.2;
 valueAxis.extraMax = 0.2;
-=======
 valueAxis.title.text = cashedCharts[parameter].chart_prop[0].unit;
->>>>>>> Stashed changes
+
 // Create series
 var series = chart.series.push(new am4charts.LineSeries());
 series.dataFields.valueY = "value";
