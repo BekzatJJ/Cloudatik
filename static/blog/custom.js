@@ -53,6 +53,7 @@ window.onload = function () {
                 success: function(data){
                     var data = reJSONAlarmSummary(data);
                     console.log('updated alarm badge');
+                    console.log(data);
 
                     var parent = document.getElementById('badgeAlarm');
                     parent.innerHTML = data.data.length;
@@ -1480,8 +1481,12 @@ dateAxis.baseInterval = {
 };
 
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+<<<<<<< Updated upstream
 valueAxis.extraMin = 0.2;
 valueAxis.extraMax = 0.2;
+=======
+valueAxis.title.text = cashedCharts[parameter].chart_prop[0].unit;
+>>>>>>> Stashed changes
 // Create series
 var series = chart.series.push(new am4charts.LineSeries());
 series.dataFields.valueY = "value";
@@ -1516,9 +1521,9 @@ chart.cursor.xAxis = dateAxis;
 chart.cursor.snapToSeries = series;
 
 // Create vertical scrollbar and place it before the value axis
-chart.scrollbarY = new am4core.Scrollbar();
+/*chart.scrollbarY = new am4core.Scrollbar();
 chart.scrollbarY.parent = chart.leftAxesContainer;
-chart.scrollbarY.toBack();
+chart.scrollbarY.toBack(); */
 
 // Create a horizontal scrollbar with previe and place it underneath the date axis
 chart.scrollbarX = new am4charts.XYChartScrollbar();
@@ -1787,11 +1792,12 @@ chart.cursor.behavior = "panXY";
 chart.cursor.xAxis = dateAxis;
 chart.cursor.snapToSeries = series;
 
+/*
 // Create vertical scrollbar and place it before the value axis
 chart.scrollbarY = new am4core.Scrollbar();
 chart.scrollbarY.parent = chart.leftAxesContainer;
 chart.scrollbarY.toBack();
-
+*/
 // Create a horizontal scrollbar with previe and place it underneath the date axis
 chart.scrollbarX = new am4charts.XYChartScrollbar();
 chart.scrollbarX.series.push(series);

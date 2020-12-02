@@ -475,16 +475,20 @@ pre {
   margin-left: auto; }
   @media (min-width: 576px) {
     .container {
-      max-width: 540px; } }
+      max-width: 540px;
+      justify-content: center; } }
   @media (min-width: 768px) {
     .container {
-      max-width: 720px; } }
+      max-width: 720px;
+      justify-content: center; } }
   @media (min-width: 992px) {
     .container {
-      max-width: 960px; } }
+      max-width: 960px;
+      justify-content: center; } }
   @media (min-width: 1200px) {
     .container {
-      max-width: 1140px; } }
+      max-width: 1140px; 
+      justify-content: center;} }
 
 .container-fluid {
   width: 100%;
@@ -6018,7 +6022,7 @@ button.bg-purple:focus {
 
 .mt-5,
 .my-5 {
-  margin-top: 3rem !important; }
+  margin-top: 2rem !important; }
 
 .mr-5,
 .mx-5 {
@@ -8355,7 +8359,8 @@ strong {
 .custom-select-set {
   height: 44px;
   line-height: 25px;
-  padding: 10px 30px 10px 30px; }
+  padding: 10px 30px 10px 30px;
+  width: max-content; }
 
 .dropdown-toggle::after {
   display: none; }
@@ -9120,8 +9125,8 @@ strong {
 .parameters{
   flex-direction: column;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    grid-gap: .5rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 500px));
+    grid-gap: 1.2rem;
 }
 .parameters-module{
   margin-top:20px;
@@ -9139,7 +9144,8 @@ strong {
 }
 
 .chartTitle{
-  text-align: center;
+  /*text-align: center;*/
+  text-align: -webkit-auto;
   padding: 10px;
 }
 
@@ -9475,6 +9481,7 @@ color: white;
 }
 }
 
+
 /*Alarm map*/
 .map-alarm-class{
   background-color: #ff00006b;
@@ -9489,3 +9496,8 @@ li > .datepicker > div {
   display: block ;
 }
 
+.tagName_justify{
+  text-align: center;
+  padding-bottom: 20px;
+
+}

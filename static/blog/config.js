@@ -567,6 +567,7 @@ function requestNodeInfo(){
                     $("#latitude").val(data.latitude);
                     $("#address").val(data.address);
                     $("#premise").val(data.premise);
+                    document.getElementById("tagname_header").innerHTML = data.tag_name; 
                 }
 
             });

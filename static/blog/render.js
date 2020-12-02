@@ -152,7 +152,8 @@ function createNodeCards(data){
         }
 
         document.getElementById('map-content').innerHTML = htmlMap; //Map render
-
+    
+    console.log(data);
     //Nodes Section
     for(var i=0; i<data.node.length; i++){
 
@@ -444,8 +445,16 @@ function createNodeCards(data){
                 </div>
 
               </div>
-
+            
+              <div class="tagName_justify">
+              <h2>${data.node[i].tag_name}</h2>
+              </div>
+            
             <section id="section_${data.node[i].device_id}_dashboard" class="nodeDash">
+           
+             
+
+
               <div id="spinner_${data.node[i].device_id}" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
 
               <div id="${data.node[i].serial}-parameters" class="container parameters" style="">
@@ -470,6 +479,9 @@ function createNodeCards(data){
 
 
             `<section id="section_${data.node[i].device_id}_charts" class="sectionNodeLinks" style="display:none;">
+
+           
+
               <div class="wrapperForCharts" style="">
                 <div id="chartController_${data.node[i].device_id}" class="chartController">
                   <form id="chartForm_${data.node[i].device_id}">
@@ -479,6 +491,8 @@ function createNodeCards(data){
                       <select class="form-control" id="firstParameterSelect_${data.node[i].device_id}">
 
                       </select>
+
+
                     </div>
                     <div id="chartParameters_${data.node[i].device_id}" style="display:none; margin-bottom: 20px; margin-left: 30px;">
 
@@ -698,7 +712,14 @@ function createNodeCards(data){
 function alarmSummary(data){
     var parent = document.getElementById('alarmHistoryList');
     parent.innerHTML = '';
+    
+    console.log(data.data);
 
+    data.data.sort(function(a,b){
+      return new Date(b.datetime) - new Date(a.datetime)
+    });
+
+    console.log(data.data);
     for (var i=0; i< data.data.length; i++){
         var serial = data.data[i].serial;
         var label = data.data[i].label;
