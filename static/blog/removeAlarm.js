@@ -1,17 +1,24 @@
 $(document).ready(function(){
-
         $(document).on('click', ".dashboardRemoveAlarm", function() {
+        
+         if(checkDemoUsername()==false){
             var parentId = $(this).parents().eq(3).attr('id');
             var buttonId = $(this).attr('id');
             var device_id = parentId.split(/_/);
             $(this).closest('tr').remove();
             removeNewAlarm(buttonId, device_id[1]);
+           }
+        else 
+        {
+            callDemoUserAlertModal();
+            console.log("Functions disabled");
+        }
         });
-
-
 });
 
 function removeNewAlarm(id, device_id){
+
+
    data = {"device_id": device_id, "alarm_id": id, "username": username};
 
    $.ajax({
@@ -30,4 +37,5 @@ function removeNewAlarm(id, device_id){
             alert(errMsg);
         }
     });
+
 }

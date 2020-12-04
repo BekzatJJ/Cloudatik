@@ -826,6 +826,8 @@ function callChangePassword(){
         };
 
     function permissions(){
+    if(checkDemoUsername()==false){
+       
         if(mobileAndTabletCheck()){
         $('#QRModal').modal('show');
         var resultContainer = document.getElementById('qr-reader-results');
@@ -888,8 +890,14 @@ function callChangePassword(){
             $('#QRModal').modal('show');
             $('#qr-reader-results').html(`<div class="alert alert-danger fade-in" role="alert">You need to use mobile browser!!!</div>`);
         }
+  }
+  else 
+  {
+    callDemoUserAlertModal();
+    console.log("Functions disabled");
+   } 
 
-    }
+}
 function addserialNode(){
             var spinnerWait = document.getElementById('spinnerQR');
             spinnerWait.classList.add('lds-roller');
