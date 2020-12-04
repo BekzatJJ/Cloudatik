@@ -141,7 +141,7 @@
                                 <a class="dropdown-item" href="#" onclick="profileExec();"><i data-feather="user"
                                         class="svg-icon mr-2 ml-1"></i>
                                     My Profile</a>
-                                <a class="dropdown-item" href="#" onclick="$('#changePasswordModal').modal('show');"><i data-feather="credit-card"
+                                <a class="dropdown-item" href="#" onclick="callChangePassword();"><i data-feather="credit-card"
                                         class="svg-icon mr-2 ml-1"></i>
                                     Change Password</a>
                                 <div class="dropdown-divider"></div>
@@ -240,7 +240,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalEdit">Edit Profile</h5><br>
+            <h5 class="modal-title" id="exampleModalEdit" >Edit Profile</h5><br>
 
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
@@ -278,7 +278,7 @@
             <div id="savedProfileSuccess" style="display:none;" class="alert alert-success" role="alert"></div>
             <div id="savedProfileFail" style="display:none;" class="alert alert-danger" role="alert"></div>
 
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary " data-dismiss="modal">Close</button>
             <button id="saveProfile" onclick="saveProfile();" class="btn btn-primary">Save</button>
           </div>
         </div>
@@ -326,6 +326,7 @@
       </div>
     </div>
 
+
         <!-- QRCodeModal -->
     <div class="modal fade" id="QRModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalEdit" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -354,7 +355,24 @@
         </div>
       </div>
     </div>
-
+      <!-- Modal Demo User Alert -->
+  <div class="modal fade" id="demoAlertModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-body">
+          <div class="alert alert-danger" role="alert">  
+           <p>Function Access Denied for Demo Users</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
 
     <!-- All Jquery -->
     <!-- ============================================================== -->
@@ -399,6 +417,18 @@
     <script type="text/javascript">
 
         var username = '{{ user.get_username }}';
+        
+        var tempUsername = username.split("_");
+
+        if(tempUsername[0] == "demo")
+         {
+            var demoUser = true;
+         }
+         else 
+         {
+            var demoUser = false;
+         }  
+
         var logo = '{{ logo | safe}}';
         logo = logo.split(/"/)[1];
 
@@ -706,6 +736,8 @@ function editProfile(){
 }
 
 function saveProfile(){
+   
+    if(checkDemoUsername()==false){
     $('#savedProfileSuccess').html('');
     $('#savedProfileFail').html('');
     $('#savedProfileSuccess').removeAttr("style").hide();
@@ -747,8 +779,42 @@ function saveProfile(){
                     }
                 }
             });
+    }
+    else 
+    {
+     callDemoUserAlertModal();
+     console.log("Functions disabled");
+    }
 
 }
+
+function checkDemoUsername(){
+
+   if(demoUser == true)
+   {
+     return true;
+   }
+   else
+   {
+    return false;
+   }
+}
+
+
+function callDemoUserAlertModal(){
+   $("#demoAlertModal").modal();
+}
+
+function callChangePassword(){
+    if(checkDemoUsername()==false){
+     $('#changePasswordModal').modal('show');   
+     }
+     else 
+     {
+       $("#demoAlertModal").modal(); 
+     }
+}
+
 </script>
 
 <script type="text/javascript">

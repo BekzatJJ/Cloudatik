@@ -123,6 +123,7 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
 
 
     $.fn.editable.defaults.mode = 'inline';
+
     $.fn.editableform.buttons =
 '<button type="submit" class="btn btn-primary btn-sm editable-submit">' +
     '<i class="fa fa-fw fa-check"></i>' +
@@ -132,7 +133,11 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
     '</button>';
 
     for(var i=0; i<data.alarm_prop.length; i++){
+
+       if(checkDemoUsername()==false){
+
         $('#'+ data.alarm_prop[i].parameter + '_title').editable({
+    
             mode: 'inline',
             send:"always",
             validate: function(value) {
@@ -153,8 +158,21 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
 
                 return JSON.stringify(data);
             }
+
         });
+     }
+     else
+     {
+        console.log("coming here");
+         $('#'+ data.alarm_prop[i].parameter + '_title').editable({
+         
+
+        }); 
+
+     }
+
     }
+
 
 
     //Init controller
@@ -404,10 +422,11 @@ document.getElementById('removeNodeHeader').innerHTML = serialRemoveNode;
 }
 
 function saveAlarm(){
-
+   
     window.dataChanged = [];
     var changed = document.getElementsByClassName('changed');
-
+    
+    if(checkDemoUsername()==false){
     for(var i=0; i< changed.length; i++){
         var parameter = changed[i].id;
         console.log(changed[i].id);
@@ -460,7 +479,6 @@ function saveAlarm(){
 
 
 
-
     }
 
 //Fill into modal
@@ -488,9 +506,15 @@ for (var i = 0; i < dataChanged.length; i++) {
         tr.push("<td>" + dataChanged[i].limit_high + "</td>");
         tr.push('</tr>');
     }
-$('#bodySummaryTable').append($(tr.join('')));
+  $('#bodySummaryTable').append($(tr.join('')));
 
-$('#summary').modal('show');
+  $('#summary').modal('show');
+}
+else 
+{
+  callDemoUserAlertModal();
+  console.log("Functions disabled");
+}
 
 }
 
@@ -542,7 +566,6 @@ function submitToSaveAlarm(){
 
 function clearAlarm(){
 
-
             document.getElementById('save').disabled = true;
             document.getElementById('clear').disabled = true;
             $('#alertSuccesAlarm').fadeOut();
@@ -551,7 +574,7 @@ function clearAlarm(){
 
      renderConfigAlarm(alarmData);
 
-}
+ }
 function requestNodeInfo(){
         $.ajax({
                 type: "GET",
@@ -574,6 +597,8 @@ function requestNodeInfo(){
 }
 
 function removeNode(){
+    
+    if(checkDemoUsername()==false){
     document.getElementById('removeNodeButton').innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`;
     var usernameRemoveNode = $('[name=username]').val();
     var password = $('[name=password]').val();
@@ -600,15 +625,24 @@ function removeNode(){
                     }
                 },
                 error: function(request, status, error){
+                    console.log("error getiing");
                     document.getElementById('removeNodeButton').innerHTML = `Remove Node`;
                     alert(request.responseJSON.message);
                 }
             });
+   }
+   else 
+   {
+    callDemoUserAlertModal();
+    console.log("Functions disabled");
+   }
 
 }
 
 
 function saveNodeProfile(){
+    
+    if(checkDemoUsername()==false){
     $("#saveNodeProfile").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
     $("#saveNodeProfile").attr("disabled", true);
 
@@ -646,4 +680,11 @@ function saveNodeProfile(){
                     alert('Success saved');
                 }
             });
+  }
+   else 
+   {
+    callDemoUserAlertModal();
+    console.log("Functions disabled");
+   }   
 }
+
