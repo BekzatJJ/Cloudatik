@@ -25,12 +25,7 @@ def convert(obj):
     return obj
 
 def trying(request):
-    r = requests.get('https://api.cl-ds.com/getUserNode/bekzat/')
-    now = timezone.now()
-    if r.status_code == 200:
-        context={r.json()['node'][0]['last_update'] , now}
-        return HttpResponse(context, content_type="application/json")
-    return HttpResponse('Could not save data')
+    return render(request, 'blog/amchart.html')
 
 @login_required
 def adminDash(request):

@@ -14,9 +14,10 @@ window.onload = function () {
 
         //Node status
         window.nodeStatus = {};
-
-
-
+        
+        requestAjax('kTOP4t');
+   
+ 
     //console.log('requested');
     $.ajax({
                 type: "GET",
@@ -24,9 +25,13 @@ window.onload = function () {
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
+                                                 console.log("nodeList");
+      console.log(data.node.length);
                     var spinnerNode = document.getElementById('spinnerMain');
                     spinnerNode.classList.remove('lds-roller');
                     var parent = document.getElementById('nodesList');
+
+                    
                     if(data.node.length == 0){
                         parent.innerHTML = ``;
                         parent.innerHTML = `<div id="addNode" class="card border-success mb-3 node" style="">
@@ -60,7 +65,7 @@ window.onload = function () {
                     alarmSummary(data);
                 }
             });
-
+      
 
 }
 function reJSONAlarmSummary(data){
@@ -279,20 +284,36 @@ function requestAjax(id){
     var ajaxCounts = Object.keys(ajaxRequests).length;
     ajaxRequests[ajaxCounts] = $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardDataSetIntervalV3/' + id + '/',
+                url: 'https://api.cl-ds.com/getDashboardDataSetIntervalV3Test/' + id + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
-                    for(var i=0; i< data.chart_prop.length; i++){
-                        console.log(data.chart_prop[i].priority);
-                    }
-                      
-                    console.log("before reconstr");  
-                    console.log(data)
+                    
+                    
 
-                    data = reConstructJSON(data);
-                    console.log("after reconstr");
+                    console.log("before Rejeson");
                     console.log(data);
+                    data = reConstructJSON(data);
+                     
+                     console.log("after Rejeson");
+                    console.log(data);
+/*
+                    for(var i=0; i< data.length; i++){
+                      console.log("parameter"); 
+                      console.log(data[i].chart_prop[0]);
+                      console.log("chart_prop"); 
+                      console.log(data[i].parameter);
+                      console.log("data "); 
+                      console.log(data[i].data);
+                       
+                    
+                    }
+                     
+                    console.log("cashed charts");
+                    console.log(cashedCharts);
+                    console.log("params");
+                    console.log(parameters);
+               */
                     var nodeProcessed = document.getElementsByClassName(data[0].serial);
                     ajaxNodeProcess[nodeProcessed[0].id] = true;
                     console.log('processes' + data[0].serial + ':' + ajaxNodeProcess[nodeProcessed[0].id]);
@@ -315,7 +336,9 @@ function requestAjax(id){
                             let child = document.createElement('div');
                             let canvasLcd = document.createElement('canvas');
                             let title = document.createElement('h3');
-                            let canvasChart = document.createElement('canvas');
+                            let canvasChart = document.createElement('div');
+                            let selector = document.createElement('div');
+
                             child.id = data[i].id;
                             if(data[i].chart_prop[0].priority == null){
                                 child.dataset.priority = "0";
@@ -323,10 +346,12 @@ function requestAjax(id){
                                 child.dataset.priority = data[i].chart_prop[0].priority;
                             }
 
-                            child.className = 'd-inline float-left parameters-module '+data[0].serial+'-parameter';
+                            child.className = 'd-inline float-left parameters-module '+data[0].serial+'-parameter'+' datavalidated';
+
                             canvasLcd.id = 'lcd_' + data[i].id;
                             canvasLcd.className = 'lcd-parameters';
                             title.id = 'chartTitle_' + data[i].id;
+                            
                                 if(data[i].chart_title == null){
                                     if(Object.keys(data[i].chart_prop).length === 0){title.innerHTML = '';}else{
                                        title.innerHTML = data[i].chart_prop[0].label;
@@ -337,11 +362,14 @@ function requestAjax(id){
 
                             title.className = 'chartTitle';
                             canvasChart.id = 'chart_' + data[i].id;
+                            selector.id = 'selectordiv_'+data[i].id;
+                            canvasChart.style.width = '100%';
+                            canvasChart.style.height = '300px';
 
                             child.appendChild(canvasLcd);
                             child.appendChild(title);
                             child.appendChild(canvasChart);
-
+                            child.appendChild(selector);
                             parent.appendChild(child);
 
                         }
@@ -405,271 +433,286 @@ function requestAjax(id){
                             var reverseData = data[i].data;
                                 var reverseData = reverseData.reverse();
 
-                            var labels = reverseData.map(function(e) {
-                               return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
-                            });
-
-
-
                             var dataChart = reverseData.map(function(e) {
                                return e[data[i].parameter];
                             });;
 
+                            var labels = reverseData.map(function(e) {
+                               return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
+                            });
+                           
+                           /* amChart*/
 
+                           // applying chart theme 
+                               /*
+                                 var labels = data[i].data.map(function(e) {
+                                           return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
+                                         });
+                                     var data = data[i].data.map(function(e) {
+                                           return e[data[i].chart_prop[0].parameter];
+                                        });
+*/
 
-                            if(typeof data[i].data[0][data[i].parameter]=== 'boolean'){
-                                var max = 1;
-                                var min = 0;
+                              
 
-                                //Plot limits
-                                if(data[i].chart_prop[0].plot_limit){
-                                     var plot =  [{"y": data[i].chart_prop[0].limit_high},
-                                                                   {"y": data[i].chart_prop[0].limit_low}];
-                                }else if(data[i].chart_prop[0].plot_control){
-                                    var plot =  [{"y": data[i].chart_prop[0].control_max,
-                                                    "style": "rgba(0,0,255,0.6)"},
-                                                                   {"y": data[i].chart_prop[0].control_min,
-                                                                    "style": "rgba(0,0,255,0.6)"}];
-                                }else{
-                                    var plot =  [];
+                                    var maxEst = Math.max.apply(this, data);
+                                    var minEst = Math.min.apply(this, data);
+                                   // console.log(maxEst +' '+ minEst);
+                                    var chartData = [];
+                                for(var a=0; a< labels.length; a++){
+                                    var tempObj ={};
+                                    tempObj.date = labels[a];
+                                    tempObj.value = dataChart[a];
+                                    chartData.push(tempObj);
                                 }
 
-                                //INIT Charts
-                                    options[i] ={ "horizontalLine":plot,
-                                                legend: {
-                                                    display: false,
-                                                    position: 'top',
-                                                    labels:{
-                                                        boxWidth: 80,
-                                                        fontColor: 'black'
-                                                        }
-                                                    },
-                                                scales:{
+                                console.log(chartData);
+                                //Chart starts
+                                am4core.useTheme(am4themes_animated);
+                                // Themes end
 
-                                                    yAxes: [{
-                                                        ticks: {
-                                                            min: min,
-                                                            max: max,
-                                                            stepSize: 1
-                                                                },
-                                                        scaleLabel: {
-                                                            display:true,
-                                                            labelString: label + '(' + unit + ')'
-                                                                }
-                                                        }],
-                                                        xAxes: [{
-                                                                type:'time',
-                                                                distribution: 'linear',
-                                                                offset: false,
-                                                                bounds: 'data',
-                                                                time:{
-                                                                    stepSize: 0.5
-                                                                },
-                                                                ticks: {
-                                                                    major:{
-                                                                        enabled: true,
-                                                                        fontStyle: 'bold'
-                                                                    },
-                                                                    minor:{
-                                                                        enabled:true
-                                                                    },
-                                                                    source: 'auto',
-                                                                    autoSkip: true,
-                                                                    autoSkipPadding: 0,
-                                                                    maxRotation: 0,
-                                                                    sampleSize: 100,
+                                // Create chart instance
+                                var chart = am4core.create('chart_' + data[i].id, am4charts.XYChart);
 
-                                                                }
-                                                            }],
-
-                                                    }
-                                    };
-                            }else{
-
-                                var max = Math.max.apply(this, dataChart);
-                                var min = Math.min.apply(this, dataChart);
-
-                                if(max < 0){
-                                    max = max-(max*0.10);
-                                }else{max = max+(max*0.10);}
-
-                                if(min < 0){
-                                    min = min+(min*0.10);
-                                }else{
-                                    min = min-(min*0.10);
+                                chart.data = chartData;
+                               /* chart.exporting.menu = new am4core.ExportMenu();
+                                chart.exporting.filePrefix = "ChartView";
+                                if(permission.raw_data){
+                                    var raw_data = {
+                                            "label": "Data",
+                                            "menu": [
+                                              { "type": "json", "label": "JSON" },
+                                              { "type": "csv", "label": "CSV" },
+                                              { "type": "xlsx", "label": "XLSX" },
+                                              { "type": "html", "label": "HTML" },
+                                              { "type": "pdfdata", "label": "PDF" }
+                                            ]
+                                          };
                                 }
+                                chart.exporting.menu.items = [
+                                      {
+                                        "label": "...",
+                                        "menu": [
+                                          {
+                                            "label": "Image",
+                                            "menu": [
+                                              { "type": "png", "label": "PNG" },
+                                              { "type": "jpg", "label": "JPG" },
+                                              { "type": "svg", "label": "SVG" },
+                                              { "type": "pdf", "label": "PDF" }
+                                            ]
+                                          }, raw_data, {
+                                            "label": "Print", "type": "print"
+                                          }
+                                        ]
+                                      }
+                                    ];*/
+                                chart.logo.disabled =true;
+                                chart.dateFormatter.inputDateFormat = "MM/dd/yyyy hh:mm:ss a";
+                                chart.export = true;
+                                //title
+                                var topContainer = chart.chartContainer.createChild(am4core.Container);
+                                topContainer.layout = "absolute";
+                                topContainer.toBack();
+                                topContainer.paddingBottom = 15;
+                                topContainer.width = am4core.percent(100);
 
-                                //Plot limits and chart max with min
-                                if(data[i].chart_prop[0].plot_limit){
-                                    if(data[i].chart_prop[0].control_category == "threshold"){
-                                        var plot =  [{"y": data[i].chart_prop[0].limit_high}];
-                                        var temp_max = parseFloat(data[i].chart_prop[0].limit_high);
-                                        if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                    }else{
-                                        var plot =  [{"y": data[i].chart_prop[0].limit_high},
-                                                                   {"y": data[i].chart_prop[0].limit_low}];
-                                         var temp_max = parseFloat(data[i].chart_prop[0].limit_high);
-                                         var temp_min = parseFloat(data[i].chart_prop[0].limit_low);
-                                        if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                        if(temp_min < min){
-                                            min = temp_min-(temp_min*0.20);
-                                        }
-                                    }
-
-                                }else if(data[i].chart_prop[0].plot_control){
-                                    if(data[i].chart_prop[0].control_category == "threshold"){
-                                        var plot =  [{"y": data[i].chart_prop[0].control_max,
-                                                        "style": "rgba(0,0,255,0.6)"}];
-                                        var temp_max = parseFloat(data[i].chart_prop[0].control_max);
-                                    if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                    }else{
-                                        var plot =  [{"y": data[i].chart_prop[0].control_max,
-                                                        "style": "rgba(0,0,255,0.6)"},
-                                                                   {"y": data[i].chart_prop[0].control_min,
-                                                        "style": "rgba(0,0,255,0.6)"}];
-                                        var temp_max = parseFloat(data[i].chart_prop[0].control_max);
-                                         var temp_min = parseFloat(data[i].chart_prop[0].control_min);
-                                        if(temp_max > max){
-                                            max = temp_max+(temp_max*0.20);
-                                        }
-                                         if(temp_min < min){
-                                            min = temp_min-(temp_min*0.20);
-                                        }
-                                    }
-
-                                }else{
-                                    var plot =  [];
-                                }
-
-
-                                //INIT Charts
-                                    options[i] ={   "horizontalLine": plot,
-                                                legend: {
-                                                    display: false,
-                                                    position: 'top',
-                                                    labels:{
-                                                        boxWidth: 80,
-                                                        fontColor: 'black'
-                                                        }
-                                                    },
-                                                scales:{
-
-                                                    yAxes: [{
-                                                        ticks: {
-                                                            min: min,
-                                                            max: max
-                                                                },
-                                                        offset:true,
-                                                        scaleLabel: {
-                                                            display:true,
-                                                            labelString: label + '(' + unit + ')'
-                                                                }
-                                                        }],
-                                                         xAxes: [{
-                                                                type:'time',
-                                                                distribution: 'linear',
-                                                                offset: false,
-                                                                bounds: 'data',
-                                                                time:{
-                                                                    stepSize: 0.5
-                                                                },
-                                                                ticks: {
-                                                                    major:{
-                                                                        enabled: true,
-                                                                        fontStyle: 'bold'
-                                                                    },
-                                                                    minor:{
-                                                                        enabled:true
-                                                                    },
-                                                                    source: 'auto',
-                                                                    autoSkip: true,
-                                                                    autoSkipPadding: 0,
-                                                                    maxRotation: 0,
-                                                                    sampleSize: 100,
-
-                                                                }
-                                                            }],
-
-                                                    }
-                                    };
-                            }
-
-
-                            //plugin
-var horizonalLinePlugin = {
-  afterDraw: function(chartInstance) {
-    var yValue;
-    var yScale = chartInstance.scales["y-axis-0"];
-    var canvas = chartInstance.chart;
-    var ctx = canvas.ctx;
-    var index;
-    var line;
-    var style;
-
-    if (chartInstance.options.horizontalLine) {
-      for (index = 0; index < chartInstance.options.horizontalLine.length; index++) {
-        line = chartInstance.options.horizontalLine[index];
-
-        if (!line.style) {
-          style = "rgba(255,0,0, .6)";
-        } else {
-          style = line.style;
-        }
-
-        if (line.y) {
-          yValue = yScale.getPixelForValue(line.y);
-        } else {
-          yValue = 0;
-        }
-
-        ctx.lineWidth = 1;
-
-        if (yValue) {
-          ctx.setLineDash([5, 3]);
-          ctx.beginPath();
-          ctx.moveTo(canvas.chartArea.left, yValue);
-          ctx.lineTo(canvas.width, yValue);
-          ctx.strokeStyle = style;
-          ctx.stroke();
-        }
-
-        if (line.text) {
-          ctx.fillStyle = style;
-          ctx.fillText(line.text, 0, yValue + ctx.lineWidth);
-        }
-      }
-      return;
-    }
-  }
+                                var title = topContainer.createChild(am4core.Label);
+                                title.text ="";
+                                title.fontWeight = 600;
+                                title.align = "center";
+// Create axes
+var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+dateAxis.groupData = true;
+dateAxis.baseInterval = {
+  "timeUnit": "minute",
+  "count": 1
 };
-Chart.pluginService.register(horizonalLinePlugin);
 
-                           chartDataSet[i]= {
-                                    labels: labels,
-                                    datasets:[{
-                                        label: data[i].parameter,
-                                        data: dataChart,
-                                        fill: false,
-                                        lineTension: 0.5,
-                                        borderColor: 'rgba(151, 190, 252,0.8)',
-                                        backgroundColor: 'rgba(151, 190, 252,1)'
-                                    }]
-                                };
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+valueAxis.extraMin = 0.2;
+valueAxis.extraMax = 0.2;
+valueAxis.title.text = data[i].chart_prop[0].unit;
 
-                                //Run chart
-                                var chartTemp = 'chart_' + data[i].id;
-                                chartObject[chartTemp] = new Chart(chartTemp, {
-                                        type: category,
-                                        data: chartDataSet[i],
-                                        options: options[i]
-                                    });
+// Create series
+var series = chart.series.push(new am4charts.LineSeries());
+series.dataFields.valueY = "value";
+series.dataFields.dateX = "date";
+series.tooltipText = "{value}"
+series.strokeWidth = 2;
+series.minBulletDistance = 15;
 
+var bullet = series.bullets.push(new am4charts.CircleBullet());
+bullet.circle.radius = 2;
+bullet.circle.strokeWidth = 2;
+
+
+
+// Drop-shaped tooltips
+series.tooltip.background.cornerRadius = 20;
+series.tooltip.background.strokeOpacity = 0;
+series.tooltip.pointerOrientation = "vertical";
+series.tooltip.label.minWidth = 40;
+series.tooltip.label.minHeight = 40;
+series.connect = true;
+series.tooltip.label.textAlign = "middle";
+series.tooltip.label.textValign = "middle";
+
+// Make bullets grow on hover
+var bullet = series.bullets.push(new am4charts.CircleBullet());
+bullet.circle.strokeWidth = 2;
+bullet.circle.radius = 4;
+bullet.circle.fill = am4core.color("#fff");
+
+var bullethover = bullet.states.create("hover");
+bullethover.properties.scale = 1.3;
+
+// Make a panning cursor
+chart.cursor = new am4charts.XYCursor();
+chart.cursor.behavior = "panXY";
+chart.cursor.xAxis = dateAxis;
+chart.cursor.snapToSeries = series;
+
+
+// Create a horizontal scrollbar with previe and place it underneath the date axis
+chart.scrollbarX = new am4charts.XYChartScrollbar();
+chart.scrollbarX.series.push(series);
+chart.scrollbarX.parent = chart.bottomAxesContainer;
+
+dateAxis.start = 0.00;
+dateAxis.keepSelection = true;
+
+// add range selector 
+var selectorAm = new am4plugins_rangeSelector.DateAxisRangeSelector();
+selectorAm.container = document.getElementById("selectordiv_"+data[i].id);
+selectorAm.axis = dateAxis;
+selectorAm.position ="bottom";
+
+
+/* to get rid off default 6 period sectors */
+selectorAm.periods.shift(
+  { name: "1D", interval: { timeUnit: "day", count: 1 } }
+);
+selectorAm.periods.shift(
+  { name: "1D", interval: { timeUnit: "day", count: 1 } }
+);
+selectorAm.periods.shift(
+  { name: "1D", interval: { timeUnit: "day", count: 1 } }
+);
+selectorAm.periods.shift(
+  { name: "1D", interval: { timeUnit: "day", count: 1 } }
+);
+selectorAm.periods.shift(
+  { name: "1D", interval: { timeUnit: "day", count: 1 } }
+);
+selectorAm.periods.shift(
+  { name: "1D", interval: { timeUnit: "day", count: 1 } }
+);
+
+/* customize your own period selector */
+selectorAm.periods.unshift(
+  { name: "3D", interval: { timeUnit: "day", count: 3 } }
+);
+selectorAm.periods.unshift(
+  { name: "2D", interval: { timeUnit: "day", count: 2 } }
+);
+selectorAm.periods.unshift(
+  { name: "1D", interval: { timeUnit: "day", count: 1 } }
+);
+selectorAm.periods.unshift(
+  { name: "12H", interval: { timeUnit: "hour", count: 12 } }
+);
+
+chart.events.on("datavalidated", function(ev) {
+  selectorAm.setPeriodInterval("hour");
+});
+
+              //Plot limits and chart max with min
+
+                                if(data[i].chart_prop[0].plot_limit){
+                                    if(data[i].chart_prop[0].control_category == "threshold"){
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = data[i].chart_prop[0].limit_high;
+                                        range.grid.stroke = am4core.color("#FF0000");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
+
+                                        if(parseFloat(data[i].chart_prop[0].limit_high) >= maxEst){
+                                            valueAxis.max = (parseFloat(data[i].chart_prop[0].limit_high)+(parseFloat(data[i].chart_prop[0].limit_high)*0.2));
+                                            valueAxis.extraMax = 0.2;
+                                        }
+
+                                    }else{
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = data[i].chart_prop[0].limit_high;
+                                        range.grid.stroke = am4core.color("#FF0000");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
+                                        var range2 = valueAxis.axisRanges.create();
+                                        range2.value = data[i].chart_prop[0].limit_low;
+                                        range2.grid.stroke = am4core.color("#FF0000");
+                                        range2.grid.strokeWidth = 1;
+                                        range2.grid.strokeOpacity = 0.6;
+                                        range2.grid.strokeDasharray = "3,3";
+
+                                        if(parseFloat(data[i].chart_prop[0].limit_high) >= maxEst){
+                                            valueAxis.max = parseFloat(data[i].chart_prop[0].limit_high);
+                                            valueAxis.extraMax = 0.2;
+                                        }
+                                        if(parseFloat(data[i].chart_prop[0].limit_low) <= minEst){
+                                            valueAxis.min = parseFloat(data[i].chart_prop[0].limit_low);
+                                            valueAxis.extraMin = 0.2;
+                                        }
+                                    }
+
+                                }else if(data[i].chart_prop[0].plot_control){
+                                    if(data[i].chart_prop[0].control_category == "threshold"){
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = data[i].chart_prop[0].control_max;
+                                        range.grid.stroke = am4core.color("#0000FF");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
+
+                                        if(parseFloat(data[i].chart_prop[0].control_max) >= maxEst){
+                                            valueAxis.max = parseFloat(data[i].chart_prop[0].control_max);
+                                            valueAxis.extraMax = 0.2;
+                                        }
+
+                                    }else{
+                                        var range = valueAxis.axisRanges.create();
+                                        range.value = data[i].chart_prop[0].control_max;
+                                        range.grid.stroke = am4core.color("#0000FF");
+                                        range.grid.strokeWidth = 1;
+                                        range.grid.strokeOpacity = 0.6;
+                                        range.grid.strokeDasharray = "3,3";
+                                        var range2 = valueAxis.axisRanges.create();
+                                        range2.value = data[i].chart_prop[0].control_min;
+                                        range2.grid.stroke = am4core.color("#0000FF");
+                                        range2.grid.strokeWidth = 1;
+                                        range2.grid.strokeOpacity = 0.6;
+                                        range2.grid.strokeDasharray = "3,3";
+
+                                        if(parseFloat(data[i].chart_prop[0].control_max) >= maxEst){
+                                            valueAxis.max = parseFloat(data[i].chart_prop[0].control_max);
+                                            valueAxis.extraMax = 0.2;
+                                        }
+                                        if(parseFloat(data[i].chart_prop[0].control_min) <= minEst){
+                                            valueAxis.min = parseFloat(data[i].chart_prop[0].control_min);
+                                            valueAxis.extraMin = 0.2;
+                                        }
+
+                                    }
+
+                                }
+
+
+                          
+                            
+
+                            
                                 // based on my answer here: https://stackoverflow.com/questions/47146427
 
 
@@ -1366,14 +1409,7 @@ function ajaxRetrieveChart(id, parameter, startEpoch, endEpoch){
                     //data: "check",
                     success: function(dataGot){
 
-
-                        console.log(dataGot);
-                         console.log("cash Param");
                         cashedCharts[parameter] = dataGot;
-
-                        console.log(cashedCharts);
-                        console.log("cash Param");
-
                         chartsRetrievedCount += 1;
                         if(chartsRequestedCount == chartsRetrievedCount){
                             var spinnerNode = document.getElementById('spinnerRetrieveCharts_'+id);
@@ -1542,10 +1578,6 @@ chart.scrollbarX.parent = chart.bottomAxesContainer;
 
 dateAxis.start = 0.00;
 dateAxis.keepSelection = true;
-
-console.log("Cacshed parameters");
-console.log(cashedCharts);
-console.log("Cacshed parameters");
 
                           //Plot limits and chart max with min
                                 if(cashedCharts[parameter].chart_prop[0].plot_limit){

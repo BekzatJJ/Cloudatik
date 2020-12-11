@@ -9501,3 +9501,25 @@ li > .datepicker > div {
   padding-bottom: 20px;
 
 }
+
+
+.amcharts-range-selector-range-wrapper input {
+   display:none;
+}
+.amcharts-range-selector-range-wrapper{
+  display:none;
+}
+/*.amcharts-range-selector-title {
+  display:none;
+}*/
+.amcharts-range-selector-period-wrapper {
+  padding-bottom:10px;
+ 
+}
+.amcharts-range-selector-period-button{
+ border-radius: 4px;
+ background-color:#67b7dc;
+ border:none;
+}
+
+
