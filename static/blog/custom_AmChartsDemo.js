@@ -346,7 +346,7 @@ function requestAjax(id){
                                 child.dataset.priority = data[i].chart_prop[0].priority;
                             }
 
-                            child.className = 'd-inline float-left parameters-module '+data[0].serial+'-parameter'+' datavalidated';
+                            child.className = 'd-inline float-left parameters-module '+data[0].serial+'-parameter';
 
                             canvasLcd.id = 'lcd_' + data[i].id;
                             canvasLcd.className = 'lcd-parameters';
@@ -523,22 +523,34 @@ function requestAjax(id){
                                 title.align = "center";
 // Create axes
 var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-dateAxis.groupData = true;
+
+//dateAxis.groupData = true;
 dateAxis.baseInterval = {
   "timeUnit": "minute",
   "count": 1
 };
+/*
+dateAxis.groupIntervals.setAll([
+  { timeUnit: "hour", count: 6 }
+]);
+*/
+dateAxis.renderer.labels.template.fontSize = 12; 
+
 
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 valueAxis.extraMin = 0.2;
 valueAxis.extraMax = 0.2;
 valueAxis.title.text = data[i].chart_prop[0].unit;
+valueAxis.title.fontSize = 12;
+valueAxis.renderer.labels.template.fontSize = 12;  
+valueAxis.extraTooltipPrecision=1;
+valueAxis.strictMinMax = true; 
 
 // Create series
 var series = chart.series.push(new am4charts.LineSeries());
 series.dataFields.valueY = "value";
 series.dataFields.dateX = "date";
-series.tooltipText = "{value}"
+//series.tooltipText = "{value}"
 series.strokeWidth = 2;
 series.minBulletDistance = 15;
 
@@ -549,11 +561,11 @@ bullet.circle.strokeWidth = 2;
 
 
 // Drop-shaped tooltips
-series.tooltip.background.cornerRadius = 20;
+series.tooltip.background.cornerRadius = 10;
 series.tooltip.background.strokeOpacity = 0;
 series.tooltip.pointerOrientation = "vertical";
-series.tooltip.label.minWidth = 40;
-series.tooltip.label.minHeight = 40;
+series.tooltip.label.minWidth = 5;
+series.tooltip.label.minHeight = 5;
 series.connect = true;
 series.tooltip.label.textAlign = "middle";
 series.tooltip.label.textValign = "middle";
@@ -575,9 +587,10 @@ chart.cursor.snapToSeries = series;
 
 
 // Create a horizontal scrollbar with previe and place it underneath the date axis
-chart.scrollbarX = new am4charts.XYChartScrollbar();
-chart.scrollbarX.series.push(series);
-chart.scrollbarX.parent = chart.bottomAxesContainer;
+
+//chart.scrollbarX = new am4charts.XYChartScrollbar();
+//chart.scrollbarX.series.push(series);
+//chart.scrollbarX.parent = chart.bottomAxesContainer;
 
 dateAxis.start = 0.00;
 dateAxis.keepSelection = true;
@@ -588,6 +601,23 @@ selectorAm.container = document.getElementById("selectordiv_"+data[i].id);
 selectorAm.axis = dateAxis;
 selectorAm.position ="bottom";
 
+/*
+// add data
+var interval;
+function startInterval() {
+    interval = setInterval(function() {
+        visits =
+            visits + chart.data;
+        var lastdataItem = series.dataItems.getIndex(series.dataItems.length - 1);
+        chart.addData(
+            { date: new Date(lastdataItem.dateX.getTime() + 2000), value: visits },
+            1
+        );
+    }, 2000);
+}
+
+startInterval();
+*/
 
 /* to get rid off default 6 period sectors */
 selectorAm.periods.shift(
@@ -624,7 +654,7 @@ selectorAm.periods.unshift(
 );
 
 chart.events.on("datavalidated", function(ev) {
-  selectorAm.setPeriodInterval("hour");
+  
 });
 
               //Plot limits and chart max with min
