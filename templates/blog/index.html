@@ -182,7 +182,7 @@
             <!-- Container fluid  -->
             <!-- ============================================================== -->
             <div class="container-fluid">
-            
+
                 {% block content %}
 
                 {% endblock %}
@@ -358,11 +358,11 @@
       <!-- Modal Demo User Alert -->
   <div class="modal fade" id="demoAlertModal" role="dialog">
     <div class="modal-dialog">
-    
+
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-body">
-          <div class="alert alert-danger" role="alert">  
+          <div class="alert alert-danger" role="alert">
            <p>Function Access Denied for Demo Users</p>
           </div>
         </div>
@@ -370,7 +370,7 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
-      
+
     </div>
   </div>
 
@@ -417,17 +417,17 @@
     <script type="text/javascript">
 
         var username = '{{ user.get_username }}';
-        
+
         var tempUsername = username.split("_");
 
         if(tempUsername[0] == "demo")
          {
             var demoUser = true;
          }
-         else 
+         else
          {
             var demoUser = false;
-         }  
+         }
 
         var logo = '{{ logo | safe}}';
         logo = logo.split(/"/)[1];
@@ -736,7 +736,7 @@ function editProfile(){
 }
 
 function saveProfile(){
-   
+
     if(checkDemoUsername()==false){
     $('#savedProfileSuccess').html('');
     $('#savedProfileFail').html('');
@@ -780,7 +780,7 @@ function saveProfile(){
                 }
             });
     }
-    else 
+    else
     {
      callDemoUserAlertModal();
      console.log("Functions disabled");
@@ -807,11 +807,11 @@ function callDemoUserAlertModal(){
 
 function callChangePassword(){
     if(checkDemoUsername()==false){
-     $('#changePasswordModal').modal('show');   
+     $('#changePasswordModal').modal('show');
      }
-     else 
+     else
      {
-       $("#demoAlertModal").modal(); 
+       $("#demoAlertModal").modal();
      }
 }
 
@@ -827,7 +827,7 @@ function callChangePassword(){
 
     function permissions(){
     if(checkDemoUsername()==false){
-       
+
         if(mobileAndTabletCheck()){
         $('#QRModal').modal('show');
         var resultContainer = document.getElementById('qr-reader-results');
@@ -891,11 +891,11 @@ function callChangePassword(){
             $('#qr-reader-results').html(`<div class="alert alert-danger fade-in" role="alert">You need to use mobile browser!!!</div>`);
         }
   }
-  else 
+  else
   {
     callDemoUserAlertModal();
     console.log("Functions disabled");
-   } 
+   }
 
 }
 function addserialNode(){
@@ -971,11 +971,11 @@ function validURL(str) {
     <!-- Any Chart JS-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script src="//cdn.amcharts.com/lib/4/plugins/rangeSelector.js"></script>
-    <script src="{% static 'blog/render.js' %}"></script>
-    <script src="{% static 'blog/custom.js' %}"></script>
+    <script src="{% static 'blog/render_AmChartsDemo.js' %}"></script>
+    <script src="{% static 'blog/custom_AmChartsDemo.js' %}"></script>
     <script src="{% static 'blog/statusLED.js' %}"></script>
     <script src="{% static 'blog/singleLCD.js' %}"></script>
-    <script src="{% static 'blog/dynamicCharts.js' %}"></script>
+    <script src="{% static 'blog/dynamicCharts_am.js' %}"></script>
     <script src="{% static 'blog/removeAlarm.js' %}"></script>
     <script src="{% static 'blog/map.js' %}"></script>
     <script src="{% static 'blog/rmt.js' %}"></script>

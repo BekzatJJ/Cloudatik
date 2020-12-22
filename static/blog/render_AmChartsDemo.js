@@ -152,7 +152,7 @@ function createNodeCards(data){
         }
 
         document.getElementById('map-content').innerHTML = htmlMap; //Map render
-    
+
     console.log(data);
     //Nodes Section
     for(var i=0; i<data.node.length; i++){
@@ -447,18 +447,25 @@ function createNodeCards(data){
                 </div>
 
               </div>
-            
+
               <div class="tagName_justify">
               <h2>${data.node[i].tag_name}</h2>
               </div>
-            
+
             <section id="section_${data.node[i].device_id}_dashboard" class="nodeDash">
-           
-             
+
+
 
 
               <div id="spinner_${data.node[i].device_id}" class="lds-roller"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-
+              <div id="chartControl_${data.node[i].device_id}" style="display:none; float: right; margin: 10px;">
+                <div class="btn-group">
+                  <button style="color: black;" type="button" onclick="set12hrs();" class="chart-control chart-12 btn btn-secondary">12 Hours</button>
+                  <button type="button" onclick="set1day();" class="chart-control chart-1 btn btn-secondary">1 Day</button>
+                  <button type="button" onclick="set2day();" class="chart-control chart-2 btn btn-secondary">2 Days</button>
+                  <button type="button" onclick="set3day();" class="chart-control chart-3 btn btn-secondary">3 Days</button>
+                </div>
+              </div>
               <div id="${data.node[i].serial}-parameters" class="container parameters" style="">
 
 
@@ -482,7 +489,7 @@ function createNodeCards(data){
 
             `<section id="section_${data.node[i].device_id}_charts" class="sectionNodeLinks" style="display:none;">
 
-           
+
 
               <div class="wrapperForCharts" style="">
                 <div id="chartController_${data.node[i].device_id}" class="chartController">
@@ -714,7 +721,7 @@ function createNodeCards(data){
 function alarmSummary(data){
     var parent = document.getElementById('alarmHistoryList');
     parent.innerHTML = '';
-    
+
     console.log(data.data);
 
     data.data.sort(function(a,b){

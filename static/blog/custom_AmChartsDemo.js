@@ -14,10 +14,9 @@ window.onload = function () {
 
         //Node status
         window.nodeStatus = {};
-        
-        requestAjax('kTOP4t');
-   
- 
+        window.selectorAm = {};
+        window.charts = [];
+
     //console.log('requested');
     $.ajax({
                 type: "GET",
@@ -31,7 +30,7 @@ window.onload = function () {
                     spinnerNode.classList.remove('lds-roller');
                     var parent = document.getElementById('nodesList');
 
-                    
+
                     if(data.node.length == 0){
                         parent.innerHTML = ``;
                         parent.innerHTML = `<div id="addNode" class="card border-success mb-3 node" style="">
@@ -65,7 +64,7 @@ window.onload = function () {
                     alarmSummary(data);
                 }
             });
-      
+
 
 }
 function reJSONAlarmSummary(data){
@@ -288,27 +287,27 @@ function requestAjax(id){
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
-                    
-                    
+
+
 
                     console.log("before Rejeson");
                     console.log(data);
                     data = reConstructJSON(data);
-                     
+
                      console.log("after Rejeson");
                     console.log(data);
 /*
                     for(var i=0; i< data.length; i++){
-                      console.log("parameter"); 
+                      console.log("parameter");
                       console.log(data[i].chart_prop[0]);
-                      console.log("chart_prop"); 
+                      console.log("chart_prop");
                       console.log(data[i].parameter);
-                      console.log("data "); 
+                      console.log("data ");
                       console.log(data[i].data);
-                       
-                    
+
+
                     }
-                     
+
                     console.log("cashed charts");
                     console.log(cashedCharts);
                     console.log("params");
@@ -321,6 +320,10 @@ function requestAjax(id){
                     //Spinner disable and Links enable
                     var spinnerNode = document.getElementById('spinner_'+nodeProcessed[0].id);
                     spinnerNode.classList.remove('lds-roller');
+
+                    //chartControl
+                    var chartControl = document.getElementById('chartControl_'+nodeProcessed[0].id);
+                    chartControl.style.display = "block";
 
                     var navLinks = document.getElementById('nodeLinks_'+nodeProcessed[0].id);
                     for(var i=0; i< navLinks.children.length; i++){
@@ -351,7 +354,7 @@ function requestAjax(id){
                             canvasLcd.id = 'lcd_' + data[i].id;
                             canvasLcd.className = 'lcd-parameters';
                             title.id = 'chartTitle_' + data[i].id;
-                            
+
                                 if(data[i].chart_title == null){
                                     if(Object.keys(data[i].chart_prop).length === 0){title.innerHTML = '';}else{
                                        title.innerHTML = data[i].chart_prop[0].label;
@@ -365,6 +368,7 @@ function requestAjax(id){
                             selector.id = 'selectordiv_'+data[i].id;
                             canvasChart.style.width = '100%';
                             canvasChart.style.height = '300px';
+                            canvasChart.style.float = 'right';
 
                             child.appendChild(canvasLcd);
                             child.appendChild(title);
@@ -440,10 +444,10 @@ function requestAjax(id){
                             var labels = reverseData.map(function(e) {
                                return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
                             });
-                           
+
                            /* amChart*/
 
-                           // applying chart theme 
+                           // applying chart theme
                                /*
                                  var labels = data[i].data.map(function(e) {
                                            return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
@@ -453,10 +457,12 @@ function requestAjax(id){
                                         });
 */
 
-                              
 
-                                    var maxEst = Math.max.apply(this, data);
-                                    var minEst = Math.min.apply(this, data);
+
+                                    var maxEst = Math.max.apply(this, dataChart);
+                                    var minEst = Math.min.apply(this, dataChart);
+                                    console.log(maxEst);
+                                        console.log(minEst);
                                    // console.log(maxEst +' '+ minEst);
                                     var chartData = [];
                                 for(var a=0; a< labels.length; a++){
@@ -466,14 +472,13 @@ function requestAjax(id){
                                     chartData.push(tempObj);
                                 }
 
-                                console.log(chartData);
                                 //Chart starts
                                 am4core.useTheme(am4themes_animated);
                                 // Themes end
 
                                 // Create chart instance
-                                var chart = am4core.create('chart_' + data[i].id, am4charts.XYChart);
-
+                                 charts['chart_' + data[i].id] = am4core.create('chart_' + data[i].id, am4charts.XYChart);
+                                 var chart = charts['chart_' + data[i].id];
                                 chart.data = chartData;
                                /* chart.exporting.menu = new am4core.ExportMenu();
                                 chart.exporting.filePrefix = "ChartView";
@@ -529,36 +534,66 @@ dateAxis.baseInterval = {
   "timeUnit": "minute",
   "count": 1
 };
+
+dateAxis.dateFormats.setKey("hour", "HH");
+dateAxis.periodChangeDateFormats.setKey("hour", "[bold]MMM dd");
+dateAxis.gridIntervals.setAll([
+  { timeUnit: "hour", count: 2 },
+  { timeUnit: "hour", count: 3 },
+  { timeUnit: "hour", count: 6 },
+  { timeUnit: "hour", count: 8 },
+  { timeUnit: "hour", count: 12 },
+  { timeUnit: "day", count: 1 }]);
+
 /*
 dateAxis.groupIntervals.setAll([
   { timeUnit: "hour", count: 6 }
 ]);
 */
-dateAxis.renderer.labels.template.fontSize = 12; 
-
+dateAxis.renderer.labels.template.fontSize = 12;
+dateAxis.renderer.minGridDistance = 60;
 
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
-valueAxis.extraMin = 0.2;
-valueAxis.extraMax = 0.2;
+
 valueAxis.title.text = data[i].chart_prop[0].unit;
 valueAxis.title.fontSize = 12;
-valueAxis.renderer.labels.template.fontSize = 12;  
+valueAxis.renderer.labels.template.fontSize = 12;
 valueAxis.extraTooltipPrecision=1;
-valueAxis.strictMinMax = true; 
 
-// Create series
-var series = chart.series.push(new am4charts.LineSeries());
-series.dataFields.valueY = "value";
-series.dataFields.dateX = "date";
-//series.tooltipText = "{value}"
-series.strokeWidth = 2;
-series.minBulletDistance = 15;
 
+
+
+if(data[i].chart_prop[0].chart_category == "line"){
+    // Create series
+    var series = chart.series.push(new am4charts.LineSeries());
+    series.dataFields.valueY = "value";
+    series.dataFields.dateX = "date";
+    //series.tooltipText = "{value}"
+    series.strokeWidth = 2;
+    //series.minBulletDistance = 15;
+
+    // Make bullets grow on hover
 var bullet = series.bullets.push(new am4charts.CircleBullet());
-bullet.circle.radius = 2;
 bullet.circle.strokeWidth = 2;
+bullet.circle.radius = 2;
+bullet.circle.fill = am4core.color("#fff");
 
+var bullethover = bullet.states.create("hover");
+bullethover.properties.scale = 1.3;
 
+}else if(data[i].chart_prop[0].chart_category == "bar" ){
+    // Create series
+    var series = chart.series.push(new am4charts.ColumnSeries());
+    series.dataFields.valueY = "value";
+    series.dataFields.dateX = "date";
+    series.name = "Bar Chart";
+    //series.columns.template.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+    series.columns.template.fillOpacity = .8;
+
+    var columnTemplate = series.columns.template;
+    columnTemplate.strokeWidth = 5;
+    columnTemplate.strokeOpacity = 1;
+}
 
 // Drop-shaped tooltips
 series.tooltip.background.cornerRadius = 10;
@@ -570,14 +605,7 @@ series.connect = true;
 series.tooltip.label.textAlign = "middle";
 series.tooltip.label.textValign = "middle";
 
-// Make bullets grow on hover
-var bullet = series.bullets.push(new am4charts.CircleBullet());
-bullet.circle.strokeWidth = 2;
-bullet.circle.radius = 4;
-bullet.circle.fill = am4core.color("#fff");
 
-var bullethover = bullet.states.create("hover");
-bullethover.properties.scale = 1.3;
 
 // Make a panning cursor
 chart.cursor = new am4charts.XYCursor();
@@ -592,70 +620,55 @@ chart.cursor.snapToSeries = series;
 //chart.scrollbarX.series.push(series);
 //chart.scrollbarX.parent = chart.bottomAxesContainer;
 
-dateAxis.start = 0.00;
-dateAxis.keepSelection = true;
+//dateAxis.start = 1;
+//dateAxis.keepSelection = true;
 
-// add range selector 
-var selectorAm = new am4plugins_rangeSelector.DateAxisRangeSelector();
-selectorAm.container = document.getElementById("selectordiv_"+data[i].id);
-selectorAm.axis = dateAxis;
-selectorAm.position ="bottom";
+// add range selector
+selectorAm[data[i].id] = new am4plugins_rangeSelector.DateAxisRangeSelector();
+selectorAm[data[i].id].container = document.getElementById("selectordiv_"+data[i].id);
+selectorAm[data[i].id].axis = dateAxis;
+selectorAm[data[i].id].position ="bottom";
 
-/*
-// add data
-var interval;
-function startInterval() {
-    interval = setInterval(function() {
-        visits =
-            visits + chart.data;
-        var lastdataItem = series.dataItems.getIndex(series.dataItems.length - 1);
-        chart.addData(
-            { date: new Date(lastdataItem.dateX.getTime() + 2000), value: visits },
-            1
-        );
-    }, 2000);
-}
-
-startInterval();
-*/
 
 /* to get rid off default 6 period sectors */
-selectorAm.periods.shift(
+selectorAm[data[i].id].periods.shift(
   { name: "1D", interval: { timeUnit: "day", count: 1 } }
 );
-selectorAm.periods.shift(
+selectorAm[data[i].id].periods.shift(
   { name: "1D", interval: { timeUnit: "day", count: 1 } }
 );
-selectorAm.periods.shift(
+selectorAm[data[i].id].periods.shift(
   { name: "1D", interval: { timeUnit: "day", count: 1 } }
 );
-selectorAm.periods.shift(
+selectorAm[data[i].id].periods.shift(
   { name: "1D", interval: { timeUnit: "day", count: 1 } }
 );
-selectorAm.periods.shift(
+selectorAm[data[i].id].periods.shift(
   { name: "1D", interval: { timeUnit: "day", count: 1 } }
 );
-selectorAm.periods.shift(
+selectorAm[data[i].id].periods.shift(
   { name: "1D", interval: { timeUnit: "day", count: 1 } }
 );
 
 /* customize your own period selector */
-selectorAm.periods.unshift(
+selectorAm[data[i].id].periods.unshift(
   { name: "3D", interval: { timeUnit: "day", count: 3 } }
 );
-selectorAm.periods.unshift(
+selectorAm[data[i].id].periods.unshift(
   { name: "2D", interval: { timeUnit: "day", count: 2 } }
 );
-selectorAm.periods.unshift(
+selectorAm[data[i].id].periods.unshift(
   { name: "1D", interval: { timeUnit: "day", count: 1 } }
 );
-selectorAm.periods.unshift(
+selectorAm[data[i].id].periods.unshift(
   { name: "12H", interval: { timeUnit: "hour", count: 12 } }
 );
 
 chart.events.on("datavalidated", function(ev) {
-  
-});
+    for (var key in selectorAm) {
+        selectorAm[key].setPeriodInterval({ timeUnit: "hour", count: 12 });
+    }
+}, this);
 
               //Plot limits and chart max with min
 
@@ -669,8 +682,9 @@ chart.events.on("datavalidated", function(ev) {
                                         range.grid.strokeDasharray = "3,3";
 
                                         if(parseFloat(data[i].chart_prop[0].limit_high) >= maxEst){
-                                            valueAxis.max = (parseFloat(data[i].chart_prop[0].limit_high)+(parseFloat(data[i].chart_prop[0].limit_high)*0.2));
-                                            valueAxis.extraMax = 0.2;
+                                            valueAxis.max = (parseFloat(data[i].chart_prop[0].limit_high)+(parseFloat(data[i].chart_prop[0].limit_high)*0.01));
+                                            valueAxis.extraMax = 0.01;
+
                                         }
 
                                     }else{
@@ -688,12 +702,16 @@ chart.events.on("datavalidated", function(ev) {
                                         range2.grid.strokeDasharray = "3,3";
 
                                         if(parseFloat(data[i].chart_prop[0].limit_high) >= maxEst){
+                                            console.log(maxEst);
                                             valueAxis.max = parseFloat(data[i].chart_prop[0].limit_high);
                                             valueAxis.extraMax = 0.2;
+
                                         }
                                         if(parseFloat(data[i].chart_prop[0].limit_low) <= minEst){
+                                            console.log(minEst);
                                             valueAxis.min = parseFloat(data[i].chart_prop[0].limit_low);
                                             valueAxis.extraMin = 0.2;
+
                                         }
                                     }
 
@@ -708,7 +726,9 @@ chart.events.on("datavalidated", function(ev) {
 
                                         if(parseFloat(data[i].chart_prop[0].control_max) >= maxEst){
                                             valueAxis.max = parseFloat(data[i].chart_prop[0].control_max);
-                                            valueAxis.extraMax = 0.2;
+                                            valueAxis.extraMax = 0.01;
+
+
                                         }
 
                                     }else{
@@ -728,10 +748,12 @@ chart.events.on("datavalidated", function(ev) {
                                         if(parseFloat(data[i].chart_prop[0].control_max) >= maxEst){
                                             valueAxis.max = parseFloat(data[i].chart_prop[0].control_max);
                                             valueAxis.extraMax = 0.2;
+
                                         }
                                         if(parseFloat(data[i].chart_prop[0].control_min) <= minEst){
                                             valueAxis.min = parseFloat(data[i].chart_prop[0].control_min);
                                             valueAxis.extraMin = 0.2;
+
                                         }
 
                                     }
@@ -739,10 +761,10 @@ chart.events.on("datavalidated", function(ev) {
                                 }
 
 
-                          
-                            
 
-                            
+
+
+
                                 // based on my answer here: https://stackoverflow.com/questions/47146427
 
 
@@ -2064,4 +2086,68 @@ function ConvertToCSV(objArray) {
             }
 
             return str;
+}
+
+function set12hrs(){
+    var buttons = document.getElementsByClassName('chart-control');
+    for(var i=0; i<buttons.length; i++){
+        buttons[i].style.color = "white";
+    }
+
+    var button = document.getElementsByClassName('chart-12');
+    for(var i=0; i<button.length; i++){
+        button[i].style.color = "black";
+    }
+
+
+        for (var key in selectorAm) {
+            selectorAm[key].setPeriodInterval({ timeUnit: "hour", count: 12 });
+        }
+}
+function set1day(){
+    var buttons = document.getElementsByClassName('chart-control');
+    for(var i=0; i<buttons.length; i++){
+        buttons[i].style.color = "white";
+    }
+
+    var button = document.getElementsByClassName('chart-1');
+    for(var i=0; i<button.length; i++){
+        button[i].style.color = "black";
+    }
+
+
+        for (var key in selectorAm) {
+            selectorAm[key].setPeriodInterval({ timeUnit: "day", count: 1 });
+        }
+}
+function set2day(){
+    var buttons = document.getElementsByClassName('chart-control');
+    for(var i=0; i<buttons.length; i++){
+        buttons[i].style.color = "white";
+    }
+
+    var button = document.getElementsByClassName('chart-2');
+    for(var i=0; i<button.length; i++){
+        button[i].style.color = "black";
+    }
+
+
+    for (var key in selectorAm) {
+        selectorAm[key].setPeriodInterval({ timeUnit: "day", count: 2 });
+    }
+}
+function set3day(){
+    var buttons = document.getElementsByClassName('chart-control');
+    for(var i=0; i<buttons.length; i++){
+        buttons[i].style.color = "white";
+    }
+
+    var button = document.getElementsByClassName('chart-3');
+    for(var i=0; i<button.length; i++){
+        button[i].style.color = "black";
+    }
+
+    for (var key in selectorAm) {
+        selectorAm[key].setPeriodInterval({ timeUnit: "day", count: 3 });
+    }
 }

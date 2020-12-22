@@ -487,7 +487,7 @@ pre {
       justify-content: center; } }
   @media (min-width: 1200px) {
     .container {
-      max-width: 1140px; 
+      max-width: 1140px;
       justify-content: center;} }
 
 .container-fluid {
@@ -9147,8 +9147,16 @@ strong {
   /*text-align: center;*/
   text-align: -webkit-auto;
   padding: 10px;
+  float: left;
 }
-
+@media (max-width: 500.98px) {
+.chartTitle{
+    text-align: center;
+    padding: 10px;
+    float: left;
+    width: 100%;
+}
+}
 
 .nav-pills .nav-link{
   padding: 16px 48px;
@@ -9512,12 +9520,14 @@ li > .datepicker > div {
 
 .amcharts-range-selector-period-wrapper {
   padding-bottom:10px;
- 
+  display: none !important;
+
 }
 .amcharts-range-selector-period-button{
  border-radius: 4px;
  background-color:#67b7dc;
  border:none;
 }
+
 
 

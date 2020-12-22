@@ -283,15 +283,28 @@ function requestAjax(id){
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
-                    for(var i=0; i< data.chart_prop.length; i++){
-                        console.log(data.chart_prop[i].priority);
-                    }
-                      
-                    console.log("before reconstr");  
+
+                    console.log("before reconstr");
                     console.log(data)
 
                     data = reConstructJSON(data);
                     console.log("after reconstr");
+                    data[0].data = [
+                    {
+                        "datetime": "2020-12-17T06:30:28Z",
+                        "t": "243.7"
+                    },
+                    {
+                        "datetime": "2020-12-17T06:32:28Z",
+                        "t": "243.7"
+                    },
+                    {
+                        "datetime": "2020-12-17T06:35:28Z",
+                        "t": "243.7"
+                    },
+
+
+                    ];
                     console.log(data);
                     var nodeProcessed = document.getElementsByClassName(data[0].serial);
                     ajaxNodeProcess[nodeProcessed[0].id] = true;
@@ -361,6 +374,7 @@ function requestAjax(id){
                         var chartDataSet=[];
 
                         for(var i=0; i< data.length; i++){
+
                             if(Object.keys(data[i].chart_prop).length === 0){
                                     var unit = '';
                                     var label = '';
@@ -404,6 +418,7 @@ function requestAjax(id){
                                         //data[i].data[17][data[i].parameter], data[i].data[19][data[i].parameter]]
                             var reverseData = data[i].data;
                                 var reverseData = reverseData.reverse();
+                                console.log(reverseData);
 
                             var labels = reverseData.map(function(e) {
                                return moment(e.datetime).format('MM/DD/YYYY h:mm:ss a');
@@ -413,9 +428,9 @@ function requestAjax(id){
 
                             var dataChart = reverseData.map(function(e) {
                                return e[data[i].parameter];
-                            });;
+                            });
 
-
+console.log(dataChart);
 
                             if(typeof data[i].data[0][data[i].parameter]=== 'boolean'){
                                 var max = 1;
@@ -600,7 +615,7 @@ function requestAjax(id){
                                     };
                             }
 
-
+console.log("Here 44444");
                             //plugin
 var horizonalLinePlugin = {
   afterDraw: function(chartInstance) {
@@ -663,7 +678,9 @@ Chart.pluginService.register(horizonalLinePlugin);
                                 };
 
                                 //Run chart
+                                console.log(chartDataSet[i]);
                                 var chartTemp = 'chart_' + data[i].id;
+                                console.log("Here 66666");
                                 chartObject[chartTemp] = new Chart(chartTemp, {
                                         type: category,
                                         data: chartDataSet[i],
@@ -672,7 +689,7 @@ Chart.pluginService.register(horizonalLinePlugin);
 
                                 // based on my answer here: https://stackoverflow.com/questions/47146427
 
-
+                                console.log("Here 66666");
 
 
                                 //Last update text:
