@@ -425,7 +425,7 @@ function requestAjax(id){
                           if(typeof data[i].data[0][data[i].parameter] === 'boolean' ){
                             setLastValue(lcd[lcdId], data[i].data[0][data[i].parameter]);
                           }else{
-                            setLastValue(lcd[lcdId], parseFloat(data[i].data[0][data[i].parameter]));
+                            setLastValue(lcd[lcdId], Math.round(parseFloat(data[i].data[0][data[i].parameter]) * 100) / 100);
                           }
 
 
@@ -467,13 +467,19 @@ function requestAjax(id){
                                     var chartData = [];
                                 for(var a=0; a< labels.length; a++){
                                     var tempObj ={};
-                                    tempObj.date = labels[a];
-                                    tempObj.value = dataChart[a];
+                                    tempObj.date = new Date(labels[a]);
+                                    tempObj.value = Math.round(parseFloat(dataChart[a]) * 100) / 100;
                                     chartData.push(tempObj);
                                 }
+                                console.log(chartData);
 
                                 //Chart starts
                                 am4core.useTheme(am4themes_animated);
+                                am4core.options.minPolylineStep = 5;
+
+                                //initation
+                                //am4core.options.queue = true;
+
                                 // Themes end
 
                                 // Create chart instance
@@ -526,6 +532,9 @@ function requestAjax(id){
                                 title.text ="";
                                 title.fontWeight = 600;
                                 title.align = "center";
+
+                                //zoom out
+                                chart.zoomOutButton.disabled = true;
 // Create axes
 var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
 
@@ -570,16 +579,16 @@ if(data[i].chart_prop[0].chart_category == "line"){
     series.dataFields.dateX = "date";
     //series.tooltipText = "{value}"
     series.strokeWidth = 2;
-    //series.minBulletDistance = 15;
+    series.minBulletDistance = 0.3;
 
     // Make bullets grow on hover
-var bullet = series.bullets.push(new am4charts.CircleBullet());
-bullet.circle.strokeWidth = 2;
-bullet.circle.radius = 2;
-bullet.circle.fill = am4core.color("#fff");
+var bullet = series.bullets.push(new am4core.Circle());
+bullet.strokeWidth = 1;
+bullet.radius = 1;
+bullet.fill = am4core.color("#fff");
 
-var bullethover = bullet.states.create("hover");
-bullethover.properties.scale = 1.3;
+//var bullethover = bullet.states.create("hover");
+//bullethover.properties.scale = 1.3;
 
 }else if(data[i].chart_prop[0].chart_category == "bar" ){
     // Create series
@@ -664,7 +673,7 @@ selectorAm[data[i].id].periods.unshift(
   { name: "12H", interval: { timeUnit: "hour", count: 12 } }
 );
 
-chart.events.on("datavalidated", function(ev) {
+chart.events.on("ready", function(ev) {
     for (var key in selectorAm) {
         selectorAm[key].setPeriodInterval({ timeUnit: "hour", count: 12 });
     }
@@ -684,6 +693,8 @@ chart.events.on("datavalidated", function(ev) {
                                         if(parseFloat(data[i].chart_prop[0].limit_high) >= maxEst){
                                             valueAxis.max = (parseFloat(data[i].chart_prop[0].limit_high)+(parseFloat(data[i].chart_prop[0].limit_high)*0.01));
                                             valueAxis.extraMax = 0.01;
+                                            valueAxis.min = minEst - (minEst*0.05);
+                                            valueAxis.extraMin = 0.01;
 
                                         }
 
@@ -727,6 +738,8 @@ chart.events.on("datavalidated", function(ev) {
                                         if(parseFloat(data[i].chart_prop[0].control_max) >= maxEst){
                                             valueAxis.max = parseFloat(data[i].chart_prop[0].control_max);
                                             valueAxis.extraMax = 0.01;
+                                            valueAxis.min = minEst - (minEst*0.05);
+                                            valueAxis.extraMin = 0.01;
 
 
                                         }

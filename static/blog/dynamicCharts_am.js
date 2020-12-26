@@ -18,9 +18,10 @@ function removeData(chart) {
 function moveChart(chart, newData, newtime) {
 
         chart.addData(
-            { date: newtime, value: newData },
+            { date: new Date(newtime), value: Math.round(parseFloat(newData) * 100) / 100 },
             1
         );
+        chart.invalidateRawData();
 
 }
 
@@ -52,7 +53,7 @@ for(var b=0; b< nodes.length; b++){
                         if(typeof data[i].data[data[i].parameter] === 'boolean' ){
                             setLastValue(lcd[lcdId], data[i].data[data[i].parameter]);
                           }else{
-                            setLastValue(lcd[lcdId], parseFloat(data[i].data[data[i].parameter]));
+                            setLastValue(lcd[lcdId], Math.round(parseFloat(data[i].data[data[i].parameter]) * 100) / 100);
                           }
                     //console.log('time:' +moment(data[0].data.datetime).format('h:mm a'));
                     //console.log('data: '+ data[i].data[data[i].parameter]);
