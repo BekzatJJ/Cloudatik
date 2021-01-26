@@ -2,16 +2,16 @@ function createNodeCards(data){
     var list = document.getElementById('nodesList');
     var secondLayer = document.getElementById('secondLayer');
     window.permission = {
-      alarm: data.permission.alarm,
-      map: data.permission.map,
-      raw_data: data.permission.raw_data
+      alarm: data.alarm,
+      map: data.map,
+      raw_data: data.raw_data
     };
     //Remove previos children
         list.innerHTML='';
         secondLayer.innerHTML='';
 
     //Check permissions on alarm
-    if(data.permission.alarm == true){
+    if(data.alarm == true){
         var htmlAlarm = `<a href="#" class="float-right mr-3 alarmHistoryDashLink" data-toggle="popover" data-placement="bottom" data-content="Alarm History"><i data-feather="clock" class="feather-icon"></i></a>`;
         var htmlAlarmMobile = `<a href="#" class="float-right alarmHistoryDashLinkMobile dropdown-item">Alarm History</a>`;
     }else{
@@ -30,10 +30,10 @@ function createNodeCards(data){
             var htmlRemoteCtrlMobile = ``;
         }
 
-        var htmlNode = `<div id="${data.node[i].device_id}" class="card border-success mb-3 node ${data.node[i].serial}_${data.node[i].sensor_set}"  style="">
-                  <div class="card-header bg-transparent border-success first" onclick="section_node(this)"> ${data.node[i].tag_name} <br> <p style="font-size:11px; color: black; margin-top:1px; margin-bottom:0;"> ${data.node[i].serial}  (set ${data.node[i].sensor_set})</p></div>
+        var htmlNode = `<div id="${data.node[i].device_id}" class="card border-success mb-3 node ${data.node[i].serial}"  style="">
+                  <div class="card-header bg-transparent border-success first" onclick="section_node(this)"> ${data.node[i].tag_name} <br> <p style="font-size:11px; color: black; margin-top:1px; margin-bottom:0;"> ${data.node[i].serial}</p></div>
                   <div class="card-body text-dark float-right" style="padding:12px !important; background-color: #e8e6e6 !important;">
-                    <a href="#" id="canvasLedParent_${data.node[i].serial}_${data.node[i].sensor_set}" class="" data-toggle="popover" data-placement="bottom" data-content=""><canvas id="canvasLed_${data.node[i].serial}_${data.node[i].sensor_set}" class="leds" width="25" height="25"></canvas></a>
+                    <a href="#" id="canvasLedParent_${data.node[i].serial}" class="" data-toggle="popover" data-placement="bottom" data-content=""><canvas id="canvasLed_${data.node[i].serial}" class="leds" width="25" height="25"></canvas></a>
 
                     <div class="mainDashLinksDesktop">
                     <a href="#" class="float-right mr-1 nodeConfigDashLink" data-toggle="popover" data-placement="bottom" data-content="Node Configurations"><i data-feather="settings" class="feather-icon"></i></a>`+
@@ -76,7 +76,7 @@ function createNodeCards(data){
                 $('[data-toggle="popover"]').popover({trigger:'hover'});
 
 //Map sections
-        if(data.permission.map){
+        if(data.map){
           var htmlMap = `<div class="page-breadcrumb">
                               <div class="row">
                                   <div class="col-7 align-self-center">
@@ -159,7 +159,7 @@ function createNodeCards(data){
 
         //Permissions for alarm, raw_data, remote_ctrl
         //alarm and raw data
-        if((data.permission.alarm) && (data.permission.raw_data)){
+        if((data.alarm) && (data.raw_data)){
             var htmlAlarmHistoryLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'alarmHistory'); loadAlarmHistoryLink('${data.node[i].device_id}');" class="nav-item">
                                             <a class="nav-link" href="#">Alarm History</a>
                                         </li>`;
@@ -213,7 +213,7 @@ function createNodeCards(data){
                                         <h1>rawData</h1>
                                     </section>`;
             var htmlRawDataButton = `<button type="button" id="btnRetrieveRawData_${data.node[i].device_id}" onclick="retrieveRawData('${data.node[i].device_id}')" class="btn btn-primary" style="margin-top:5px;">Raw Data</button>`;
-        }else if(data.permission.alarm){
+        }else if(data.alarm){
             var htmlAlarmHistoryLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'alarmHistory'); loadAlarmHistoryLink('${data.node[i].device_id}');" class="nav-item">
                                             <a class="nav-link" href="#">Alarm History</a>
                                         </li>`;
@@ -263,7 +263,7 @@ function createNodeCards(data){
                                             </section>`;;
             var htmlRawDataSection = ``;
             var htmlRawDataButton = ``;
-        }else if(data.permission.raw_data){
+        }else if(data.raw_data){
             var htmlAlarmHistoryLink = ``;
             var htmlRawDataLink = `<li onClick="sectionNodeLinks('${data.node[i].device_id}', 'rawData')" class="nav-item">
                                         <a class="nav-link" href="#">Raw Data</a>
@@ -439,7 +439,7 @@ function createNodeCards(data){
                         <a class="nav-link"><canvas id="dashboardLed_${data.node[i].serial}" class="leds" width="25" height="25"></canvas></a>
                       </li>
                       <li class="nav-item">
-                        <p class="nav-link" id="lastUpdate_${ data.node[i].serial }_${data.node[i].sensor_set}" style="color: black; font-size: 15px; font-weight: 100;">Last update: </p>
+                        <p class="nav-link" id="lastUpdate_${ data.node[i].serial }" style="color: black; font-size: 15px; font-weight: 100;">Last update: </p>
                       </li>
                     </ul>
                   </div>
@@ -612,26 +612,26 @@ function createNodeCards(data){
     for(var i=0; i< data.node.length; i++){
       if(data.node[i].last_update == null){
         nodeStatus[data.node[i].device_id] = false;
-        $('#lastUpdate_'+data.node[i].serial+'_'+data.node[i].sensor_set).text('Last update: ' + moment('2000-01-01T00:00:00').calendar());
-         setLED('canvasLed_'+ data.node[i].serial+'_'+data.node[i].sensor_set, false);
+        $('#lastUpdate_'+data.node[i].serial).text('Last update: ' + moment('2000-01-01T00:00:00').calendar());
+         setLED('canvasLed_'+ data.node[i].serial, false);
          setLED('dashboardLed_'+ data.node[i].serial, false);
          var popContent = 'Last update: '+ moment('2000-01-01T00:00:00').fromNow();
-          $('a#canvasLedParent_'+data.node[i].serial+'_'+data.node[i].sensor_set).attr("data-content", popContent);
+          $('a#canvasLedParent_'+data.node[i].serial).attr("data-content", popContent);
       }else{
             if(moment(data.node[i].last_update).add(8, 'hours').format() < moment().subtract(10,'minutes').format()){
               nodeStatus[data.node[i].device_id] = false;
-            $('#lastUpdate_'+data.node[i].serial+'_'+data.node[i].sensor_set).text('Last update: ' + moment(data.node[i].last_update).add(8, 'hours').calendar());
-             setLED('canvasLed_'+ data.node[i].serial+'_'+data.node[i].sensor_set, false);
+            $('#lastUpdate_'+data.node[i].serial).text('Last update: ' + moment(data.node[i].last_update).add(8, 'hours').calendar());
+             setLED('canvasLed_'+ data.node[i].serial, false);
              setLED('dashboardLed_'+ data.node[i].serial, false);
           }else{
             nodeStatus[data.node[i].device_id] = true;
-            $('#lastUpdate_'+data.node[i].serial+'_'+data.node[i].sensor_set).text('Last update: ' + moment(data.node[i].last_update).add(8, 'hours').calendar());
-             setLED('canvasLed_'+ data.node[i].serial+'_'+data.node[i].sensor_set, true);
+            $('#lastUpdate_'+data.node[i].serial).text('Last update: ' + moment(data.node[i].last_update).add(8, 'hours').calendar());
+             setLED('canvasLed_'+ data.node[i].serial, true);
              setLED('dashboardLed_'+ data.node[i].serial, true);
           }
 
           var popContent = 'Last update: '+ moment(data.node[i].last_update).add(8, 'hours').fromNow();
-          $('a#canvasLedParent_'+data.node[i].serial+'_'+data.node[i].sensor_set).attr("data-content", popContent);
+          $('a#canvasLedParent_'+data.node[i].serial).attr("data-content", popContent);
       }
 
 
