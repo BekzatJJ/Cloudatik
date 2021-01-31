@@ -38,7 +38,7 @@ for(var b=0; b< nodes.length; b++){
             //Request Ajax
          $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardDataV3/' + nodes[b].id + '/',
+                url: 'https://api.cl-ds.com/getDashboardDataV4/' + nodes[b].id + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
@@ -61,12 +61,12 @@ for(var b=0; b< nodes.length; b++){
 
 
                      if(moment(data[0].data.datetime).format('h:mm a') < moment().subtract(10, 'minutes').format('h:mm a')){
-                        setLED('canvasLed_'+ data[0].serial, false);
-                        setLED('dashboardLed_'+ data[0].serial, false);
-                        $('#lastUpdate_'+data[0].serial).text('Last update: ' + moment(data[0].data.datetime).calendar());
-                    }else{setLED('canvasLed_'+ data[0].serial, true);
-                        setLED('dashboardLed_'+ data[0].serial, true);
-                        $('#lastUpdate_'+data[0].serial).text('Last update: ' + moment(data[0].data.datetime).calendar());}
+                        setLED('canvasLed_'+ data[0].serial+'_'+data[0].set, false);
+                        setLED('dashboardLed_'+ data[0].serial+'_'+data[0].set, false);
+                        $('#lastUpdate_'+data[0].serial+'_'+data[0].set).text('Last update: ' + moment(data[0].data.datetime).calendar());
+                    }else{setLED('canvasLed_'+ data[0].serial+'_'+data[0].set, true);
+                        setLED('dashboardLed_'+ data[0].serial+'_'+data[0].set, true);
+                        $('#lastUpdate_'+data[0].serial+'_'+data[0].set).text('Last update: ' + moment(data[0].data.datetime).calendar());}
 
 
                 }

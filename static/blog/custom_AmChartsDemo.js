@@ -43,6 +43,7 @@ window.onload = function () {
                         createNodeCards(data);
                         document.getElementById('mapButton').disabled=false;
 
+
                     }
                 }
             });
@@ -51,7 +52,7 @@ window.onload = function () {
 
          $.ajax({
                 type: "GET",
-                url:'https://api.cl-ds.com/getAlarmSummaryV2/'+ username + '/?format=json',
+                url:'https://api.cl-ds.com/getAlarmSummaryV3/'+ username + '/?format=json',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
@@ -100,7 +101,7 @@ function reJSONAlarmSummary(data){
 }
 
 function reJsonDataAlarm(data){
-    var newData = [{}];
+    var newData = [];
 
     for(var i=0; i<data.alarm.length; i++){
         var datetime = data.alarm[i].datetime;
@@ -181,14 +182,19 @@ setInterval(function(){
         //Request Ajax
          $.ajax({
                 type: "GET",
-                url:'https://api.cl-ds.com/getAlarmSummary/'+ username + '/?format=json',
+                url:'https://api.cl-ds.com/getAlarmSummaryV3/'+ username + '/?format=json',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
+                    var data = reJSONAlarmSummary(data);
                     console.log('updated alarm badge');
+                    console.log(data);
+
                     var parent = document.getElementById('badgeAlarm');
                     parent.innerHTML = data.data.length;
                     alarmSummary(data);
+
+
                 }
             });
     }else{
@@ -221,6 +227,7 @@ function reConstructJSON(data){
         var parameter = data.chart_prop[i].parameter;
         var section = "";
         var serial = data.chart_prop[i].serial;
+        var set = data.data[0].sensor_set;
         var nodeData = [{}];
         for(var x=0; x < data.data.length; x++){
             nodeData[x] = {
@@ -237,6 +244,7 @@ function reConstructJSON(data){
             "parameter": parameter,
             "section": section,
             "serial": serial,
+            "set": set
 
         }
     }
@@ -256,6 +264,7 @@ function reConstructSingleJSON(data){
         var parameter = data.chart_prop[i].parameter;
         var section = "";
         var serial = data.chart_prop[i].serial;
+        var set = data.data.sensor_set;
         var nodeData = {};
             nodeData = {
                 "datetime": data.data.datetime,
@@ -270,7 +279,8 @@ function reConstructSingleJSON(data){
             "id": id,
             "parameter": parameter,
             "section": section,
-            "serial": serial
+            "serial": serial,
+            "set": set
         }
     }
 
@@ -313,7 +323,7 @@ function requestAjax(id){
                     console.log("params");
                     console.log(parameters);
                */
-                    var nodeProcessed = document.getElementsByClassName(data[0].serial);
+                    var nodeProcessed = document.getElementsByClassName(data[0].serial+"_"+data[0].set);
                     ajaxNodeProcess[nodeProcessed[0].id] = true;
                     console.log('processes' + data[0].serial + ':' + ajaxNodeProcess[nodeProcessed[0].id]);
 
@@ -335,7 +345,7 @@ function requestAjax(id){
 
                     //Append DOM
                         for(var i=0; i< data.length;i++){
-                            var parent = document.getElementById(data[0].serial + '-parameters');
+                            var parent = document.getElementById(data[0].serial+"_"+data[0].set + '-parameters');
                             let child = document.createElement('div');
                             let canvasLcd = document.createElement('canvas');
                             let title = document.createElement('h3');
@@ -805,7 +815,7 @@ chart.events.on("ready", function(ev) {
             var ajaxCounts = Object.keys(ajaxRequests).length;
             ajaxRequests[ajaxCounts] = $.ajax({
                     type: "GET",
-                    url: 'https://api.cl-ds.com/getAlarmV2/' + id + '/?format=json',
+                    url: 'https://api.cl-ds.com/getAlarmV3/' + id + '/?format=json',
                     headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                     //data: "check",
                     success: function(data_alarm){
@@ -818,7 +828,7 @@ chart.events.on("ready", function(ev) {
 
                         }else{
                             //To get ID
-                        var nodeProcessed = document.getElementsByClassName(data_alarm[0].serial);
+                        var nodeProcessed = document.getElementsByClassName(data_alarm[0].serial+"_1");
                         var alarmTable = document.getElementById('alarmTable_' + nodeProcessed[0].id).getElementsByTagName('tbody')[0];
 
                         for(var i = alarmTable.rows.length - 1; i >= 0; i--)
@@ -874,14 +884,14 @@ function requestAjaxOffline(id){
     var ajaxCounts = Object.keys(ajaxRequests).length;
     ajaxRequests[ajaxCounts] = $.ajax({
                 type: "GET",
-                url: 'https://api.cl-ds.com/getDashboardDataV3/' + id + '/',
+                url: 'https://api.cl-ds.com/getDashboardDataV4/' + id + '/',
                 headers: {"Authorization": "Token 62990ac3b609e5601a678c1e133416e6da7f10db"},
                 //data: "check",
                 success: function(data){
 
                     data = reConstructSingleJSON(data);
                     //console.log('success for  '+ data[0].serial);
-                    var nodeProcessed = document.getElementsByClassName(data[0].serial);
+                    var nodeProcessed = document.getElementsByClassName(data[0].serial+"_"+data[0].set);
                     ajaxNodeProcess[nodeProcessed[0].id] = true;
                     console.log('processes' + data[0].serial + ':' + ajaxNodeProcess[nodeProcessed[0].id]);
 
@@ -899,7 +909,7 @@ function requestAjaxOffline(id){
 
                     //Append DOM
                         for(var i=0; i< data.length;i++){
-                            var parent = document.getElementById(data[0].serial + '-parameters');
+                            var parent = document.getElementById(data[0].serial+"_"+data[0].set + '-parameters');
                             let child = document.createElement('div');
                             let canvasLcd = document.createElement('canvas');
                             let title = document.createElement('h3');
